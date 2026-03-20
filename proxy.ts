@@ -9,9 +9,8 @@ export function proxy(request: NextRequest) {
 	// Next and Node are case-sensitive and AWS Amplify does not normalize casing--so
 	// /Path and /PATH would 404.
 	const lowered = path.toLowerCase();
-	if (path !== lowered) {
+	if (path !== lowered)
 		return NextResponse.redirect(new URL(lowered, request.url), 308);
-	}
 }
 
 // Match every path EXCEPT for the paths starting with

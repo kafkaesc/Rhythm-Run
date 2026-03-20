@@ -11,6 +11,12 @@ function subscribe(callback: () => void) {
 	return () => window.removeEventListener('theme-change', callback);
 }
 
+/**
+ * Subscribes to the current dark mode state and provides a toggle function.
+ * @returns An object containing:
+ * - `isDark` (whether dark mode is active)
+ * - `toggle` (a function to switch between light and dark mode)
+ */
 export function useDarkMode() {
 	// useSyncExternalStore handles SSR/hydration correctly: server uses getServerSnapshot,
 	// client uses getSnapshot (which reads the class already set by the inline script)
