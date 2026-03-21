@@ -1,12 +1,12 @@
-# Tempo Run
+# Rhythm Run
 
 Built by Jared Hettinger
 
-![Tests](https://github.com/kafkaesc/tempo-run/actions/workflows/test.yml/badge.svg)
-![Lint](https://github.com/kafkaesc/tempo-run/actions/workflows/lint.yml/badge.svg)
-![Typecheck](https://github.com/kafkaesc/tempo-run/actions/workflows/typecheck.yml/badge.svg)
+![Tests](https://github.com/kafkaesc/rhythm-run/actions/workflows/test.yml/badge.svg)
+![Lint](https://github.com/kafkaesc/rhythm-run/actions/workflows/lint.yml/badge.svg)
+![Typecheck](https://github.com/kafkaesc/rhythm-run/actions/workflows/typecheck.yml/badge.svg)
 
-Tempo Run is a Next.js app for finding tracks to match your pace.
+Rhythm Run is a Next.js app for finding tracks to match your pace.
 
 ## 📋 Prerequisites
 
