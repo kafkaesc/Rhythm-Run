@@ -15,7 +15,7 @@ export default function A({ children, className, href, ...props }: AProps) {
 		);
 	}
 
-	if (href.startsWith('/')) {
+	if (href.startsWith('/') || href.startsWith('#')) {
 		return (
 			<Link className={cn(sharedStyles, className)} href={href} {...props}>
 				{children}
