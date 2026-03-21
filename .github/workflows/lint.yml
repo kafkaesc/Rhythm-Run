@@ -1,0 +1,24 @@
+name: Lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # GitHub checkout clones the repo into the runner
+      - uses: actions/checkout@v4
+      # Install pnpm into the runner
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      # Install node on the runner
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      # Install pnpm on the runner and run linter
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
