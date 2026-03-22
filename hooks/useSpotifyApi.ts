@@ -4,13 +4,15 @@ import { useReducer, useEffect } from 'react';
 import { SpotifyTrack } from '@/models/spotifyApiResponses';
 import { AsyncState, AsyncAction } from '@/models/async';
 
-// https://en.wikipedia.org/wiki/Millisecond
-const MILLISECONDS_IN_SECOND = 1000;
+const MILLISECONDS_IN_SECOND = 1000; // https://en.wikipedia.org/wiki/Millisecond
 
-// Endpoints
+// Spotify API Endpoints, https://developer.spotify.com/documentation/web-api
 const LOCAL_TOKEN_ENDPOINT = '/api/spotify/token';
 const SPOTIFY_BASE_URL = 'https://api.spotify.com/v1';
 const SPOTIFY_SEARCH_ENDPOINT = `${SPOTIFY_BASE_URL}/search`;
+
+// Endpoint parameters
+const SPOTIFY_SEARCH_LIMIT = '10'; // Spotify API won't allow more than 10
 
 // Contains a cached Spotify access token and its expiration time,
 // null => no token yet or expired token was flushed
@@ -87,6 +89,7 @@ export function useSpotifyTrackSearch(query: string) {
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
 				url.searchParams.set('q', query);
 				url.searchParams.set('type', 'track');
+				url.searchParams.set('limit', SPOTIFY_SEARCH_LIMIT);
 
 				// Call the Spotify API with the access token
 				return fetch(url, {
