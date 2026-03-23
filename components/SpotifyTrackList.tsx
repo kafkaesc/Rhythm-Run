@@ -1,4 +1,4 @@
-import { SpotifyTrack } from '@/models/spotifyApiResponses';
+import { SpotifyTrack } from '@/models/spotify';
 
 type SpotifyTrackListProps = {
 	tracks: SpotifyTrack[] | null;

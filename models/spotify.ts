@@ -1,3 +1,4 @@
+/** TODO: Link to Spotify API site where tracks is defined */
 export interface SpotifyTrack {
 	id: string;
 	name: string;
@@ -10,3 +11,9 @@ export interface SpotifyTrack {
 	};
 	external_urls: { spotify: string };
 }
+
+export type SpotifyTrackResult = {
+	tracks: SpotifyTrack[] | null;
+	loading: boolean;
+	error: string | null;
+};
