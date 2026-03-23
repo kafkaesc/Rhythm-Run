@@ -1,16 +1,20 @@
 'use client';
 
 import { useReducer, useEffect } from 'react';
-import { SpotifyTrack } from '@/models/spotifyApiResponses';
+import { SpotifyTrack, SpotifyTrackResult } from '@/models/spotify';
 import { AsyncState, AsyncAction } from '@/models/async';
 
-// https://en.wikipedia.org/wiki/Millisecond
-const MILLISECONDS_IN_SECOND = 1000;
+const MILLISECONDS_IN_SECOND = 1000; // https://en.wikipedia.org/wiki/Millisecond
 
-// Endpoints
+// Spotify API Endpoints, https://developer.spotify.com/documentation/web-api
 const LOCAL_TOKEN_ENDPOINT = '/api/spotify/token';
 const SPOTIFY_BASE_URL = 'https://api.spotify.com/v1';
 const SPOTIFY_SEARCH_ENDPOINT = `${SPOTIFY_BASE_URL}/search`;
+const SPOTIFY_RECOMMENDATIONS_ENDPOINT = `${SPOTIFY_BASE_URL}/recommendations`;
+
+// Endpoint parameters
+const SPOTIFY_SEARCH_LIMIT = '10'; // Spotify API won't allow more than 10
+const SPOTIFY_RECOMMENDATIONS_LIMIT = '10'; // TODO: Test the limit when this is working
 
 // Contains a cached Spotify access token and its expiration time,
 // null => no token yet or expired token was flushed
@@ -69,11 +73,11 @@ function reducer<T>(
 }
 
 /**
- * Calls the Spotify API to search for tracks matching the given query.
+ * Calls the Spotify API to search for tracks matching the query.
  * @param query - The search string to look up on Spotify.
- * @returns An object containing the fetched `tracks`, a `loading` boolean, and an `error` string if the request failed.
+ * @returns A {@link SpotifyTrackResult}
  */
-export function useSpotifyTrackSearch(query: string) {
+export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 	const [state, dispatch] = useReducer(reducer<SpotifyTrack[]>, initialState);
 
 	useEffect(() => {
@@ -87,6 +91,7 @@ export function useSpotifyTrackSearch(query: string) {
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
 				url.searchParams.set('q', query);
 				url.searchParams.set('type', 'track');
+				url.searchParams.set('limit', SPOTIFY_SEARCH_LIMIT);
 
 				// Call the Spotify API with the access token
 				return fetch(url, {
@@ -109,6 +114,77 @@ export function useSpotifyTrackSearch(query: string) {
 				});
 			});
 	}, [query]);
+
+	return {
+		tracks: state.data,
+		loading: state.status === 'loading',
+		error: state.error,
+	};
+}
+
+type TempoSearchParams = {
+	bpm: number | null;
+	seedTrack?: string;
+	seedArtist?: string;
+	seedGenre?: string;
+};
+
+/**
+ * Calls the Spotify API for track recommendations matching a target BPM + seed data.
+ * At least one seed (track ID, artist ID, or genre name) must be provided alongside a BPM.
+ * Track IDs and artist IDs will need to be obtained by first searching
+ * with {@link useSpotifyTrackSearch} or a similar method.
+ * @param bpm - Target tempo in beats per minute (BPM)
+ * @param seedTrack - A Spotify track ID
+ * @param seedArtist - A Spotify artist ID
+ * @param seedGenre - A genre name
+ * @returns A {@link SpotifyTrackResult}
+ */
+export function useSpotifyTempoSearch({
+	bpm,
+	seedTrack,
+	seedArtist,
+	seedGenre,
+}: TempoSearchParams): SpotifyTrackResult {
+	const [state, dispatch] = useReducer(reducer<SpotifyTrack[]>, initialState);
+
+	useEffect(() => {
+		const hasSeed = seedTrack || seedArtist || seedGenre;
+		if (!bpm || !hasSeed) return;
+
+		dispatch({ type: 'fetch' });
+
+		getCachedToken()
+			.then((accessToken) => {
+				// Build the URI
+				const url = new URL(SPOTIFY_RECOMMENDATIONS_ENDPOINT);
+				url.searchParams.set('target_tempo', String(bpm));
+				url.searchParams.set('limit', SPOTIFY_RECOMMENDATIONS_LIMIT);
+				if (seedTrack) url.searchParams.set('seed_tracks', seedTrack);
+				if (seedArtist) url.searchParams.set('seed_artists', seedArtist);
+				if (seedGenre) url.searchParams.set('seed_genres', seedGenre);
+
+				// Call the Spotify API with the access token
+				return fetch(url, {
+					headers: { Authorization: `Bearer ${accessToken}` },
+				});
+			})
+			.then((res) => {
+				// Check for errors before returning a JSON promise of the data
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				return res.json() as Promise<{ tracks: SpotifyTrack[] }>;
+			})
+			.then((data) => {
+				// Return the fetched tracks
+				return dispatch({ type: 'success', data: data.tracks });
+			})
+			.catch((err: unknown) => {
+				dispatch({
+					type: 'error',
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			});
+	}, [bpm, seedTrack, seedArtist, seedGenre]);
 
 	return {
 		tracks: state.data,

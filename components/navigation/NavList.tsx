@@ -1,5 +1,6 @@
 import NavItem from '@/components/navigation/NavItem';
 
+/** The site navigation list */
 export default function NavList() {
 	return (
 		<ul className="flex gap-2">
