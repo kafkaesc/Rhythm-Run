@@ -18,8 +18,7 @@ export default function SpotifyTrackList({ tracks }: SpotifyTrackListProps) {
 			{tracks.map((tr) => (
 				<div key={tr.id}>
 					<p className="py-2">
-						&quot;{tr.name}&quot; by{' '}
-						{tr.artists.map((ar) => ar.name).join(', ')}
+						&quot;{tr.name}&quot; by {tr.artists.map((ar) => ar.name)}
 					</p>
 					<hr />
 				</div>
