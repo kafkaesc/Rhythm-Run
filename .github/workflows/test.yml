@@ -18,7 +18,7 @@ jobs:
       # Install node on the runner
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
       # Install pnpm on the runner and run tests
       - run: pnpm install --frozen-lockfile
