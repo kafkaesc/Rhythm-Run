@@ -2,64 +2,38 @@ import { cn } from '@/lib/css-utils';
 
 type ButtonProps = React.ComponentPropsWithoutRef<'button'> & {
 	buttonStyle?: 'black-white' | 'danger' | 'primary' | 'warning';
+	mini?: boolean;
+};
+
+// Base styles shared across default buttons
+const baseStyle =
+	'px-3 py-1 rounded-md border-2 border-transparent transition-colors cursor-pointer hover:border-2 disabled:opacity-64 disabled:cursor-not-allowed disabled:hover:border-transparent';
+
+// Styles to render a smaller version of the button
+const miniStyle = 'px-2 py-0 text-small';
+
+// key = buttonStyle, value = corresponding classes for the UI
+const styleClasses: Record<string, string> = {
+	primary: 'bg-highlight text-dark hover:border-foreground',
+	'black-white': 'bg-foreground text-background hover:border-highlight',
+	danger: 'bg-danger text-light hover:border-foreground',
+	warning: 'bg-warning text-dark hover:border-foreground',
 };
 
 export default function Button({
 	buttonStyle,
 	children,
 	className,
+	mini,
 	...props
 }: ButtonProps) {
-	if (!buttonStyle || buttonStyle === 'primary') {
-		return (
-			<button
-				className={cn(
-					'px-3 py-1 rounded-md bg-highlight text-dark transition-colors cursor-pointer hover:opacity-90',
-					className,
-				)}
-				{...props}
-			>
-				{children}
-			</button>
-		);
-	}
-	if (buttonStyle === 'black-white') {
-		return (
-			<button
-				className={cn(
-					'px-3 py-1 rounded-md bg-foreground text-background transition-colors cursor-pointer hover:opacity-90',
-					className,
-				)}
-				{...props}
-			>
-				{children}
-			</button>
-		);
-	}
-	if (buttonStyle === 'danger') {
-		return (
-			<button
-				className={cn(
-					'px-3 py-1 rounded-md bg-danger text-dark transition-colors cursor-pointer hover:opacity-90',
-					className,
-				)}
-				{...props}
-			>
-				{children}
-			</button>
-		);
-	}
-	if (buttonStyle === 'warning') {
-		return (
-			<button
-				className={cn(
-					'px-3 py-1 rounded-md bg-warning text-dark transition-colors cursor-pointer hover:opacity-90',
-					className,
-				)}
-				{...props}
-			>
-				{children}
-			</button>
-		);
-	}
+	const secondaryStyle = styleClasses[buttonStyle ?? 'primary'];
+	return (
+		<button
+			className={cn(baseStyle, secondaryStyle, mini && miniStyle, className)}
+			{...props}
+		>
+			{children}
+		</button>
+	);
 }

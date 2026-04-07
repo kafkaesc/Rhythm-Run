@@ -39,3 +39,27 @@ it('Cannot call onClick when disabled', async () => {
 	await userEvent.click(btn);
 	expect(onClick).not.toHaveBeenCalled();
 });
+
+it('Renders the danger button with the buttonStyle prop', () => {
+	render(<Button buttonStyle="danger">Click me</Button>);
+	const btn = screen.getByRole('button');
+	expect(btn).toHaveClass('bg-danger');
+	expect(btn).toHaveClass('text-light');
+	expect(btn).toHaveClass('hover:border-foreground');
+});
+
+it('Renders the warning button with the buttonStyle prop', () => {
+	render(<Button buttonStyle="warning">Click me</Button>);
+	const btn = screen.getByRole('button');
+	expect(btn).toHaveClass('bg-warning');
+	expect(btn).toHaveClass('text-dark');
+	expect(btn).toHaveClass('hover:border-foreground');
+});
+
+it('Renders a mini button with the mini prop', () => {
+	render(<Button mini>Click me</Button>);
+	const btn = screen.getByRole('button');
+	expect(btn).toHaveClass('px-2');
+	expect(btn).toHaveClass('py-0');
+	expect(btn).toHaveClass('text-small');
+});
