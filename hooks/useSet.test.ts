@@ -25,6 +25,7 @@ it('Uses the key function and prevents override or duplicates', () => {
 });
 
 it('Cannot exceed the limit', () => {
+	jest.spyOn(console, 'warn').mockImplementation(() => {});
 	const { result } = renderHook(() => useSet<string>({ limit: 2 }));
 	act(() => result.current.add('base'));
 	act(() => result.current.add('tempo'));
