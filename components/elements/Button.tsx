@@ -10,7 +10,7 @@ const baseStyle =
 	'px-3 py-1 rounded-md border-2 border-transparent transition-colors cursor-pointer hover:border-2 disabled:opacity-64 disabled:cursor-not-allowed disabled:hover:border-transparent';
 
 // Styles to render a smaller version of the button
-const miniStyle = 'px-2 py-0 text-small';
+const miniStyle = 'px-2 py-0 text-sm';
 
 // key = buttonStyle, value = corresponding classes for the UI
 const styleClasses: Record<string, string> = {
@@ -30,7 +30,7 @@ export default function Button({
 	const secondaryStyle = styleClasses[buttonStyle ?? 'primary'];
 	return (
 		<button
-			className={cn(baseStyle, secondaryStyle, mini && miniStyle, className)}
+			className={cn(baseStyle, mini && miniStyle, secondaryStyle, className)}
 			{...props}
 		>
 			{children}
