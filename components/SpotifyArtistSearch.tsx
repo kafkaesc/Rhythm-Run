@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
@@ -21,7 +22,7 @@ type StatusProps = {
 function Status({ err, loading }: StatusProps) {
 	const hasDisplay = loading || err;
 	return (
-		<P className="px-2 text-small">
+		<P className="px-2 text-sm">
 			{err && 'Error with the Spotify response'}
 			{loading && 'Loading...'}
 			{!hasDisplay && '\u00A0'}
@@ -67,7 +68,16 @@ export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
 						type="text"
 						value={input}
 					/>
-					<Button disabled={input.length === 0} type="submit">
+					<Button
+						className="flex items-center gap-1"
+						disabled={input.length === 0}
+						type="submit"
+					>
+						<Icon
+							icon="lucide:search"
+							aria-hidden="true"
+							className="-translate-y-px"
+						/>
 						Search
 					</Button>
 					<Button buttonStyle="black-white" type="button" onClick={clear}>
