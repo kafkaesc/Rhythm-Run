@@ -7,4 +7,5 @@ export type AsyncState<T> =
 export type AsyncAction<T> =
 	| { type: 'fetch' }
 	| { type: 'success'; data: T }
-	| { type: 'error'; error: string };
+	| { type: 'error'; error: string }
+	| { type: 'clear' };
