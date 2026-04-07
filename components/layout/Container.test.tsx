@@ -9,7 +9,7 @@ it('Renders its children', () => {
 it('Applies default layout classes', () => {
 	render(<Container>hello world</Container>);
 	const container = screen.getByText(/hello world/i);
-	expect(container).toHaveClass('mx-auto', 'w-full', 'max-w-4xl', 'px-4');
+	expect(container).toHaveClass('mx-auto', 'w-full', 'max-w-4xl', 'px-2', 'md:px-4');
 });
 
 it('Merges a custom className with the default classes', () => {
