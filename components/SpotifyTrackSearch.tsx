@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import SpotifyTrackList from '@/components/SpotifyTrackList';
 import { useSpotifyTrackSearch } from '@/hooks/useSpotifyApi';
+import { SpotifyTrack } from '@/models/spotify';
 
 type StatusProps = {
 	err: string | null;
@@ -27,12 +29,17 @@ function Status({ err, loading }: StatusProps) {
 	);
 }
 
+type SpotifyTrackSearchProps = {
+	add?: (track: SpotifyTrack) => void;
+};
+
 /**
  * Search form for querying the Spotify API by track name.
  * Renders the response track list once the search completes.
  */
-export default function SpotifySearch() {
-	const [query, setQuery] = useState('');
+export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
+	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
+	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { tracks, loading, error } = useSpotifyTrackSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
@@ -41,26 +48,35 @@ export default function SpotifySearch() {
 		// If a previous search is still running, don't trigger another
 		if (loading) return;
 
-		// Get the search query from the form data
-		const data = new FormData(ev.currentTarget);
-		const searchQuery = data.get('searchQuery');
+		setQuery(input);
+	}
 
-		// The search query should be a string, if not
-		// the hook might need to be revisited
-		if (typeof searchQuery !== 'string') return;
-		setQuery(searchQuery);
+	function clear() {
+		setInput('');
+		setQuery('');
 	}
 
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
 				<div className="flex items-center gap-2">
-					<Input name="searchQuery" placeholder="Search Spotify" type="text" />
-					<button type="submit">Search</button>
+					<Input
+						name="searchQuery"
+						onChange={(e) => setInput(e.target.value)}
+						placeholder="Search Spotify"
+						type="text"
+						value={input}
+					/>
+					<Button disabled={input.length === 0} type="submit">
+						Search
+					</Button>
+					<Button buttonStyle="black-white" type="button" onClick={clear}>
+						Clear
+					</Button>
 				</div>
 				<Status loading={loading} err={error} />
 			</form>
-			<SpotifyTrackList tracks={tracks} />
+			<SpotifyTrackList tracks={tracks} add={add} />
 		</div>
 	);
 }

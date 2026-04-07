@@ -1,7 +1,12 @@
 'use client';
 
 import { useReducer, useEffect } from 'react';
-import { SpotifyTrack, SpotifyTrackResult } from '@/models/spotify';
+import {
+	SpotifyArtist,
+	SpotifyArtistResult,
+	SpotifyTrack,
+	SpotifyTrackResult,
+} from '@/models/spotify';
 import { AsyncState, AsyncAction } from '@/models/async';
 
 const MILLISECONDS_IN_SECOND = 1000; // https://en.wikipedia.org/wiki/Millisecond
@@ -19,6 +24,11 @@ const SPOTIFY_RECOMMENDATIONS_LIMIT = '10'; // TODO: Test the limit when this is
 // Contains a cached Spotify access token and its expiration time,
 // null => no token yet or expired token was flushed
 let tokenCache: { token: string; expiresAt: number } | null = null;
+
+// Initial state for an async fetch is idling with no data or error
+function initialState<T>(): AsyncState<T> {
+	return { status: 'idle', data: null, error: null };
+}
 
 /**
  * Returns a cached Spotify access token, or fetches a new one if the cache is empty or expired.
@@ -45,13 +55,6 @@ function getCachedToken(): Promise<string> {
 		});
 }
 
-// Initial state for an async fetch is idling with no data or error
-const initialState: AsyncState<SpotifyTrack[]> = {
-	status: 'idle',
-	data: null,
-	error: null,
-};
-
 /**
  * Reducer function for async fetch state transitions for a given data type, T.
  * @param _state - The current state (unused; each action returns a full replacement).
@@ -68,8 +71,62 @@ function reducer<T>(
 		return { status: 'success', data: _action.data, error: null };
 	if (_action.type === 'error')
 		return { status: 'error', data: null, error: _action.error };
+	if (_action.type === 'clear')
+		return { status: 'idle', data: null, error: null };
 
 	throw new Error('Unhandled action type');
+}
+
+/**
+ * Calls the Spotify API to search for artists matching the query.
+ * @param query - The search string to look up on Spotify.
+ * @returns A {@link SpotifyArtistResult}
+ */
+export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
+	const [state, dispatch] = useReducer(
+		reducer<SpotifyArtist[]>,
+		initialState<SpotifyArtist[]>(),
+	);
+
+	useEffect(() => {
+		if (!query) {
+			dispatch({ type: 'clear' });
+			return;
+		}
+
+		dispatch({ type: 'fetch' });
+
+		getCachedToken()
+			.then((accessToken) => {
+				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
+				url.searchParams.set('q', query);
+				url.searchParams.set('type', 'artist');
+				url.searchParams.set('limit', SPOTIFY_SEARCH_LIMIT);
+
+				return fetch(url, {
+					headers: { Authorization: `Bearer ${accessToken}` },
+				});
+			})
+			.then((res) => {
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				return res.json() as Promise<{ artists: { items: SpotifyArtist[] } }>;
+			})
+			.then((data) => {
+				return dispatch({ type: 'success', data: data.artists.items });
+			})
+			.catch((err: unknown) => {
+				dispatch({
+					type: 'error',
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			});
+	}, [query]);
+
+	return {
+		artists: state.data,
+		loading: state.status === 'loading',
+		error: state.error,
+	};
 }
 
 /**
@@ -78,10 +135,16 @@ function reducer<T>(
  * @returns A {@link SpotifyTrackResult}
  */
 export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
-	const [state, dispatch] = useReducer(reducer<SpotifyTrack[]>, initialState);
+	const [state, dispatch] = useReducer(
+		reducer<SpotifyTrack[]>,
+		initialState<SpotifyTrack[]>(),
+	);
 
 	useEffect(() => {
-		if (!query) return;
+		if (!query) {
+			dispatch({ type: 'clear' });
+			return;
+		}
 
 		dispatch({ type: 'fetch' });
 
@@ -146,7 +209,10 @@ export function useSpotifyTempoSearch({
 	seedArtist,
 	seedGenre,
 }: TempoSearchParams): SpotifyTrackResult {
-	const [state, dispatch] = useReducer(reducer<SpotifyTrack[]>, initialState);
+	const [state, dispatch] = useReducer(
+		reducer<SpotifyTrack[]>,
+		initialState<SpotifyTrack[]>(),
+	);
 
 	useEffect(() => {
 		const hasSeed = seedTrack || seedArtist || seedGenre;
