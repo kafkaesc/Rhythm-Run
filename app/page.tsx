@@ -8,11 +8,11 @@ export default function Home() {
 		<main>
 			<H1 className="text-center">Rhythm Run</H1>
 			<P className="text-center">Find tracks and run at your rate</P>
-			<div className="flex gap-4">
-				<div className="flex-1">
+			<div className="flex flex-col gap-4 md:flex-row">
+				<div className="flex-1 min-w-0">
 					<SearchAndAddTrack title="Search and Add Tracks" />
 				</div>
-				<div className="flex-1">
+				<div className="flex-1 min-w-0">
 					<SearchAndAddArtist title="Search and Add Artists" />
 				</div>
 			</div>

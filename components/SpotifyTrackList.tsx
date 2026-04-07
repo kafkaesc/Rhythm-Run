@@ -27,7 +27,7 @@ export default function SpotifyTrackList({
 	if (!tracks || tracks.length === 0) return <></>;
 
 	return (
-		<div>
+		<div className="max-h-[11em] overflow-y-auto">
 			<hr />
 			{tracks.map((tr) => (
 				<div key={tr.id}>

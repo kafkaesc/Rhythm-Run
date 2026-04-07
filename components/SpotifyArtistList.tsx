@@ -27,7 +27,7 @@ export default function SpotifyArtistList({
 	if (!artists || artists.length === 0) return <></>;
 
 	return (
-		<div>
+		<div className="max-h-[11em] overflow-y-auto">
 			<hr />
 			{artists.map((ar) => (
 				<div key={ar.id}>

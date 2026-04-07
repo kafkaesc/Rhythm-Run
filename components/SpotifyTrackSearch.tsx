@@ -9,6 +9,11 @@ import SpotifyTrackList from '@/components/SpotifyTrackList';
 import { useSpotifyTrackSearch } from '@/hooks/useSpotifyApi';
 import { SpotifyTrack } from '@/models/spotify';
 
+const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
+const SearchIcon = () => (
+	<Icon icon="lucide:search" aria-hidden="true" className="-translate-y-px" />
+);
+
 type StatusProps = {
 	err: string | null;
 	loading: boolean | null;
@@ -62,6 +67,7 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 			<form onSubmit={onSubmit}>
 				<div className="flex items-center gap-2">
 					<Input
+						className="flex-1 min-w-0"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Search Spotify"
@@ -73,15 +79,18 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 						disabled={input.length === 0}
 						type="submit"
 					>
-						<Icon
-							icon="lucide:search"
-							aria-hidden="true"
-							className="-translate-y-px"
-						/>
-						Search
+						<SearchIcon />
+						<span className="hidden md:inline">Search</span>
 					</Button>
-					<Button buttonStyle="black-white" type="button" onClick={clear}>
-						Clear
+					<Button
+						aria-label="Clear search"
+						buttonStyle="black-white"
+						className="flex items-center gap-1"
+						type="button"
+						onClick={clear}
+					>
+						<ClearIcon />
+						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>
 				<Status loading={loading} err={error} />
