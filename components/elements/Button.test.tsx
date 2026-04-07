@@ -61,5 +61,5 @@ it('Renders a mini button with the mini prop', () => {
 	const btn = screen.getByRole('button');
 	expect(btn).toHaveClass('px-2');
 	expect(btn).toHaveClass('py-0');
-	expect(btn).toHaveClass('text-small');
+	expect(btn).toHaveClass('text-sm');
 });
