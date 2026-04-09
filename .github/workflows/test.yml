@@ -23,3 +23,6 @@ jobs:
       # Install pnpm on the runner and run tests
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:ci
+      - uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

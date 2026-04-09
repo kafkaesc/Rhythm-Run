@@ -3,6 +3,7 @@
 Built by Jared Hettinger
 
 ![Tests](https://github.com/kafkaesc/rhythm-run/actions/workflows/test.yml/badge.svg)
+[![Coverage](https://codecov.io/gh/kafkaesc/rhythm-run/branch/main/graph/badge.svg)](https://codecov.io/gh/kafkaesc/rhythm-run)
 ![Lint](https://github.com/kafkaesc/rhythm-run/actions/workflows/lint.yml/badge.svg)
 ![Typecheck](https://github.com/kafkaesc/rhythm-run/actions/workflows/typecheck.yml/badge.svg)
 
