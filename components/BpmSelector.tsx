@@ -8,6 +8,11 @@ const DEFAULT_BPM = 160;
 const MAX_BPM = 220;
 const MIN_BPM = 60;
 
+// https://www.youtube.com/watch?v=sVOpqbJYXp8
+function clamp(value: number) {
+	return Math.min(MAX_BPM, Math.max(MIN_BPM, value));
+}
+
 type BpmSelectorProps = {
 	onChange?: (bpm: number) => void;
 	title?: string;
@@ -17,8 +22,7 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 	const [bpm, setBpm] = useState(DEFAULT_BPM);
 
 	function handleChange(value: number) {
-		// https://www.youtube.com/watch?v=sVOpqbJYXp8
-		const clampValue = Math.min(MAX_BPM, Math.max(MIN_BPM, value));
+		const clampValue = clamp(value);
 		setBpm(clampValue);
 		onChange?.(clampValue);
 	}
