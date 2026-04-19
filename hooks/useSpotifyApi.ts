@@ -186,28 +186,29 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 }
 
 type TempoSearchParams = {
-	bpm: number | null;
+	bpm?: number;
 	seedTrack?: string;
 	seedArtist?: string;
 	seedGenre?: string;
 };
 
 /**
+ * DEPRECATED BY SPOTIFY, WILL ONLY RETURN A 400 ERROR
  * Calls the Spotify API for track recommendations matching a target BPM + seed data.
  * At least one seed (track ID, artist ID, or genre name) must be provided alongside a BPM.
  * Track IDs and artist IDs will need to be obtained by first searching
  * with {@link useSpotifyTrackSearch} or a similar method.
- * @param bpm - Target tempo in beats per minute (BPM)
- * @param seedTrack - A Spotify track ID
+ * @param bpm - Target tempo in beats per minute (BPM) 
  * @param seedArtist - A Spotify artist ID
  * @param seedGenre - A genre name
+ * @param seedTrack - A Spotify track ID
  * @returns A {@link SpotifyTrackResult}
  */
 export function useSpotifyTempoSearch({
 	bpm,
-	seedTrack,
 	seedArtist,
 	seedGenre,
+	seedTrack,
 }: TempoSearchParams): SpotifyTrackResult {
 	const [state, dispatch] = useReducer(
 		reducer<SpotifyTrack[]>,
@@ -216,6 +217,7 @@ export function useSpotifyTempoSearch({
 
 	useEffect(() => {
 		const hasSeed = seedTrack || seedArtist || seedGenre;
+
 		if (!bpm || !hasSeed) return;
 
 		dispatch({ type: 'fetch' });
