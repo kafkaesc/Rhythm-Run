@@ -30,6 +30,11 @@ Once the project is installed, running it just takes two steps:
 - React 19
 - Tailwind 4
 
+## 🔌 APIs
+
+- [Spotify](https://developer.spotify.com/documentation/web-api)
+- [GetSongBpm](https://getsongbpm.com)
+
 ## 🎯 Testing
 
 This project uses Jest for unit testing.
