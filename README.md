@@ -16,9 +16,23 @@ Rhythm Run is a Next.js app for finding tracks to match your pace.
 
 ## 📦 Installation & Operation
 
-After first downloading this project, run `pnpm install` to install the node modules.
+### Install
 
-Once the project is installed, running it just takes two steps:
+After first downloading this project, run `pnpm install` from the root folder to install the node modules.
+
+### Setup
+
+In order to call APIS you will need to create a `.env.local` file.
+
+```
+GET_SONG_BPM_KEY=<YOUR_KEY_HERE>
+SPOTIFY_CLIENT_ID=<YOUR_KEY_HERE>
+SPOTIFY_CLIENT_SECRET=<YOUR_KEY_HERE>
+```
+
+### Run
+
+Once the project is installed and setup, running it just takes two steps:
 
 1. Run `pnpm dev`
 1. Open [http://localhost:3000](http://localhost:3000) in your browser of choice
