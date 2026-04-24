@@ -1,10 +1,11 @@
 'use client';
 
 import H2 from '@/components/elements/H2';
-import SpotifyArtistList from '@/components/SpotifyArtistList';
+import ArtistList from '@/components/ArtistList';
 import SpotifyArtistSearch from '@/components/SpotifyArtistSearch';
 import { useSet } from '@/hooks/useSet';
 import { SpotifyArtist } from '@/models/spotify';
+import { NormalizeSpotifyArtist } from '@/lib/normalize';
 
 type SearchAndAddArtistProps = {
 	title?: string;
@@ -25,7 +26,11 @@ export default function SearchAndAddArtist({ title }: SearchAndAddArtistProps) {
 			<SpotifyArtistSearch add={add} />
 			<h3>Selected</h3>
 			{/* The list of artists the user has selected from search results */}
-			<SpotifyArtistList artists={selection} remove={remove} />
+			<ArtistList
+				artists={selection}
+				remove={remove}
+				toArtist={NormalizeSpotifyArtist}
+			/>
 		</>
 	);
 }
