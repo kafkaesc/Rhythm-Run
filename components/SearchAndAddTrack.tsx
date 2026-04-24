@@ -1,7 +1,7 @@
 'use client';
 
 import H2 from '@/components/elements/H2';
-import SpotifyTrackList from '@/components/SpotifyTrackList';
+import TrackList from '@/components/TrackList';
 import SpotifyTrackSearch from '@/components/SpotifyTrackSearch';
 import { useSet } from '@/hooks/useSet';
 import { SpotifyTrack } from '@/models/spotify';
@@ -25,7 +25,15 @@ export default function SearchAndAddTrack({ title }: SearchAndAddTrackProps) {
 			<SpotifyTrackSearch add={add} />
 			<h3>Selected</h3>
 			{/* The list of tracks the user has selected from search results */}
-			<SpotifyTrackList tracks={selection} remove={remove} />
+			<TrackList
+				tracks={selection}
+				remove={remove}
+				toTrack={(tr) => ({
+					id: tr.id,
+					title: tr.name,
+					artists: tr.artists.map((ar) => ar.name),
+				})}
+			/>
 		</>
 	);
 }

@@ -6,9 +6,9 @@ import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import TrackList from '@/components/TrackList';
-import { useSpotifyTrackSearch } from '@/hooks/useSpotifyApi';
-import { NormalizeSpotifyTrack } from '@/lib/normalize';
-import { SpotifyTrack } from '@/models/spotify';
+import { useGsbSongSearch } from '@/hooks/useGetSongBpmApi';
+import { NormalizeGsbTrack } from '@/lib/normalize';
+import { GsbSong } from '@/models/getSongBpm';
 
 const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
 const SearchIcon = () => (
@@ -20,41 +20,33 @@ type StatusProps = {
 	loading: boolean | null;
 };
 
-/**
- * Helper component to display the loading and error status of the Spotify search
- * @param err - Error message, if any
- * @param loading - Whether the search is currently loading
- */
 function Status({ err, loading }: StatusProps) {
 	const hasDisplay = loading || err;
 	return (
 		<P className="px-2 text-sm">
-			{err && 'Error with the Spotify response'}
+			{err && 'Error with the GetSongBPM response'}
 			{loading && 'Loading...'}
-			{!hasDisplay && '\u00A0'}
+			{!hasDisplay && ' '}
 		</P>
 	);
 }
 
-type SpotifyTrackSearchProps = {
-	add?: (track: SpotifyTrack) => void;
+type GsbTrackSearchProps = {
+	add?: (track: GsbSong) => void;
 };
 
 /**
- * Search form for querying the Spotify API by track name.
+ * Search form for querying the GetSongBPM API by track name.
  * Renders the response track list once the search completes.
  */
-export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
-	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
-	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
-	const { tracks, loading, error } = useSpotifyTrackSearch(query);
+export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
+	const [input, setInput] = useState('');
+	const [query, setQuery] = useState('');
+	const { songs, loading, error } = useGsbSongSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
-
-		// If a previous search is still running, don't trigger another
 		if (loading) return;
-
 		setQuery(input);
 	}
 
@@ -71,7 +63,7 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 						className="flex-1 min-w-0"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
-						placeholder="Search Spotify"
+						placeholder="Search GetSongBPM"
 						type="text"
 						value={input}
 					/>
@@ -96,7 +88,7 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 				</div>
 				<Status loading={loading} err={error} />
 			</form>
-			<TrackList tracks={tracks} add={add} toTrack={NormalizeSpotifyTrack} />
+			<TrackList tracks={songs} add={add} toTrack={NormalizeGsbTrack} />
 		</div>
 	);
 }

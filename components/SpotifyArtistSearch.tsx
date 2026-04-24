@@ -5,9 +5,10 @@ import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
-import SpotifyArtistList from '@/components/SpotifyArtistList';
+import ArtistList from '@/components/ArtistList';
 import { useSpotifyArtistSearch } from '@/hooks/useSpotifyApi';
 import { SpotifyArtist } from '@/models/spotify';
+import { NormalizeSpotifyArtist } from '@/lib/normalize';
 
 const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
 const SearchIcon = () => (
@@ -95,7 +96,11 @@ export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
 				</div>
 				<Status loading={loading} err={error} />
 			</form>
-			<SpotifyArtistList artists={artists} add={add} />
+			<ArtistList
+				add={add}
+				artists={artists}
+				toArtist={NormalizeSpotifyArtist}
+			/>
 		</div>
 	);
 }

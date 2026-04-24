@@ -21,6 +21,12 @@ type BpmSelectorProps = {
 export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 	const [bpm, setBpm] = useState(DEFAULT_BPM);
 
+	// Native range input uses CSS accent-color which delegates rendering
+	// to the browser, so the color won't match other UI elements. Instead
+	// we pass the fillPercent as a CSS variable and use it in a gradient
+	// on the track.
+	const fillPercent = ((bpm - MIN_BPM) / (MAX_BPM - MIN_BPM)) * 100;
+
 	function handleChange(value: number) {
 		const clampValue = clamp(value);
 		setBpm(clampValue);
@@ -36,10 +42,16 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 					aria-controls="bpm-input"
 					aria-labelledby="bpm-heading"
 					aria-valuetext={`${bpm} BPM`}
-					className="flex-1 accent-highlight cursor-pointer"
+					className="flex-1 cursor-pointer"
 					max={MAX_BPM}
 					min={MIN_BPM}
 					onChange={(e) => handleChange(Number(e.target.value))}
+					// Is this worth it for the slider to match the rest of the UI? Maybe
+					style={
+						{
+							['--range-fill' as string]: `${fillPercent}%`,
+						} as React.CSSProperties
+					}
 					type="range"
 					value={bpm}
 				/>
