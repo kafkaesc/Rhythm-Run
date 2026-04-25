@@ -51,11 +51,15 @@ Once the project is installed and setup, running it just takes two steps:
 
 ## 🎯 Testing
 
-This project uses Jest for unit testing.
+Tests are written with [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/), with coverage tracked using [Codecov](https://codecov.io/).
 
 - `pnpm test` - Runs tests and displays the test names and pass/fail results
 - `pnpm test:ci` - Runs tests and displays coverage across the project
 - `pnpm test:watch` - Runs tests in watch mode, re-running affected tests automatically as files change
+
+### Coverage Graph
+
+![Coverage Graph](https://codecov.io/gh/kafkaesc/Rhythm-Run/graphs/sunburst.svg?token=I4SQ74QIAQ)
 
 ## ⚖️ License
 
