@@ -22,7 +22,7 @@ After first downloading this project, run `pnpm install` from the root folder to
 
 ### Setup
 
-In order to call APIS you will need to create a `.env.local` file.
+In order to call APIs you will need to create a `.env.local` file.
 
 ```
 GET_SONG_BPM_KEY=<YOUR_KEY_HERE>
@@ -32,7 +32,7 @@ SPOTIFY_CLIENT_SECRET=<YOUR_KEY_HERE>
 
 ### Run
 
-Once the project is installed and setup, running it just takes two steps:
+Once the project is installed and set up, running it just takes two steps:
 
 1. Run `pnpm dev`
 1. Open [http://localhost:3000](http://localhost:3000) in your browser of choice
