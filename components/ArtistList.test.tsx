@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ArtistList from './ArtistList';
-import { BadBunny, DaftPunk, GreenDay } from '@/mocks/SpotifyArtistMocks';
+import { SpBadBunny, SpDaftPunk, SpGreenDay } from '@/mocks/SpotifyArtistMocks';
 import { NormalizeSpotifyArtist } from '@/lib/normalize';
 
 it('Renders nothing when artists is null', () => {
@@ -22,7 +22,7 @@ it('Renders artist names', () => {
 	render(
 		<ArtistList
 			toArtist={NormalizeSpotifyArtist}
-			artists={[BadBunny, DaftPunk, GreenDay]}
+			artists={[SpBadBunny, SpDaftPunk, SpGreenDay]}
 		/>,
 	);
 	const badBunnyRow = screen.getByText('Bad Bunny');
@@ -38,7 +38,7 @@ it('Renders an add button for each artist when add function is passed', () => {
 		<ArtistList
 			add={jest.fn()}
 			toArtist={NormalizeSpotifyArtist}
-			artists={[BadBunny, DaftPunk]}
+			artists={[SpBadBunny, SpDaftPunk]}
 		/>,
 	);
 	const addBadBunnyBtn = screen.getByRole('button', {
@@ -52,7 +52,9 @@ it('Renders an add button for each artist when add function is passed', () => {
 });
 
 it('Does not render an add button when add function is not passed', () => {
-	render(<ArtistList toArtist={NormalizeSpotifyArtist} artists={[BadBunny]} />);
+	render(
+		<ArtistList toArtist={NormalizeSpotifyArtist} artists={[SpBadBunny]} />,
+	);
 	const anyAddBtn = screen.queryByRole('button', { name: /add/i });
 	expect(anyAddBtn).not.toBeInTheDocument();
 });
@@ -60,11 +62,15 @@ it('Does not render an add button when add function is not passed', () => {
 it('Calls add with the artist when the add button is clicked', async () => {
 	const add = jest.fn();
 	render(
-		<ArtistList add={add} toArtist={NormalizeSpotifyArtist} artists={[BadBunny]} />,
+		<ArtistList
+			add={add}
+			toArtist={NormalizeSpotifyArtist}
+			artists={[SpBadBunny]}
+		/>,
 	);
 	const addBadBunnyBtn = screen.getByRole('button', { name: /add bad bunny/i });
 	await userEvent.click(addBadBunnyBtn);
-	expect(add).toHaveBeenCalledWith(BadBunny);
+	expect(add).toHaveBeenCalledWith(SpBadBunny);
 });
 
 it('Renders a remove button for each artist when remove function is passed', () => {
@@ -72,7 +78,7 @@ it('Renders a remove button for each artist when remove function is passed', () 
 		<ArtistList
 			remove={jest.fn()}
 			toArtist={NormalizeSpotifyArtist}
-			artists={[BadBunny, DaftPunk]}
+			artists={[SpBadBunny, SpDaftPunk]}
 		/>,
 	);
 	const rmBadBunnyBtn = screen.getByRole('button', {
@@ -91,12 +97,12 @@ it('Calls remove with the artist when the remove button is clicked', async () =>
 		<ArtistList
 			remove={remove}
 			toArtist={NormalizeSpotifyArtist}
-			artists={[BadBunny]}
+			artists={[SpBadBunny]}
 		/>,
 	);
 	const rmBadBunnyBtn = screen.getByRole('button', {
 		name: /remove bad bunny/i,
 	});
 	await userEvent.click(rmBadBunnyBtn);
-	expect(remove).toHaveBeenCalledWith(BadBunny);
+	expect(remove).toHaveBeenCalledWith(SpBadBunny);
 });

@@ -1,6 +1,6 @@
 import { SpotifyArtist } from '@/models/spotify';
 
-export const BadBunny: SpotifyArtist = {
+export const SpBadBunny: SpotifyArtist = {
 	id: '4q3ewBCX7sLwd24euuV69X',
 	name: 'Bad Bunny',
 	images: [
@@ -26,7 +26,7 @@ export const BadBunny: SpotifyArtist = {
 	},
 };
 
-export const DaftPunk: SpotifyArtist = {
+export const SpDaftPunk: SpotifyArtist = {
 	id: '4tZwfgrHOc3mvqYlEYSvVi',
 	name: 'Daft Punk',
 	images: [
@@ -52,7 +52,7 @@ export const DaftPunk: SpotifyArtist = {
 	},
 };
 
-export const GreenDay: SpotifyArtist = {
+export const SpGreenDay: SpotifyArtist = {
 	id: '7oPftvlwr6VrsViSDV7fJY',
 	name: 'Green Day',
 	images: [
@@ -78,7 +78,7 @@ export const GreenDay: SpotifyArtist = {
 	},
 };
 
-export const Shakira: SpotifyArtist = {
+export const SpShakira: SpotifyArtist = {
 	id: '0EmeFodog0BfCgMzAIvKQp',
 	name: 'Shakira',
 	images: [
@@ -104,7 +104,7 @@ export const Shakira: SpotifyArtist = {
 	},
 };
 
-export const TheKillers: SpotifyArtist = {
+export const SpTheKillers: SpotifyArtist = {
 	id: '0C0XlULifJtAgn6ZNCW2eu',
 	name: 'The Killers',
 	images: [

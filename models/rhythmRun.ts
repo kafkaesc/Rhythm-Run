@@ -2,6 +2,7 @@ export interface Artist {
 	genres: string[];
 	getSongBpmId?: string;
 	id: string;
+	mbid?: string;
 	name: string;
 	spotifyId?: string;
 }

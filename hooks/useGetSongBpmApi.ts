@@ -2,6 +2,8 @@
 
 import { useReducer, useEffect } from 'react';
 import {
+	GsbArtist,
+	GsbArtistResult,
 	GsbSong,
 	GsbSongResult,
 	GsbTempo,
@@ -10,6 +12,7 @@ import {
 import { AsyncState, AsyncAction } from '@/models/async';
 
 // GetSongBPM API, https://getsongbpm.com/api
+const LOCAL_ARTIST_ENDPOINT = '/api/gsb/artist';
 const LOCAL_SONG_ENDPOINT = '/api/gsb/song';
 const LOCAL_TEMPO_ENDPOINT = '/api/gsb/tempo';
 
@@ -31,6 +34,51 @@ function reducer<T>(
 		return { status: 'idle', data: null, error: null };
 
 	throw new Error('Unhandled action type');
+}
+
+/**
+ * Calls the GetSongBPM API to search for artists matching a name.
+ * @param artist - Artist name to search for.
+ * @returns A {@link GsbArtistResult}
+ */
+export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
+	const [state, dispatch] = useReducer(
+		reducer<GsbArtist[]>,
+		initialState<GsbArtist[]>(),
+	);
+
+	useEffect(() => {
+		if (!artist) {
+			dispatch({ type: 'clear' });
+			return;
+		}
+
+		dispatch({ type: 'fetch' });
+
+		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
+		url.searchParams.set('artist', artist);
+
+		fetch(url)
+			.then((res) => {
+				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
+				return res.json() as Promise<GsbArtist[]>;
+			})
+			.then((data) => {
+				dispatch({ type: 'success', data });
+			})
+			.catch((err: unknown) => {
+				dispatch({
+					type: 'error',
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			});
+	}, [artist]);
+
+	return {
+		artists: state.data,
+		loading: state.status === 'loading',
+		error: state.error,
+	};
 }
 
 /**

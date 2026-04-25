@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TrackList from './TrackList';
 import {
-	BasketCase,
-	FeelGoodInc,
-	PortionsForFoxes,
+	SpBasketCase,
+	SpFeelGoodInc,
+	SpPortionsForFoxes,
 } from '@/mocks/SpotifyTrackMocks';
 import { NormalizeSpotifyTrack } from '@/lib/normalize';
 
@@ -26,7 +26,7 @@ it('Renders track name and artist', () => {
 	render(
 		<TrackList
 			toTrack={NormalizeSpotifyTrack}
-			tracks={[BasketCase, FeelGoodInc, PortionsForFoxes]}
+			tracks={[SpBasketCase, SpFeelGoodInc, SpPortionsForFoxes]}
 		/>,
 	);
 	const basketCaseRow = screen.getByText(/"Basket Case" by Green Day/i);
@@ -42,7 +42,7 @@ it('Renders an add button for each track when add function is passed', () => {
 		<TrackList
 			add={jest.fn()}
 			toTrack={NormalizeSpotifyTrack}
-			tracks={[BasketCase, FeelGoodInc]}
+			tracks={[SpBasketCase, SpFeelGoodInc]}
 		/>,
 	);
 	const addBasketCaseBtn = screen.getByRole('button', {
@@ -56,7 +56,7 @@ it('Renders an add button for each track when add function is passed', () => {
 });
 
 it('Does not render an add button when add function is not passed', () => {
-	render(<TrackList toTrack={NormalizeSpotifyTrack} tracks={[BasketCase]} />);
+	render(<TrackList toTrack={NormalizeSpotifyTrack} tracks={[SpBasketCase]} />);
 	const anyAddBtn = screen.queryByRole('button', { name: /add/i });
 	expect(anyAddBtn).not.toBeInTheDocument();
 });
@@ -64,11 +64,15 @@ it('Does not render an add button when add function is not passed', () => {
 it('Calls add with the track when the add button is clicked', async () => {
 	const add = jest.fn();
 	render(
-		<TrackList add={add} toTrack={NormalizeSpotifyTrack} tracks={[BasketCase]} />,
+		<TrackList
+			add={add}
+			toTrack={NormalizeSpotifyTrack}
+			tracks={[SpBasketCase]}
+		/>,
 	);
 	const addBtn = screen.getByRole('button', { name: /add "basket case"/i });
 	await userEvent.click(addBtn);
-	expect(add).toHaveBeenCalledWith(BasketCase);
+	expect(add).toHaveBeenCalledWith(SpBasketCase);
 });
 
 it('Renders a remove button for each track when remove function is passed', () => {
@@ -76,7 +80,7 @@ it('Renders a remove button for each track when remove function is passed', () =
 		<TrackList
 			remove={jest.fn()}
 			toTrack={NormalizeSpotifyTrack}
-			tracks={[BasketCase, FeelGoodInc]}
+			tracks={[SpBasketCase, SpFeelGoodInc]}
 		/>,
 	);
 	const rmBasketCaseBtn = screen.getByRole('button', {
@@ -95,10 +99,10 @@ it('Calls remove with the track when the remove button is clicked', async () => 
 		<TrackList
 			remove={remove}
 			toTrack={NormalizeSpotifyTrack}
-			tracks={[BasketCase]}
+			tracks={[SpBasketCase]}
 		/>,
 	);
 	const rmBtn = screen.getByRole('button', { name: /remove "basket case"/i });
 	await userEvent.click(rmBtn);
-	expect(remove).toHaveBeenCalledWith(BasketCase);
+	expect(remove).toHaveBeenCalledWith(SpBasketCase);
 });
