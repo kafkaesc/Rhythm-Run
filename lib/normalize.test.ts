@@ -8,7 +8,7 @@ import {
 	NormalizeSpotifyTrack,
 	NormalizeSpotifyTracks,
 } from './normalize';
-import { GsbGreenDay, GsbDaftPunk } from '@/mocks/GsbArtistMocks';
+import { GsbGreenDay, GsbDaftPunk, GsbBadBunny } from '@/mocks/GsbArtistMocks';
 import { GsbBasketCase, GsbFeelGoodInc } from '@/mocks/GsbTrackMocks';
 import { SpGreenDay, SpDaftPunk } from '@/mocks/SpotifyArtistMocks';
 import { SpBasketCase, SpFeelGoodInc } from '@/mocks/SpotifyTrackMocks';
@@ -22,6 +22,11 @@ it('NormalizeGsbArtist normalizes Green Day correctly', () => {
 		name: 'Green Day',
 		genres: ['pop', 'punk', 'rock'],
 	});
+});
+
+it('NormalizeGsbArtist normalizes an artist with null genres as an empty array', () => {
+	const result = NormalizeGsbArtist(GsbBadBunny);
+	expect(result.genres).toEqual([]);
 });
 
 it('NormalizeGsbArtist normalizes Daft Punk correctly', () => {
