@@ -1,7 +1,7 @@
 export interface GsbAlbum {
 	title: string;
 	uri: string;
-	year: number;
+	year: string;
 }
 
 export interface GsbArtist {
@@ -16,14 +16,14 @@ export interface GsbArtist {
 
 export interface GsbSong {
 	acousticness: number;
-	album: GsbAlbum[];
+	album: GsbAlbum;
 	artist: GsbArtist;
 	danceability: number;
 	id: string;
 	key_of: string;
 	open_key: string;
 	tempo: string;
-	time_sig: number;
+	time_sig: string;
 	title: string;
 	uri: string;
 }

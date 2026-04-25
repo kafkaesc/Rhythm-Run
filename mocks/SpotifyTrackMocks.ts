@@ -1,6 +1,6 @@
 import { SpotifyTrack } from '@/models/spotify';
 
-export const BasketCase: SpotifyTrack = {
+export const SpBasketCase: SpotifyTrack = {
 	id: '6L89mwZXS0wYl76YXfX13s',
 	name: 'Basket Case',
 	duration_ms: 181533,
@@ -31,7 +31,7 @@ export const BasketCase: SpotifyTrack = {
 	},
 };
 
-export const FeelGoodInc: SpotifyTrack = {
+export const SpFeelGoodInc: SpotifyTrack = {
 	id: '0d28khcov6AiegSCpG5TuT',
 	name: 'Feel Good Inc.',
 	duration_ms: 222640,
@@ -65,7 +65,7 @@ export const FeelGoodInc: SpotifyTrack = {
 	},
 };
 
-export const PortionsForFoxes: SpotifyTrack = {
+export const SpPortionsForFoxes: SpotifyTrack = {
 	id: '4yY8JqT0Qyi7K4O1QcQtBG',
 	name: 'Portions for Foxes',
 	duration_ms: 284640,
@@ -96,7 +96,7 @@ export const PortionsForFoxes: SpotifyTrack = {
 	},
 };
 
-export const SugarWereGoingDown: SpotifyTrack = {
+export const SpSugarWereGoingDown: SpotifyTrack = {
 	id: '2TfSHkHiFO4gRztVIkggkE',
 	name: "Sugar, We're Goin Down",
 	duration_ms: 229093,

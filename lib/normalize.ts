@@ -7,6 +7,7 @@ export function NormalizeGsbArtist(artist: GsbArtist): Artist {
 	return {
 		id: artist.id,
 		getSongBpmId: artist.id,
+		mbid: artist.mbid,
 		name: artist.name,
 		genres: artist.genres,
 	};
