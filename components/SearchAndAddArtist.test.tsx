@@ -1,8 +1,17 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SearchAndAddArtist from './SearchAndAddArtist';
+import { SpBadBunny } from '@/mocks/SpotifyArtistMocks';
+
+const mockUseSpotifyArtistSearch = jest.fn();
+mockUseSpotifyArtistSearch.mockReturnValue({
+	artists: null,
+	loading: null,
+	error: null,
+});
 
 jest.mock('../hooks/useSpotifyApi', () => ({
-	useSpotifyArtistSearch: () => ({ artists: null, loading: null, error: null }),
+	useSpotifyArtistSearch: (...args: unknown[]) => mockUseSpotifyArtistSearch(...args),
 }));
 
 it('Renders the default title', () => {
@@ -33,4 +42,32 @@ it('Renders the search input', () => {
 	render(<SearchAndAddArtist />);
 	const input = screen.getByRole('textbox');
 	expect(input).toBeInTheDocument();
+});
+
+it('Adds an artist to the selected list when the add button is clicked', async () => {
+	mockUseSpotifyArtistSearch.mockReturnValueOnce({
+		artists: [SpBadBunny],
+		loading: false,
+		error: null,
+	});
+	render(<SearchAndAddArtist />);
+	const addBadBunny = screen.getByRole('button', { name: /Add Bad Bunny/i });
+	await userEvent.click(addBadBunny);
+	const rmBadBunny = screen.getByRole('button', { name: /Remove Bad Bunny/i });
+	expect(rmBadBunny).toBeInTheDocument();
+});
+
+it('Removes an artist from the selected list when the remove button is clicked', async () => {
+	mockUseSpotifyArtistSearch.mockReturnValueOnce({
+		artists: [SpBadBunny],
+		loading: false,
+		error: null,
+	});
+	render(<SearchAndAddArtist />);
+	const addBadBunny = screen.getByRole('button', { name: /Add Bad Bunny/i });
+	await userEvent.click(addBadBunny);
+	const rmBadBunny = screen.getByRole('button', { name: /Remove Bad Bunny/i });
+	await userEvent.click(rmBadBunny);
+	const rmBadBunnyAfter = screen.queryByRole('button', { name: /Remove Bad Bunny/i });
+	expect(rmBadBunnyAfter).not.toBeInTheDocument();
 });
