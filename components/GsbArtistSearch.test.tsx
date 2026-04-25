@@ -76,3 +76,22 @@ it('Renders error status display when there is an error', () => {
 	const errDisplay = screen.getByText('Error with the GetSongBPM response');
 	expect(errDisplay).toBeInTheDocument();
 });
+
+it('Does not trigger a new search when the state is loading', async () => {
+	mockUseGsbArtistSearch.mockReturnValue({
+		artists: null,
+		loading: true,
+		error: null,
+	});
+	render(<GsbArtistSearch />);
+	const input = screen.getByRole('textbox');
+	await userEvent.type(input, 'Rilo Kiley');
+	const searchBtn = screen.getByRole('button', { name: /^search$/i });
+	await userEvent.click(searchBtn);
+	expect(mockUseGsbArtistSearch).not.toHaveBeenCalledWith('Rilo Kiley');
+	mockUseGsbArtistSearch.mockReturnValue({
+		artists: null,
+		loading: null,
+		error: null,
+	});
+});
