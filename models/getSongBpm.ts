@@ -6,11 +6,11 @@ export interface GsbAlbum {
 
 export interface GsbArtist {
 	from: string;
-	genres: string[];
+	genres: string[] | null;
 	id: string;
 	mbid: string;
 	name: string;
-	similar?: GsbArtist[];
+	similar?: GsbArtist[] | null;
 	uri: string;
 }
 
@@ -36,6 +36,12 @@ export interface GsbTempo {
 	song_uri: string;
 	tempo: number;
 }
+
+export type GsbArtistResult = {
+	artists: GsbArtist[] | null;
+	loading: boolean;
+	error: string | null;
+};
 
 export type GsbSongResult = {
 	songs: GsbSong[] | null;

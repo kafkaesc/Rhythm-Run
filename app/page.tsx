@@ -4,6 +4,7 @@ import BpmSelector from '@/components/BpmSelector';
 import SearchAndAddArtist from '@/components/SearchAndAddArtist';
 import SearchAndAddTrack from '@/components/SearchAndAddTrack';
 import GsbTrackSearch from '@/components/GsbTrackSearch';
+import GsbArtistSearch from '@/components/GsbArtistSearch';
 
 export default function Home() {
 	return (
@@ -14,7 +15,9 @@ export default function Home() {
 				<div className="flex-1 min-w-0">
 					<GsbTrackSearch />
 				</div>
-				<div className="flex-1 min-w-0">Lorem ipsum</div>
+				<div className="flex-1 min-w-0">
+					<GsbArtistSearch />
+				</div>
 			</div>
 			<BpmSelector />
 			<div className="flex flex-col gap-4 md:flex-row">
