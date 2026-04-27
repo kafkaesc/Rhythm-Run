@@ -77,3 +77,22 @@ it('Renders error status display when there is an error', () => {
 	const errDisplay = screen.getByText(/error with the spotify response/i);
 	expect(errDisplay).toBeInTheDocument();
 });
+
+it('Does not trigger a new search when the state is loading', async () => {
+	mockUseSpotifyArtistSearch.mockReturnValue({
+		artists: null,
+		loading: true,
+		error: null,
+	});
+	render(<SpotifyArtistSearch />);
+	const input = screen.getByRole('textbox');
+	await userEvent.type(input, 'Rilo Kiley');
+	const searchBtn = screen.getByRole('button', { name: /^search$/i });
+	await userEvent.click(searchBtn);
+	expect(mockUseSpotifyArtistSearch).not.toHaveBeenCalledWith('Rilo Kiley');
+	mockUseSpotifyArtistSearch.mockReturnValue({
+		artists: null,
+		loading: null,
+		error: null,
+	});
+});
