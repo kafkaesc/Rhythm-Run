@@ -65,6 +65,21 @@ it('Adds a track to the selected list when the add button is clicked', async () 
 	expect(rmBasketCase).toBeInTheDocument();
 });
 
+it('Does not add a duplicate track', async () => {
+	mockUseSpotifyTrackSearch.mockReturnValue({
+		tracks: [SpBasketCase],
+		loading: false,
+		error: null,
+	});
+	render(<SearchAndAddTrack />);
+	const addBasketCase = screen.getByRole('button', { name: /Add "Basket Case"/i });
+	await userEvent.click(addBasketCase);
+	await userEvent.click(addBasketCase);
+	const rmButtons = screen.getAllByRole('button', { name: /Remove "Basket Case"/i });
+	expect(rmButtons).toHaveLength(1);
+	mockUseSpotifyTrackSearch.mockReturnValue({ tracks: null, loading: null, error: null });
+});
+
 it('Removes a track from the selected list when the remove button is clicked', async () => {
 	mockUseSpotifyTrackSearch.mockReturnValueOnce({
 		tracks: [SpBasketCase],
