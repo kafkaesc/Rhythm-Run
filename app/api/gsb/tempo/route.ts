@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 	}
 
 	// Create the URI to request from Get Song BPM
-	const uri = new URL(`${GSB_TEMPO_ENDPOINT}`);
+	const uri = new URL(GSB_TEMPO_ENDPOINT);
 	uri.searchParams.set('api_key', apiKey);
 	uri.searchParams.set('bpm', bpm);
 
@@ -37,5 +37,5 @@ export async function GET(request: NextRequest) {
 
 	const data = await res.json();
 
-	return NextResponse.json(data);
+	return NextResponse.json(Array.isArray(data) ? data : []);
 }
