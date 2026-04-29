@@ -1,0 +1,15 @@
+{
+	"version": "0.2",
+	"ignorePaths": [".next", "node_modules"],
+	"words": [
+		"getsongbpm",
+		"Hettinger",
+		"iconify",
+		"kafkaesc",
+		"mbid",
+		"musicbrainz",
+		"Kiley",
+		"Rilo",
+		"Shakira"
+	]
+}
