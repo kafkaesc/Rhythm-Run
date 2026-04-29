@@ -3,6 +3,8 @@ import {
 	NormalizeGsbArtists,
 	NormalizeGsbTrack,
 	NormalizeGsbTracks,
+	NormalizeMbArtist,
+	NormalizeMbArtists,
 	NormalizeSpotifyArtist,
 	NormalizeSpotifyArtists,
 	NormalizeSpotifyTrack,
@@ -10,6 +12,7 @@ import {
 } from './normalize';
 import { GsbGreenDay, GsbDaftPunk, GsbBadBunny } from '@/mocks/GsbArtistMocks';
 import { GsbBasketCase, GsbFeelGoodInc } from '@/mocks/GsbTrackMocks';
+import { MbGreenDay, MbDaftPunk } from '@/mocks/MbArtistMocks';
 import { SpGreenDay, SpDaftPunk } from '@/mocks/SpotifyArtistMocks';
 import { SpBasketCase, SpFeelGoodInc } from '@/mocks/SpotifyTrackMocks';
 
@@ -98,6 +101,44 @@ it('NormalizeGsbTracks normalizes an array of tracks correctly', () => {
 			title: 'Feel Good Inc.',
 			artists: ['Gorillaz'],
 			bpm: 136,
+		},
+	]);
+});
+
+it('NormalizeMbArtist normalizes Green Day correctly', () => {
+	const result = NormalizeMbArtist(MbGreenDay);
+	expect(result).toEqual({
+		id: '084308bd-1654-436f-ba03-df6697104e19',
+		mbid: '084308bd-1654-436f-ba03-df6697104e19',
+		name: 'Green Day',
+		genres: [],
+	});
+});
+
+it('NormalizeMbArtist normalizes Daft Punk correctly', () => {
+	const result = NormalizeMbArtist(MbDaftPunk);
+	expect(result).toEqual({
+		id: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+		mbid: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+		name: 'Daft Punk',
+		genres: [],
+	});
+});
+
+it('NormalizeMbArtists normalizes an array of artists correctly', () => {
+	const result = NormalizeMbArtists([MbGreenDay, MbDaftPunk]);
+	expect(result).toEqual([
+		{
+			id: '084308bd-1654-436f-ba03-df6697104e19',
+			mbid: '084308bd-1654-436f-ba03-df6697104e19',
+			name: 'Green Day',
+			genres: [],
+		},
+		{
+			id: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+			mbid: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+			name: 'Daft Punk',
+			genres: [],
 		},
 	]);
 });

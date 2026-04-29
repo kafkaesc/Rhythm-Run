@@ -1,6 +1,7 @@
 import { GsbArtist, GsbSong } from '@/models/getSongBpm';
 import { SpotifyArtist, SpotifyTrack } from '@/models/spotify';
 import { Artist, Track } from '@/models/rhythmRun';
+import { MbArtist } from '@/models/musicBrainz';
 
 /** Normalizes a GsbArtist from the GetSongBPM API into the common Artist shape */
 export function NormalizeGsbArtist(artist: GsbArtist): Artist {
@@ -34,6 +35,22 @@ export function NormalizeGsbTrack(track: GsbSong): Track {
  * into the common Track shape */
 export function NormalizeGsbTracks(tracks: GsbSong[]): Track[] {
 	return tracks.map(NormalizeGsbTrack);
+}
+
+/** Normalizes a MbArtist from the MusicBrainz API into the common Artist shape */
+export function NormalizeMbArtist(artist: MbArtist): Artist {
+	return {
+		id: artist.id,
+		mbid: artist.id,
+		name: artist.name,
+		genres: [],
+	};
+}
+
+/** Normalizes an array of MbArtist objects from the MusicBrainz API
+ * into the common Artist shape */
+export function NormalizeMbArtists(artists: MbArtist[]): Artist[] {
+	return artists.map(NormalizeMbArtist);
 }
 
 /** Normalizes a SpotifyArtist from the Spotify API into the common Artist shape */
