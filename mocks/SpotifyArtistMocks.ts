@@ -1,3 +1,5 @@
+// cspell:disable
+
 import { SpotifyArtist } from '@/models/spotify';
 
 export const SpBadBunny: SpotifyArtist = {

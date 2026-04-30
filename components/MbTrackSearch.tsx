@@ -6,9 +6,9 @@ import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import TrackList from '@/components/TrackList';
-import { useGsbSongSearch } from '@/hooks/useGetSongBpmApi';
-import { NormalizeGsbTrack } from '@/lib/normalize';
-import { GsbSong } from '@/models/getSongBpm';
+import { useMusicBrainzTrackSearch } from '@/hooks/useMusicBrainzApi';
+import { MbTrack } from '@/models/musicBrainz';
+import { NormalizeMbTrack } from '@/lib/normalize';
 
 const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
 const SearchIcon = () => (
@@ -21,8 +21,8 @@ type StatusProps = {
 };
 
 /**
- * Helper component to display the loading and error
- * status of the GetSongBPM search
+ * Helper component to display the loading and error status
+ * of the MusicBrainz search
  * @param err - Error message, if any
  * @param loading - True if the search is currently loading
  */
@@ -30,25 +30,21 @@ function Status({ err, loading }: StatusProps) {
 	const hasDisplay = loading || err;
 	return (
 		<P className="px-2 text-sm">
-			{err && 'Error with the GetSongBPM response'}
+			{err && 'Error with the MusicBrainz response'}
 			{loading && 'Loading...'}
 			{!hasDisplay && '\u00A0'}
 		</P>
 	);
 }
 
-type GsbTrackSearchProps = {
-	add?: (track: GsbSong) => void;
+type MbTrackSearchProps = {
+	add?: (track: MbTrack) => void;
 };
 
-/**
- * Search form for querying the GetSongBPM API by track name.
- * Renders the response track list once the search completes.
- */
-export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
+export default function MbTrackSearch({ add }: MbTrackSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');
-	const { songs, loading, error } = useGsbSongSearch(query);
+	const { tracks, loading, error } = useMusicBrainzTrackSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
@@ -69,7 +65,7 @@ export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 						className="flex-1 min-w-0"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
-						placeholder="Find a track via GetSongBPM"
+						placeholder="Find a track via MusicBrainz"
 						type="text"
 						value={input}
 					/>
@@ -94,7 +90,7 @@ export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 				</div>
 				<Status loading={loading} err={error} />
 			</form>
-			<TrackList tracks={songs} add={add} toTrack={NormalizeGsbTrack} />
+			<TrackList tracks={tracks} add={add} toTrack={NormalizeMbTrack} />
 		</div>
 	);
 }

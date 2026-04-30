@@ -16,10 +16,17 @@ const LOCAL_ARTIST_ENDPOINT = '/api/gsb/artist';
 const LOCAL_SONG_ENDPOINT = '/api/gsb/song';
 const LOCAL_TEMPO_ENDPOINT = '/api/gsb/tempo';
 
+/** Initial state for an async fetch is idling with no data or error. */
 function initialState<T>(): AsyncState<T> {
 	return { status: 'idle', data: null, error: null };
 }
 
+/**
+ * Reducer function for async fetch state transitions for a given data type, T.
+ * @param _state - The current state (unused; each action returns a full replacement).
+ * @param _action - The action describing the transition: 'fetch', 'success', or 'error'.
+ * @returns A new {@link AsyncState} reflecting the dispatched action.
+ */
 function reducer<T>(
 	_state: AsyncState<T>,
 	_action: AsyncAction<T>,

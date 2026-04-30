@@ -3,6 +3,10 @@ import {
 	NormalizeGsbArtists,
 	NormalizeGsbTrack,
 	NormalizeGsbTracks,
+	NormalizeMbArtist,
+	NormalizeMbArtists,
+	NormalizeMbTrack,
+	NormalizeMbTracks,
 	NormalizeSpotifyArtist,
 	NormalizeSpotifyArtists,
 	NormalizeSpotifyTrack,
@@ -10,6 +14,8 @@ import {
 } from './normalize';
 import { GsbGreenDay, GsbDaftPunk, GsbBadBunny } from '@/mocks/GsbArtistMocks';
 import { GsbBasketCase, GsbFeelGoodInc } from '@/mocks/GsbTrackMocks';
+import { MbGreenDay, MbDaftPunk } from '@/mocks/MbArtistMocks';
+import { MbBasketCase, MbFeelGoodInc } from '@/mocks/MbTrackMocks';
 import { SpGreenDay, SpDaftPunk } from '@/mocks/SpotifyArtistMocks';
 import { SpBasketCase, SpFeelGoodInc } from '@/mocks/SpotifyTrackMocks';
 
@@ -102,11 +108,83 @@ it('NormalizeGsbTracks normalizes an array of tracks correctly', () => {
 	]);
 });
 
+it('NormalizeMbArtist normalizes Green Day correctly', () => {
+	const result = NormalizeMbArtist(MbGreenDay);
+	expect(result).toEqual({
+		id: '084308bd-1654-436f-ba03-df6697104e19',
+		mbid: '084308bd-1654-436f-ba03-df6697104e19',
+		name: 'Green Day',
+		genres: [],
+	});
+});
+
+it('NormalizeMbArtist normalizes Daft Punk correctly', () => {
+	const result = NormalizeMbArtist(MbDaftPunk);
+	expect(result).toEqual({
+		id: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+		mbid: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+		name: 'Daft Punk',
+		genres: [],
+	});
+});
+
+it('NormalizeMbTrack normalizes Basket Case correctly', () => {
+	const result = NormalizeMbTrack(MbBasketCase);
+	expect(result).toEqual({
+		id: '464f46cc-0530-4360-b019-3b05884d0344',
+		title: 'Basket Case',
+		artists: ['Green Day'],
+	});
+});
+
+it('NormalizeMbTrack normalizes Feel Good Inc. with joinphrase correctly', () => {
+	const result = NormalizeMbTrack(MbFeelGoodInc);
+	expect(result).toEqual({
+		id: '7938f2fd-ea5b-4f3b-949d-2e3c6db82c74',
+		title: 'Feel Good Inc.',
+		artists: ['Gorillaz feat. De La Soul'],
+	});
+});
+
+it('NormalizeMbTracks normalizes an array of tracks correctly', () => {
+	const result = NormalizeMbTracks([MbBasketCase, MbFeelGoodInc]);
+	expect(result).toEqual([
+		{
+			id: '464f46cc-0530-4360-b019-3b05884d0344',
+			title: 'Basket Case',
+			artists: ['Green Day'],
+		},
+		{
+			id: '7938f2fd-ea5b-4f3b-949d-2e3c6db82c74',
+			title: 'Feel Good Inc.',
+			artists: ['Gorillaz feat. De La Soul'],
+		},
+	]);
+});
+
+it('NormalizeMbArtists normalizes an array of artists correctly', () => {
+	const result = NormalizeMbArtists([MbGreenDay, MbDaftPunk]);
+	expect(result).toEqual([
+		{
+			id: '084308bd-1654-436f-ba03-df6697104e19',
+			mbid: '084308bd-1654-436f-ba03-df6697104e19',
+			name: 'Green Day',
+			genres: [],
+		},
+		{
+			id: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+			mbid: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+			name: 'Daft Punk',
+			genres: [],
+		},
+	]);
+});
+
 it('NormalizeSpotifyArtist normalizes Green Day correctly', () => {
 	const result = NormalizeSpotifyArtist(SpGreenDay);
 	expect(result).toEqual({
-		id: '7oPftvlwr6VrsViSDV7fJY',
-		spotifyId: '7oPftvlwr6VrsViSDV7fJY',
+		id: '7oPftvlwr6VrsViSDV7fJY', // cspell:disable-line
+		spotifyId: '7oPftvlwr6VrsViSDV7fJY', // cspell:disable-line
 		name: 'Green Day',
 		genres: [],
 	});
@@ -115,8 +193,8 @@ it('NormalizeSpotifyArtist normalizes Green Day correctly', () => {
 it('NormalizeSpotifyArtist normalizes Daft Punk correctly', () => {
 	const result = NormalizeSpotifyArtist(SpDaftPunk);
 	expect(result).toEqual({
-		id: '4tZwfgrHOc3mvqYlEYSvVi',
-		spotifyId: '4tZwfgrHOc3mvqYlEYSvVi',
+		id: '4tZwfgrHOc3mvqYlEYSvVi', // cspell:disable-line
+		spotifyId: '4tZwfgrHOc3mvqYlEYSvVi', // cspell:disable-line
 		name: 'Daft Punk',
 		genres: [],
 	});
@@ -126,14 +204,14 @@ it('NormalizeSpotifyArtists normalizes an array of artists correctly', () => {
 	const result = NormalizeSpotifyArtists([SpGreenDay, SpDaftPunk]);
 	expect(result).toEqual([
 		{
-			id: '7oPftvlwr6VrsViSDV7fJY',
-			spotifyId: '7oPftvlwr6VrsViSDV7fJY',
+			id: '7oPftvlwr6VrsViSDV7fJY', // cspell:disable-line
+			spotifyId: '7oPftvlwr6VrsViSDV7fJY', // cspell:disable-line
 			name: 'Green Day',
 			genres: [],
 		},
 		{
-			id: '4tZwfgrHOc3mvqYlEYSvVi',
-			spotifyId: '4tZwfgrHOc3mvqYlEYSvVi',
+			id: '4tZwfgrHOc3mvqYlEYSvVi', // cspell:disable-line
+			spotifyId: '4tZwfgrHOc3mvqYlEYSvVi', // cspell:disable-line
 			name: 'Daft Punk',
 			genres: [],
 		},
@@ -153,8 +231,8 @@ it('NormalizeSpotifyTrack normalizes Basket Case correctly', () => {
 it('NormalizeSpotifyTrack normalizes Feel Good Inc. correctly', () => {
 	const result = NormalizeSpotifyTrack(SpFeelGoodInc);
 	expect(result).toEqual({
-		id: '0d28khcov6AiegSCpG5TuT',
-		spotifyId: '0d28khcov6AiegSCpG5TuT',
+		id: '0d28khcov6AiegSCpG5TuT', // cspell:disable-line
+		spotifyId: '0d28khcov6AiegSCpG5TuT', // cspell:disable-line
 		title: 'Feel Good Inc.',
 		artists: ['Gorillaz', 'De La Soul'],
 	});
@@ -170,8 +248,8 @@ it('NormalizeSpotifyTracks normalizes an array of tracks correctly', () => {
 			artists: ['Green Day'],
 		},
 		{
-			id: '0d28khcov6AiegSCpG5TuT',
-			spotifyId: '0d28khcov6AiegSCpG5TuT',
+			id: '0d28khcov6AiegSCpG5TuT', // cspell:disable-line
+			spotifyId: '0d28khcov6AiegSCpG5TuT', // cspell:disable-line
 			title: 'Feel Good Inc.',
 			artists: ['Gorillaz', 'De La Soul'],
 		},

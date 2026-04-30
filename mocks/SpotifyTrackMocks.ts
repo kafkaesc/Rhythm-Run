@@ -1,3 +1,5 @@
+// cspell:disable
+
 import { SpotifyTrack } from '@/models/spotify';
 
 export const SpBasketCase: SpotifyTrack = {

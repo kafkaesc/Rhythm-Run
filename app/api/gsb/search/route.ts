@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const GSB_TEMPO_ENDPOINT = 'https://api.getsong.co/tempo/';
+const GSB_SEARCH_ENDPOINT = 'https://api.getsong.co/search/';
 
 export async function GET(request: NextRequest) {
 	// Retrieve credentials for Get Song BPM API access
@@ -15,16 +15,17 @@ export async function GET(request: NextRequest) {
 		);
 	}
 
-	// Extract the requested bpm
-	const bpm = request.nextUrl.searchParams.get('bpm');
-	if (!bpm) {
-		return NextResponse.json({ error: 'bpm is required' }, { status: 400 });
+	// Extract the requested artist name
+	const artist = request.nextUrl.searchParams.get('artist');
+	if (!artist) {
+		return NextResponse.json({ error: 'artist is required' }, { status: 400 });
 	}
 
 	// Create the URI to request from Get Song BPM
-	const uri = new URL(GSB_TEMPO_ENDPOINT);
+	const uri = new URL(GSB_SEARCH_ENDPOINT);
 	uri.searchParams.set('api_key', apiKey);
-	uri.searchParams.set('bpm', bpm);
+	uri.searchParams.set('type', 'both');
+	uri.searchParams.set('lookup', `artist:${artist}`);
 
 	// Await the response, then branch depending on error or success
 	const res = await fetch(uri);
@@ -36,6 +37,7 @@ export async function GET(request: NextRequest) {
 		);
 
 	const data = await res.json();
+	const results = data.search;
 
-	return NextResponse.json(Array.isArray(data) ? data : []);
+	return NextResponse.json(Array.isArray(results) ? results : []);
 }

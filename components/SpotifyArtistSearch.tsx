@@ -23,7 +23,7 @@ type StatusProps = {
 /**
  * Helper component to display the loading and error status of the Spotify search
  * @param err - Error message, if any
- * @param loading - Whether the search is currently loading
+ * @param loading - True if the search is currently loading
  */
 function Status({ err, loading }: StatusProps) {
 	const hasDisplay = loading || err;

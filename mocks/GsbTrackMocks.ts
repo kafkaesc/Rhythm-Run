@@ -1,3 +1,5 @@
+// cspell:disable
+
 import { GsbSong } from '@/models/getSongBpm';
 
 export const GsbBasketCase: GsbSong = {

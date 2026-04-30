@@ -25,7 +25,7 @@ const SPOTIFY_RECOMMENDATIONS_LIMIT = '10'; // TODO: Test the limit when this is
 // null => no token yet or expired token was flushed
 let tokenCache: { token: string; expiresAt: number } | null = null;
 
-// Initial state for an async fetch is idling with no data or error
+/** Initial state for an async fetch is idling with no data or error */
 function initialState<T>(): AsyncState<T> {
 	return { status: 'idle', data: null, error: null };
 }
@@ -193,12 +193,12 @@ type TempoSearchParams = {
 };
 
 /**
- * DEPRECATED BY SPOTIFY, WILL ONLY RETURN A 400 ERROR
+ * DEPRECATED BY SPOTIFY, WILL ONLY RETURN A 400 ERROR.
  * Calls the Spotify API for track recommendations matching a target BPM + seed data.
  * At least one seed (track ID, artist ID, or genre name) must be provided alongside a BPM.
  * Track IDs and artist IDs will need to be obtained by first searching
  * with {@link useSpotifyTrackSearch} or a similar method.
- * @param bpm - Target tempo in beats per minute (BPM) 
+ * @param bpm - Target tempo in beats per minute (BPM)
  * @param seedArtist - A Spotify artist ID
  * @param seedGenre - A genre name
  * @param seedTrack - A Spotify track ID
