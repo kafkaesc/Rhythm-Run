@@ -2,14 +2,21 @@
 	"version": "0.2",
 	"ignorePaths": [".next", "node_modules"],
 	"words": [
-		"getsongbpm",
+		"Dookie",
+		"Gorillaz",
 		"Hettinger",
-		"iconify",
-		"kafkaesc",
-		"mbid",
-		"musicbrainz",
 		"Kiley",
 		"Rilo",
-		"Shakira"
+		"Shakira",
+		"acousticness",
+		"danceability",
+		"getsongbpm",
+		"goin",
+		"iconify",
+		"jaredhettinger",
+		"joinphrase",
+		"kafkaesc",
+		"mbid",
+		"musicbrainz"
 	]
 }
