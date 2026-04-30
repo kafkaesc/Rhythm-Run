@@ -8,8 +8,32 @@ export interface MbArtist {
 	score: number;
 }
 
+export interface MbArtistCredit {
+	name: string;
+	artist: {
+		id: string;
+		name: string;
+		'sort-name': string;
+	};
+	joinphrase?: string;
+}
+
 export type MbArtistResult = {
 	artists: MbArtist[] | null;
+	loading: boolean;
+	error: string | null;
+};
+
+export interface MbTrack {
+	id: string;
+	title: string;
+	length?: number;
+	score: number;
+	'artist-credit': MbArtistCredit[];
+}
+
+export type MbTrackResult = {
+	tracks: MbTrack[] | null;
 	loading: boolean;
 	error: string | null;
 };

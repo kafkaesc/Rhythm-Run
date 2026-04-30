@@ -73,7 +73,7 @@ it('Renders error status display when there is an error', () => {
 		error: 'Some error',
 	});
 	render(<GsbArtistSearch />);
-	const errDisplay = screen.getByText('Error with the GetSongBPM response');
+	const errDisplay = screen.getByText(/error with the getsongbpm response/i);
 	expect(errDisplay).toBeInTheDocument();
 });
 

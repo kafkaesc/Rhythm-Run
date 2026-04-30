@@ -1,45 +1,46 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import GsbTrackSearch from './GsbTrackSearch';
+import MbTrackSearch from './MbTrackSearch';
 
-const mockUseGsbSongSearch = jest.fn();
-mockUseGsbSongSearch.mockReturnValue({
-	songs: null,
+const mockUseMusicBrainzTrackSearch = jest.fn();
+mockUseMusicBrainzTrackSearch.mockReturnValue({
+	tracks: null,
 	loading: null,
 	error: null,
 });
 
-jest.mock('../hooks/useGetSongBpmApi', () => ({
-	useGsbSongSearch: (...args: unknown[]) => mockUseGsbSongSearch(...args),
+jest.mock('../hooks/useMusicBrainzApi', () => ({
+	useMusicBrainzTrackSearch: (...args: unknown[]) =>
+		mockUseMusicBrainzTrackSearch(...args),
 }));
 
 it('Renders the search input', () => {
-	render(<GsbTrackSearch />);
+	render(<MbTrackSearch />);
 	const input = screen.getByRole('textbox');
 	expect(input).toBeInTheDocument();
 });
 
 it('Renders the search button', () => {
-	render(<GsbTrackSearch />);
+	render(<MbTrackSearch />);
 	// Must be an exact match to avoid the clear button being selected via "clear search"
 	const searchBtn = screen.getByRole('button', { name: /^search$/i });
 	expect(searchBtn).toBeInTheDocument();
 });
 
 it('Renders the clear button', () => {
-	render(<GsbTrackSearch />);
+	render(<MbTrackSearch />);
 	const clearBtn = screen.getByRole('button', { name: /clear/i });
 	expect(clearBtn).toBeInTheDocument();
 });
 
 it('Renders a disabled search button when input is empty', () => {
-	render(<GsbTrackSearch />);
+	render(<MbTrackSearch />);
 	const searchBtn = screen.getByRole('button', { name: /^search$/i });
 	expect(searchBtn).toBeDisabled();
 });
 
 it('Renders an enabled search button when input has text', async () => {
-	render(<GsbTrackSearch />);
+	render(<MbTrackSearch />);
 	const input = screen.getByRole('textbox');
 	await userEvent.type(input, 'Basket Case');
 	const searchBtn = screen.getByRole('button', { name: /^search$/i });
@@ -47,7 +48,7 @@ it('Renders an enabled search button when input has text', async () => {
 });
 
 it('Clears the input when clear button is clicked', async () => {
-	render(<GsbTrackSearch />);
+	render(<MbTrackSearch />);
 	const input = screen.getByRole('textbox');
 	await userEvent.type(input, 'Basket Case');
 	const clearBtn = screen.getByRole('button', { name: /clear/i });
@@ -56,41 +57,41 @@ it('Clears the input when clear button is clicked', async () => {
 });
 
 it('Renders loading status display when loading', () => {
-	mockUseGsbSongSearch.mockReturnValueOnce({
-		songs: null,
+	mockUseMusicBrainzTrackSearch.mockReturnValueOnce({
+		tracks: null,
 		loading: true,
 		error: null,
 	});
-	render(<GsbTrackSearch />);
+	render(<MbTrackSearch />);
 	const loadingDisplay = screen.getByText(/loading/i);
 	expect(loadingDisplay).toBeInTheDocument();
 });
 
 it('Renders error status display when there is an error', () => {
-	mockUseGsbSongSearch.mockReturnValueOnce({
-		songs: null,
+	mockUseMusicBrainzTrackSearch.mockReturnValueOnce({
+		tracks: null,
 		loading: null,
 		error: 'Some error',
 	});
-	render(<GsbTrackSearch />);
-	const errDisplay = screen.getByText(/error with the getsongbpm response/i);
+	render(<MbTrackSearch />);
+	const errDisplay = screen.getByText(/error with the musicbrainz response/i);
 	expect(errDisplay).toBeInTheDocument();
 });
 
 it('Does not trigger a new search when the state is loading', async () => {
-	mockUseGsbSongSearch.mockReturnValue({
-		songs: null,
+	mockUseMusicBrainzTrackSearch.mockReturnValue({
+		tracks: null,
 		loading: true,
 		error: null,
 	});
-	render(<GsbTrackSearch />);
+	render(<MbTrackSearch />);
 	const input = screen.getByRole('textbox');
 	await userEvent.type(input, 'Basket Case');
 	const searchBtn = screen.getByRole('button', { name: /^search$/i });
 	await userEvent.click(searchBtn);
-	expect(mockUseGsbSongSearch).not.toHaveBeenCalledWith('Basket Case');
-	mockUseGsbSongSearch.mockReturnValue({
-		songs: null,
+	expect(mockUseMusicBrainzTrackSearch).not.toHaveBeenCalledWith('Basket Case');
+	mockUseMusicBrainzTrackSearch.mockReturnValue({
+		tracks: null,
 		loading: null,
 		error: null,
 	});

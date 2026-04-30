@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
@@ -20,6 +20,12 @@ type StatusProps = {
 	loading: boolean | null;
 };
 
+/**
+ * Helper component to display the loading and error
+ * status of the GetSongBPM search
+ * @param err - Error message, if any
+ * @param loading - True if the search is currently loading
+ */
 function Status({ err, loading }: StatusProps) {
 	const hasDisplay = loading || err;
 	return (
@@ -54,10 +60,6 @@ export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 		setInput('');
 		setQuery('');
 	}
-
-	useEffect(() => {
-		console.log('>> artists: ', artists);
-	}, [artists]);
 
 	return (
 		<div>

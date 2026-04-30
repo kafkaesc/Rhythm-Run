@@ -7,7 +7,7 @@ export default function AboutPage() {
 	return (
 		<main>
 			<H1 className="text-center">About</H1>
-			<P>A page About Rhythm Run, lorem ipsum dolor sic amet</P>
+			<P>A page About Rhythm Run, lorem ipsum dolor sic</P>
 			<H2>Social Links</H2>
 			<nav aria-label="Social media links">
 				<ul className="flex gap-4">
