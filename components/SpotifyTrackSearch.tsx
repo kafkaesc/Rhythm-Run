@@ -6,7 +6,7 @@ import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import TrackList from '@/components/TrackList';
-import { useSpotifyTrackSearch } from '@/hooks/useSpotifyApi';
+import { useSpotifyTrackSearch } from '@/hooks/api/useSpotifyApi';
 import { normalizeSpotifyTrack } from '@/lib/normalize';
 import { SpotifyTrack } from '@/models/spotify';
 

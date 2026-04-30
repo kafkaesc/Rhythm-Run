@@ -6,7 +6,7 @@ import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
-import { useGsbArtistSearch } from '@/hooks/useGetSongBpmApi';
+import { useGsbArtistSearch } from '@/hooks/api/useGetSongBpmApi';
 import { normalizeGsbArtist } from '@/lib/normalize';
 import { GsbArtist } from '@/models/getSongBpm';
 

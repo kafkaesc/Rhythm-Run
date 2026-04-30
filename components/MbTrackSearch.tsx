@@ -6,7 +6,7 @@ import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import TrackList from '@/components/TrackList';
-import { useMusicBrainzTrackSearch } from '@/hooks/useMusicBrainzApi';
+import { useMusicBrainzTrackSearch } from '@/hooks/api/useMusicBrainzApi';
 import { MbTrack } from '@/models/musicBrainz';
 import { normalizeMbTrack } from '@/lib/normalize';
 

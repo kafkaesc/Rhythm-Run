@@ -10,7 +10,7 @@ mockUseSpotifyTrackSearch.mockReturnValue({
 	error: null,
 });
 
-jest.mock('../hooks/useSpotifyApi', () => ({
+jest.mock('../hooks/api/useSpotifyApi', () => ({
 	useSpotifyTrackSearch: (...args: unknown[]) =>
 		mockUseSpotifyTrackSearch(...args),
 }));

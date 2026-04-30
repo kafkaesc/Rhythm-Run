@@ -6,7 +6,7 @@ import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
-import { useSpotifyArtistSearch } from '@/hooks/useSpotifyApi';
+import { useSpotifyArtistSearch } from '@/hooks/api/useSpotifyApi';
 import { SpotifyArtist } from '@/models/spotify';
 import { normalizeSpotifyArtist } from '@/lib/normalize';
 
