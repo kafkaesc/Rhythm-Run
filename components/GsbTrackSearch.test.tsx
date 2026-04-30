@@ -9,7 +9,7 @@ mockUseGsbSongSearch.mockReturnValue({
 	error: null,
 });
 
-jest.mock('../hooks/useGetSongBpmApi', () => ({
+jest.mock('../hooks/api/useGetSongBpmApi', () => ({
 	useGsbSongSearch: (...args: unknown[]) => mockUseGsbSongSearch(...args),
 }));
 

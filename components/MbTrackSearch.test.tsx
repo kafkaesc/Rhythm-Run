@@ -9,7 +9,7 @@ mockUseMusicBrainzTrackSearch.mockReturnValue({
 	error: null,
 });
 
-jest.mock('../hooks/useMusicBrainzApi', () => ({
+jest.mock('../hooks/api/useMusicBrainzApi', () => ({
 	useMusicBrainzTrackSearch: (...args: unknown[]) =>
 		mockUseMusicBrainzTrackSearch(...args),
 }));

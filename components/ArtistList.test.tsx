@@ -2,18 +2,18 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ArtistList from './ArtistList';
 import { SpBadBunny, SpDaftPunk, SpGreenDay } from '@/mocks/SpotifyArtistMocks';
-import { NormalizeSpotifyArtist } from '@/lib/normalize';
+import { normalizeSpotifyArtist } from '@/lib/normalize';
 
 it('Renders nothing when artists is null', () => {
 	const { container } = render(
-		<ArtistList toArtist={NormalizeSpotifyArtist} artists={null} />,
+		<ArtistList toArtist={normalizeSpotifyArtist} artists={null} />,
 	);
 	expect(container).toBeEmptyDOMElement();
 });
 
 it('Renders nothing when artists is empty', () => {
 	const { container } = render(
-		<ArtistList toArtist={NormalizeSpotifyArtist} artists={[]} />,
+		<ArtistList toArtist={normalizeSpotifyArtist} artists={[]} />,
 	);
 	expect(container).toBeEmptyDOMElement();
 });
@@ -21,7 +21,7 @@ it('Renders nothing when artists is empty', () => {
 it('Renders artist names', () => {
 	render(
 		<ArtistList
-			toArtist={NormalizeSpotifyArtist}
+			toArtist={normalizeSpotifyArtist}
 			artists={[SpBadBunny, SpDaftPunk, SpGreenDay]}
 		/>,
 	);
@@ -37,7 +37,7 @@ it('Renders an add button for each artist when add function is passed', () => {
 	render(
 		<ArtistList
 			add={jest.fn()}
-			toArtist={NormalizeSpotifyArtist}
+			toArtist={normalizeSpotifyArtist}
 			artists={[SpBadBunny, SpDaftPunk]}
 		/>,
 	);
@@ -53,7 +53,7 @@ it('Renders an add button for each artist when add function is passed', () => {
 
 it('Does not render an add button when add function is not passed', () => {
 	render(
-		<ArtistList toArtist={NormalizeSpotifyArtist} artists={[SpBadBunny]} />,
+		<ArtistList toArtist={normalizeSpotifyArtist} artists={[SpBadBunny]} />,
 	);
 	const anyAddBtn = screen.queryByRole('button', { name: /add/i });
 	expect(anyAddBtn).not.toBeInTheDocument();
@@ -64,7 +64,7 @@ it('Calls add with the artist when the add button is clicked', async () => {
 	render(
 		<ArtistList
 			add={add}
-			toArtist={NormalizeSpotifyArtist}
+			toArtist={normalizeSpotifyArtist}
 			artists={[SpBadBunny]}
 		/>,
 	);
@@ -77,7 +77,7 @@ it('Renders a remove button for each artist when remove function is passed', () 
 	render(
 		<ArtistList
 			remove={jest.fn()}
-			toArtist={NormalizeSpotifyArtist}
+			toArtist={normalizeSpotifyArtist}
 			artists={[SpBadBunny, SpDaftPunk]}
 		/>,
 	);
@@ -96,7 +96,7 @@ it('Calls remove with the artist when the remove button is clicked', async () =>
 	render(
 		<ArtistList
 			remove={remove}
-			toArtist={NormalizeSpotifyArtist}
+			toArtist={normalizeSpotifyArtist}
 			artists={[SpBadBunny]}
 		/>,
 	);

@@ -5,7 +5,7 @@ import ArtistList from '@/components/ArtistList';
 import SpotifyArtistSearch from '@/components/SpotifyArtistSearch';
 import { useSet } from '@/hooks/useSet';
 import { SpotifyArtist } from '@/models/spotify';
-import { NormalizeSpotifyArtist } from '@/lib/normalize';
+import { normalizeSpotifyArtist } from '@/lib/normalize';
 
 type SearchAndAddArtistProps = {
 	title?: string;
@@ -29,7 +29,7 @@ export default function SearchAndAddArtist({ title }: SearchAndAddArtistProps) {
 			<ArtistList
 				artists={selection}
 				remove={remove}
-				toArtist={NormalizeSpotifyArtist}
+				toArtist={normalizeSpotifyArtist}
 			/>
 		</>
 	);

@@ -6,18 +6,18 @@ import {
 	SpFeelGoodInc,
 	SpPortionsForFoxes,
 } from '@/mocks/SpotifyTrackMocks';
-import { NormalizeSpotifyTrack } from '@/lib/normalize';
+import { normalizeSpotifyTrack } from '@/lib/normalize';
 
 it('Renders nothing when tracks is null', () => {
 	const { container } = render(
-		<TrackList toTrack={NormalizeSpotifyTrack} tracks={null} />,
+		<TrackList toTrack={normalizeSpotifyTrack} tracks={null} />,
 	);
 	expect(container).toBeEmptyDOMElement();
 });
 
 it('Renders nothing when tracks is empty', () => {
 	const { container } = render(
-		<TrackList toTrack={NormalizeSpotifyTrack} tracks={[]} />,
+		<TrackList toTrack={normalizeSpotifyTrack} tracks={[]} />,
 	);
 	expect(container).toBeEmptyDOMElement();
 });
@@ -25,7 +25,7 @@ it('Renders nothing when tracks is empty', () => {
 it('Renders track name and artist', () => {
 	render(
 		<TrackList
-			toTrack={NormalizeSpotifyTrack}
+			toTrack={normalizeSpotifyTrack}
 			tracks={[SpBasketCase, SpFeelGoodInc, SpPortionsForFoxes]}
 		/>,
 	);
@@ -41,7 +41,7 @@ it('Renders an add button for each track when add function is passed', () => {
 	render(
 		<TrackList
 			add={jest.fn()}
-			toTrack={NormalizeSpotifyTrack}
+			toTrack={normalizeSpotifyTrack}
 			tracks={[SpBasketCase, SpFeelGoodInc]}
 		/>,
 	);
@@ -56,7 +56,7 @@ it('Renders an add button for each track when add function is passed', () => {
 });
 
 it('Does not render an add button when add function is not passed', () => {
-	render(<TrackList toTrack={NormalizeSpotifyTrack} tracks={[SpBasketCase]} />);
+	render(<TrackList toTrack={normalizeSpotifyTrack} tracks={[SpBasketCase]} />);
 	const anyAddBtn = screen.queryByRole('button', { name: /add/i });
 	expect(anyAddBtn).not.toBeInTheDocument();
 });
@@ -66,7 +66,7 @@ it('Calls add with the track when the add button is clicked', async () => {
 	render(
 		<TrackList
 			add={add}
-			toTrack={NormalizeSpotifyTrack}
+			toTrack={normalizeSpotifyTrack}
 			tracks={[SpBasketCase]}
 		/>,
 	);
@@ -79,7 +79,7 @@ it('Renders a remove button for each track when remove function is passed', () =
 	render(
 		<TrackList
 			remove={jest.fn()}
-			toTrack={NormalizeSpotifyTrack}
+			toTrack={normalizeSpotifyTrack}
 			tracks={[SpBasketCase, SpFeelGoodInc]}
 		/>,
 	);
@@ -98,7 +98,7 @@ it('Calls remove with the track when the remove button is clicked', async () => 
 	render(
 		<TrackList
 			remove={remove}
-			toTrack={NormalizeSpotifyTrack}
+			toTrack={normalizeSpotifyTrack}
 			tracks={[SpBasketCase]}
 		/>,
 	);

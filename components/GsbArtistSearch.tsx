@@ -6,8 +6,8 @@ import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
-import { useGsbArtistSearch } from '@/hooks/useGetSongBpmApi';
-import { NormalizeGsbArtist } from '@/lib/normalize';
+import { useGsbArtistSearch } from '@/hooks/api/useGetSongBpmApi';
+import { normalizeGsbArtist } from '@/lib/normalize';
 import { GsbArtist } from '@/models/getSongBpm';
 
 const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
@@ -94,7 +94,7 @@ export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 				</div>
 				<Status loading={loading} err={error} />
 			</form>
-			<ArtistList add={add} artists={artists} toArtist={NormalizeGsbArtist} />
+			<ArtistList add={add} artists={artists} toArtist={normalizeGsbArtist} />
 		</div>
 	);
 }

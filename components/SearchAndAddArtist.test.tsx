@@ -10,7 +10,7 @@ mockUseSpotifyArtistSearch.mockReturnValue({
 	error: null,
 });
 
-jest.mock('../hooks/useSpotifyApi', () => ({
+jest.mock('../hooks/api/useSpotifyApi', () => ({
 	useSpotifyArtistSearch: (...args: unknown[]) =>
 		mockUseSpotifyArtistSearch(...args),
 }));
