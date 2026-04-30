@@ -8,7 +8,7 @@ import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
 import { useSpotifyArtistSearch } from '@/hooks/useSpotifyApi';
 import { SpotifyArtist } from '@/models/spotify';
-import { NormalizeSpotifyArtist } from '@/lib/normalize';
+import { normalizeSpotifyArtist } from '@/lib/normalize';
 
 const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
 const SearchIcon = () => (
@@ -99,7 +99,7 @@ export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
 			<ArtistList
 				add={add}
 				artists={artists}
-				toArtist={NormalizeSpotifyArtist}
+				toArtist={normalizeSpotifyArtist}
 			/>
 		</div>
 	);

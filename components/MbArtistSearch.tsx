@@ -8,7 +8,7 @@ import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
 import { useMusicBrainzArtistSearch } from '@/hooks/useMusicBrainzApi';
 import { MbArtist } from '@/models/musicBrainz';
-import { NormalizeMbArtist } from '@/lib/normalize';
+import { normalizeMbArtist } from '@/lib/normalize';
 
 const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
 const SearchIcon = () => (
@@ -93,7 +93,7 @@ export default function MbArtistSearch({ add }: MbArtistSearchProps) {
 				</div>
 				<Status loading={loading} err={error} />
 			</form>
-			<ArtistList add={add} artists={artists} toArtist={NormalizeMbArtist} />
+			<ArtistList add={add} artists={artists} toArtist={normalizeMbArtist} />
 		</div>
 	);
 }

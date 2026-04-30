@@ -7,7 +7,7 @@ import Input from '@/components/elements/Input';
 import P from '@/components/elements/P';
 import TrackList from '@/components/TrackList';
 import { useSpotifyTrackSearch } from '@/hooks/useSpotifyApi';
-import { NormalizeSpotifyTrack } from '@/lib/normalize';
+import { normalizeSpotifyTrack } from '@/lib/normalize';
 import { SpotifyTrack } from '@/models/spotify';
 
 const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
@@ -96,7 +96,7 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 				</div>
 				<Status loading={loading} err={error} />
 			</form>
-			<TrackList tracks={tracks} add={add} toTrack={NormalizeSpotifyTrack} />
+			<TrackList tracks={tracks} add={add} toTrack={normalizeSpotifyTrack} />
 		</div>
 	);
 }

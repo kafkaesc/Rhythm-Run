@@ -8,7 +8,7 @@ import P from '@/components/elements/P';
 import TrackList from '@/components/TrackList';
 import { useMusicBrainzTrackSearch } from '@/hooks/useMusicBrainzApi';
 import { MbTrack } from '@/models/musicBrainz';
-import { NormalizeMbTrack } from '@/lib/normalize';
+import { normalizeMbTrack } from '@/lib/normalize';
 
 const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
 const SearchIcon = () => (
@@ -90,7 +90,7 @@ export default function MbTrackSearch({ add }: MbTrackSearchProps) {
 				</div>
 				<Status loading={loading} err={error} />
 			</form>
-			<TrackList tracks={tracks} add={add} toTrack={NormalizeMbTrack} />
+			<TrackList tracks={tracks} add={add} toTrack={normalizeMbTrack} />
 		</div>
 	);
 }
