@@ -10,8 +10,10 @@ export interface Artist {
 export interface Track {
 	artists: string[];
 	bpm?: number; // the whole reason we're here
+	gsbDanceability?: number;
 	getSongBpmId?: string;
 	id: string;
+	mbid?: string;
 	spotifyId?: string;
 	title: string;
 }
