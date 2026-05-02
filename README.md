@@ -6,6 +6,7 @@ Built by Jared Hettinger
 [![Coverage](https://codecov.io/gh/kafkaesc/rhythm-run/branch/main/graph/badge.svg)](https://codecov.io/gh/kafkaesc/rhythm-run)
 ![Lint](https://github.com/kafkaesc/rhythm-run/actions/workflows/lint.yml/badge.svg)
 ![Typecheck](https://github.com/kafkaesc/rhythm-run/actions/workflows/typecheck.yml/badge.svg)
+![CodeQL](https://github.com/kafkaesc/rhythm-run/actions/workflows/codeql.yml/badge.svg)
 
 Rhythm Run is a Next.js app for finding tracks to match your pace.
 
