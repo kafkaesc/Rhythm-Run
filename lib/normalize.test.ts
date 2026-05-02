@@ -74,6 +74,7 @@ it('NormalizeGsbTrack normalizes Basket Case correctly', () => {
 		title: 'Basket Case',
 		artists: ['Green Day'],
 		bpm: 170,
+		gsbDanceability: 45,
 	});
 });
 
@@ -85,6 +86,7 @@ it('NormalizeGsbTrack normalizes Feel Good Inc. correctly', () => {
 		title: 'Feel Good Inc.',
 		artists: ['Gorillaz'],
 		bpm: 136,
+		gsbDanceability: 82,
 	});
 });
 
@@ -97,6 +99,7 @@ it('NormalizeGsbTracks normalizes an array of tracks correctly', () => {
 			title: 'Basket Case',
 			artists: ['Green Day'],
 			bpm: 170,
+			gsbDanceability: 45,
 		},
 		{
 			id: 'D95mAy',
@@ -104,6 +107,7 @@ it('NormalizeGsbTracks normalizes an array of tracks correctly', () => {
 			title: 'Feel Good Inc.',
 			artists: ['Gorillaz'],
 			bpm: 136,
+			gsbDanceability: 82,
 		},
 	]);
 });

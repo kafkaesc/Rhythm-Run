@@ -28,6 +28,7 @@ export function normalizeGsbTrack(track: GsbSong): Track {
 		title: track.title,
 		artists: [track.artist.name],
 		bpm: parseInt(track.tempo),
+		gsbDanceability: track.danceability,
 	};
 }
 

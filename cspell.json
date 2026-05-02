@@ -17,6 +17,8 @@
 		"joinphrase",
 		"kafkaesc",
 		"mbid",
+		"mbids",
+		"metamusic",
 		"musicbrainz"
 	]
 }

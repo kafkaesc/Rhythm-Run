@@ -60,7 +60,7 @@ Tests are written with [Jest](https://jestjs.io/) and [React Testing Library](ht
 
 ### Coverage Graph
 
-![Coverage Graph](https://codecov.io/gh/kafkaesc/Rhythm-Run/graphs/sunburst.svg?token=I4SQ74QIAQ)
+[![Coverage Graph](https://codecov.io/gh/kafkaesc/Rhythm-Run/graphs/sunburst.svg?token=I4SQ74QIAQ)](https://codecov.io/gh/kafkaesc/rhythm-run)
 
 ## ⚖️ License
 
