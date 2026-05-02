@@ -1,7 +1,6 @@
 import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
 import P from '@/components/elements/P';
-// import BpmSelector from '@/components/BpmSelector';
 import SearchAndAddArtist from '@/components/SearchAndAddArtist';
 import SearchAndAddTrack from '@/components/SearchAndAddTrack';
 import GsbTrackSearch from '@/components/GsbTrackSearch';
@@ -39,7 +38,6 @@ export default function Home() {
 					<GsbArtistSearch />
 				</div>
 			</div>
-			{/* <BpmSelector /> */}
 			<div className="flex flex-col gap-4 md:flex-row">
 				<div className="flex-1 min-w-0">
 					<SearchAndAddTrack title="Search and Add Tracks" />

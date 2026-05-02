@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Button from '@/components/elements/Button';
 import P from '@/components/elements/P';
 import { GsbDaftPunk, GsbGreenDay, GsbShakira } from '@/mocks/GsbArtistMocks';
@@ -30,12 +30,6 @@ export default function MetaMusicArtistTempo() {
 	const loadMbids = () => {
 		setQuery(artists.flatMap((a) => (a.mbid ? [a.mbid] : [])));
 	};
-
-	// const callMetaMusic = () => {};
-
-	useEffect(() => {
-		console.log('_jhdb: tracks: ', tracks);
-	}, [tracks]);
 
 	return (
 		<>
@@ -74,9 +68,7 @@ export default function MetaMusicArtistTempo() {
 			</Button>
 			{tracks &&
 				tracks.map((tr) => (
-					<P
-						key={tr.id + '_' + tr.mbid}
-					>{`${tr.artists} - ${tr.title} - bpm: ${tr.bpm}`}</P>
+					<P key={tr.id}>{`${tr.artists} - ${tr.title} - bpm: ${tr.bpm}`}</P>
 				))}
 		</>
 	);
