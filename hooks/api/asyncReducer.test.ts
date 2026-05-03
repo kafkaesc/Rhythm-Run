@@ -31,3 +31,10 @@ it('Has reducer return an idle state on a clear action', () => {
 	const state = reducer(initialState(), { type: 'clear' });
 	expect(state).toEqual({ status: 'idle', data: null, error: null });
 });
+
+it('Has reducer throw on an unhandled action type', () => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	expect(() => reducer(initialState(), { type: 'unknown' } as any)).toThrow(
+		'Unhandled action type',
+	);
+});
