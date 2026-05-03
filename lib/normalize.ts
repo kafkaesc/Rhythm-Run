@@ -1,4 +1,5 @@
 import { GsbArtist, GsbSong } from '@/models/getSongBpm';
+import { LfmArtist, LfmTrack } from '@/models/lastFm';
 import { SpotifyArtist, SpotifyTrack } from '@/models/spotify';
 import { Artist, Track } from '@/models/rhythmRun';
 import { MbArtist, MbTrack } from '@/models/musicBrainz';
@@ -36,6 +37,38 @@ export function normalizeGsbTrack(track: GsbSong): Track {
  * into the common Track shape */
 export function normalizeGsbTracks(tracks: GsbSong[]): Track[] {
 	return tracks.map(normalizeGsbTrack);
+}
+
+/** Normalizes a LfmArtist from the Last.fm API into the common Artist shape */
+export function normalizeLfmArtist(artist: LfmArtist): Artist {
+	return {
+		id: artist.mbid || artist.name,
+		mbid: artist.mbid || undefined,
+		name: artist.name,
+		genres: [],
+	};
+}
+
+/** Normalizes an array of LfmArtist objects from the Last.fm API
+ * into the common Artist shape */
+export function normalizeLfmArtists(artists: LfmArtist[]): Artist[] {
+	return artists.map(normalizeLfmArtist);
+}
+
+/** Normalizes a LfmTrack from the Last.fm API into the common Track shape */
+export function normalizeLfmTrack(track: LfmTrack): Track {
+	return {
+		id: track.mbid || track.name,
+		mbid: track.mbid || undefined,
+		title: track.name,
+		artists: [track.artist.name],
+	};
+}
+
+/** Normalizes an array of LfmTrack objects from the Last.fm API
+ * into the common Track shape */
+export function normalizeLfmTracks(tracks: LfmTrack[]): Track[] {
+	return tracks.map(normalizeLfmTrack);
 }
 
 /** Normalizes a MbArtist from the MusicBrainz API into the common Artist shape */
