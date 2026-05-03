@@ -1,16 +1,16 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import BpmSelector from './BpmSelector';
 
-it('Renders the default heading', () => {
+it('Renders the default title', () => {
 	render(<BpmSelector />);
-	const heading = screen.getByRole('heading', { level: 2 });
-	expect(heading).toHaveTextContent('Select BPM');
+	const group = screen.getByRole('group', { name: /select tempo/i });
+	expect(group).toBeInTheDocument();
 });
 
 it('Renders a custom title when provided', () => {
 	render(<BpmSelector title="Choose Tempo" />);
-	const heading = screen.getByRole('heading', { level: 2 });
-	expect(heading).toHaveTextContent('Choose Tempo');
+	const group = screen.getByRole('group', { name: /choose tempo/i });
+	expect(group).toBeInTheDocument();
 });
 
 it('Renders the slider with default BPM value', () => {

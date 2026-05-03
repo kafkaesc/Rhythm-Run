@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import H2 from '@/components/elements/H2';
 import Input from '@/components/elements/Input';
 
 const DEFAULT_BPM = 160;
@@ -34,13 +33,12 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 	}
 
 	return (
-		<>
-			<H2 id="bpm-heading">{title || 'Select BPM'}</H2>
+		<fieldset className="border-0 m-0 min-w-0 p-0">
+			<legend className="text-2xl font-bold">{title || 'Select Tempo'}</legend>
 			<div className="flex items-center gap-3">
 				{/* The draggable slider for BPM */}
 				<input
 					aria-controls="bpm-input"
-					aria-labelledby="bpm-heading"
 					aria-valuetext={`${bpm} BPM`}
 					className="flex-1 cursor-pointer"
 					max={MAX_BPM}
@@ -55,12 +53,8 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 					type="range"
 					value={bpm}
 				/>
-				<label className="sr-only" htmlFor="bpm-input">
-					BPM value
-				</label>
 				{/* Number input with up/down buttons */}
 				<Input
-					aria-labelledby="bpm-heading"
 					className="w-20"
 					id="bpm-input"
 					max={MAX_BPM}
@@ -70,6 +64,6 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 					value={bpm}
 				/>
 			</div>
-		</>
+		</fieldset>
 	);
 }
