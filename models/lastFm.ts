@@ -11,13 +11,28 @@ export type LfmArtistResult = {
 	error: string | null;
 };
 
-// https://www.last.fm/api/show/artist.getTopTracks
-export interface LfmTrack {
+// Base interface for shared track fields
+interface LfmTrack {
 	name: string;
 	mbid: string;
-	playcount: string;
 	listeners: string;
 	url: string;
+}
+
+// https://www.last.fm/api/show/track.search
+export interface LfmSearchTrack extends LfmTrack {
+	artist: string;
+}
+
+export type LfmTrackSearchResult = {
+	tracks: LfmSearchTrack[] | null;
+	loading: boolean;
+	error: string | null;
+};
+
+// https://www.last.fm/api/show/artist.getTopTracks
+export interface LfmTopTrack extends LfmTrack {
+	playcount: string;
 	artist: {
 		name: string;
 		mbid: string;
@@ -25,8 +40,8 @@ export interface LfmTrack {
 	};
 }
 
-export type LfmTrackResult = {
-	tracks: LfmTrack[] | null;
+export type LfmTopTrackResult = {
+	tracks: LfmTopTrack[] | null;
 	loading: boolean;
 	error: string | null;
 };

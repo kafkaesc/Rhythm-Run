@@ -1,8 +1,6 @@
-// cspell:disable
+import { LfmTopTrack } from '@/models/lastFm';
 
-import { LfmTrack } from '@/models/lastFm';
-
-export const LfmBasketCase: LfmTrack = {
+export const LfmBasketCase: LfmTopTrack = {
 	name: 'Basket Case',
 	mbid: '02265e4d-191a-4f31-ac24-97410a85450c',
 	playcount: '22959758',
@@ -15,7 +13,7 @@ export const LfmBasketCase: LfmTrack = {
 	},
 };
 
-export const LfmFeelGoodInc: LfmTrack = {
+export const LfmFeelGoodInc: LfmTopTrack = {
 	name: 'Feel Good Inc.',
 	mbid: '00b527e3-4f83-36b5-b448-e90ff86d9099',
 	playcount: '39943729',
@@ -28,7 +26,7 @@ export const LfmFeelGoodInc: LfmTrack = {
 	},
 };
 
-export const LfmPortionsForFoxes: LfmTrack = {
+export const LfmPortionsForFoxes: LfmTopTrack = {
 	name: 'Portions For Foxes',
 	mbid: '0254cbbd-b397-3b94-8d2f-4e3d48bcfa96',
 	playcount: '2900819',
@@ -41,7 +39,7 @@ export const LfmPortionsForFoxes: LfmTrack = {
 	},
 };
 
-export const LfmSugarWereGoinDown: LfmTrack = {
+export const LfmSugarWereGoinDown: LfmTopTrack = {
 	name: "Sugar, We're Goin Down",
 	mbid: '077bb94b-af51-3bef-8dfa-1afa201e1d08',
 	playcount: '15768974',

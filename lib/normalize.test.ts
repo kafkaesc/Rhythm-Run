@@ -5,8 +5,8 @@ import {
 	normalizeGsbTracks,
 	normalizeLfmArtist,
 	normalizeLfmArtists,
-	normalizeLfmTrack,
-	normalizeLfmTracks,
+	normalizeLfmTopTrack,
+	normalizeLfmTopTracks,
 	normalizeMbArtist,
 	normalizeMbArtists,
 	normalizeMbTrack,
@@ -166,8 +166,8 @@ it('NormalizeLfmArtists normalizes an array of artists correctly', () => {
 	]);
 });
 
-it('NormalizeLfmTrack normalizes Basket Case correctly', () => {
-	const result = normalizeLfmTrack(LfmBasketCase);
+it('NormalizeLfmTopTrack normalizes Basket Case correctly', () => {
+	const result = normalizeLfmTopTrack(LfmBasketCase);
 	expect(result).toEqual({
 		id: '02265e4d-191a-4f31-ac24-97410a85450c',
 		mbid: '02265e4d-191a-4f31-ac24-97410a85450c',
@@ -176,8 +176,8 @@ it('NormalizeLfmTrack normalizes Basket Case correctly', () => {
 	});
 });
 
-it('NormalizeLfmTrack normalizes Feel Good Inc. correctly', () => {
-	const result = normalizeLfmTrack(LfmFeelGoodInc);
+it('NormalizeLfmTopTrack normalizes Feel Good Inc. correctly', () => {
+	const result = normalizeLfmTopTrack(LfmFeelGoodInc);
 	expect(result).toEqual({
 		id: '00b527e3-4f83-36b5-b448-e90ff86d9099',
 		mbid: '00b527e3-4f83-36b5-b448-e90ff86d9099',
@@ -186,8 +186,8 @@ it('NormalizeLfmTrack normalizes Feel Good Inc. correctly', () => {
 	});
 });
 
-it('NormalizeLfmTrack falls back to name as id when mbid is empty', () => {
-	const result = normalizeLfmTrack({
+it('NormalizeLfmTopTrack falls back to name as id when mbid is empty', () => {
+	const result = normalizeLfmTopTrack({
 		name: 'Unknown Track',
 		mbid: '',
 		playcount: '0',
@@ -199,8 +199,8 @@ it('NormalizeLfmTrack falls back to name as id when mbid is empty', () => {
 	expect(result.mbid).toBeUndefined();
 });
 
-it('NormalizeLfmTracks normalizes an array of tracks correctly', () => {
-	const result = normalizeLfmTracks([LfmBasketCase, LfmFeelGoodInc]);
+it('NormalizeLfmTopTracks normalizes an array of tracks correctly', () => {
+	const result = normalizeLfmTopTracks([LfmBasketCase, LfmFeelGoodInc]);
 	expect(result).toEqual([
 		{
 			id: '02265e4d-191a-4f31-ac24-97410a85450c',
