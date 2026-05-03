@@ -1,8 +1,9 @@
-import P from './elements/P';
+import P from '@/components/elements/P';
+import { LfmArtist } from '@/models/lastFm';
 import { MbArtist } from '@/models/musicBrainz';
 
 type ArtistTempoQueryDisplayProps = {
-	artists?: MbArtist[];
+	artists?: LfmArtist[] | MbArtist[];
 	epsilon?: number | string;
 	tempo?: number | string;
 };
