@@ -1,13 +1,13 @@
 'use client';
 
 import { useReducer, useEffect } from 'react';
+import { initialState, reducer } from '@/hooks/api/asyncReducer';
 import {
 	SpotifyArtist,
 	SpotifyArtistResult,
 	SpotifyTrack,
 	SpotifyTrackResult,
 } from '@/models/spotify';
-import { AsyncState, AsyncAction } from '@/models/async';
 
 const MILLISECONDS_IN_SECOND = 1000; // https://en.wikipedia.org/wiki/Millisecond
 
@@ -24,11 +24,6 @@ const SPOTIFY_RECOMMENDATIONS_LIMIT = '10'; // TODO: Test the limit when this is
 // Contains a cached Spotify access token and its expiration time,
 // null => no token yet or expired token was flushed
 let tokenCache: { token: string; expiresAt: number } | null = null;
-
-/** Initial state for an async fetch is idling with no data or error */
-function initialState<T>(): AsyncState<T> {
-	return { status: 'idle', data: null, error: null };
-}
 
 /**
  * Returns a cached Spotify access token, or fetches a new one if the cache is empty or expired.
@@ -53,28 +48,6 @@ function getCachedToken(): Promise<string> {
 			};
 			return accessToken;
 		});
-}
-
-/**
- * Reducer function for async fetch state transitions for a given data type, T.
- * @param _state - The current state (unused; each action returns a full replacement).
- * @param _action - The action describing the transition: 'fetch', 'success', or 'error'.
- * @returns A new {@link AsyncState} reflecting the dispatched action.
- */
-function reducer<T>(
-	_state: AsyncState<T>,
-	_action: AsyncAction<T>,
-): AsyncState<T> {
-	if (_action.type === 'fetch')
-		return { status: 'loading', data: null, error: null };
-	if (_action.type === 'success')
-		return { status: 'success', data: _action.data, error: null };
-	if (_action.type === 'error')
-		return { status: 'error', data: null, error: _action.error };
-	if (_action.type === 'clear')
-		return { status: 'idle', data: null, error: null };
-
-	throw new Error('Unhandled action type');
 }
 
 /**

@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
-import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
+import SearchStatus from '@/components/SearchStatus';
 import { useMusicBrainzArtistSearch } from '@/hooks/api/useMusicBrainzApi';
 import { MbArtist } from '@/models/musicBrainz';
 import { normalizeMbArtist } from '@/lib/normalize';
@@ -14,28 +14,6 @@ const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
 const SearchIcon = () => (
 	<Icon icon="lucide:search" aria-hidden="true" className="-translate-y-px" />
 );
-
-type StatusProps = {
-	err: string | null;
-	loading: boolean | null;
-};
-
-/**
- * Helper component to display the loading and error status
- * of the MusicBrainz search
- * @param err - Error message, if any
- * @param loading - True if the search is currently loading
- */
-function Status({ err, loading }: StatusProps) {
-	const hasDisplay = loading || err;
-	return (
-		<P className="px-2 text-sm">
-			{err && 'Error with the MusicBrainz response'}
-			{loading && 'Loading...'}
-			{!hasDisplay && '\u00A0'}
-		</P>
-	);
-}
 
 type MbArtistSearchProps = {
 	add?: (artist: MbArtist) => void;
@@ -91,7 +69,11 @@ export default function MbArtistSearch({ add }: MbArtistSearchProps) {
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>
-				<Status loading={loading} err={error} />
+				<SearchStatus
+					err={error}
+					errMessage="Error with the MusicBrainz response"
+					loading={loading}
+				/>
 			</form>
 			<ArtistList add={add} artists={artists} toArtist={normalizeMbArtist} />
 		</div>
