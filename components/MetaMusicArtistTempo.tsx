@@ -4,30 +4,15 @@ import { useState } from 'react';
 import Button from '@/components/elements/Button';
 import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
+import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
 import BpmSelector from '@/components/BpmSelector';
 import MbArtistSearch from '@/components/MbArtistSearch';
+import SearchStatus from '@/components/SearchStatus';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
 import { normalizeMbArtist } from '@/lib/normalize';
 import { MbArtist } from '@/models/musicBrainz';
 import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
-import ArtistTempoQueryDisplay from './ArtistTempoQueryDisplay';
-
-type StatusProps = {
-	err: string | null;
-	loading: boolean | null;
-};
-
-function Status({ err, loading }: StatusProps) {
-	const hasDisplay = loading || err;
-	return (
-		<P className="px-2 text-sm">
-			{err && 'Error with the MetaMusic response'}
-			{loading && 'Loading...'}
-			{!hasDisplay && '\u00A0'}
-		</P>
-	);
-}
 
 export default function MetaMusicArtistTempo() {
 	const [mmQuery, setMmQuery] = useState<MetaMusicArtistTempoQuery | null>(
@@ -74,7 +59,11 @@ export default function MetaMusicArtistTempo() {
 			<Button buttonStyle="black-white" mini onClick={clearAll} type="button">
 				Clear
 			</Button>
-			<Status loading={loading} err={error} />
+			<SearchStatus
+				errMessage="Error with the MetaMusic response"
+				loading={loading}
+				err={error}
+			/>
 			{tracks &&
 				tracks.map((tr) => (
 					<P key={tr.id}>{`${tr.artists} - ${tr.title} - bpm: ${tr.bpm}`}</P>
