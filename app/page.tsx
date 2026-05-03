@@ -1,6 +1,5 @@
 import H1 from '@/components/elements/H1';
 import P from '@/components/elements/P';
-import LfmTrackSearch from '@/components/LfmTrackSearch';
 import MetaMusicArtistTempo from '@/components/MetaMusicArtistTempo';
 
 export default function Home() {
