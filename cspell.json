@@ -19,6 +19,7 @@
 		"mbid",
 		"mbids",
 		"metamusic",
-		"musicbrainz"
+		"musicbrainz",
+		"playcount"
 	]
 }
