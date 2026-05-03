@@ -5,6 +5,8 @@ import {
 	normalizeGsbTracks,
 	normalizeLfmArtist,
 	normalizeLfmArtists,
+	normalizeLfmSearchTrack,
+	normalizeLfmSearchTracks,
 	normalizeLfmTopTrack,
 	normalizeLfmTopTracks,
 	normalizeMbArtist,
@@ -19,7 +21,8 @@ import {
 import { GsbGreenDay, GsbDaftPunk, GsbBadBunny } from '@/mocks/GsbArtistMocks';
 import { GsbBasketCase, GsbFeelGoodInc } from '@/mocks/GsbTrackMocks';
 import { LfmGreenDay, LfmDaftPunk } from '@/mocks/LfmArtistMocks';
-import { LfmBasketCase, LfmFeelGoodInc } from '@/mocks/LfmTrackMocks';
+import { LfmSearchBasketCase, LfmSearchFeelGoodInc } from '@/mocks/LfmSearchTrackMocks';
+import { LfmBasketCase, LfmFeelGoodInc } from '@/mocks/LfmTopTrackMocks';
 import { MbGreenDay, MbDaftPunk } from '@/mocks/MbArtistMocks';
 import { MbBasketCase, MbFeelGoodInc } from '@/mocks/MbTrackMocks';
 import { SpGreenDay, SpDaftPunk } from '@/mocks/SpotifyArtistMocks';
@@ -162,6 +165,52 @@ it('NormalizeLfmArtists normalizes an array of artists correctly', () => {
 			mbid: '056e4f3e-d505-4dad-8ec1-d04f521cbb56',
 			name: 'Daft Punk',
 			genres: [],
+		},
+	]);
+});
+
+it('NormalizeLfmSearchTrack normalizes Basket Case correctly', () => {
+	const result = normalizeLfmSearchTrack(LfmSearchBasketCase);
+	expect(result).toEqual({
+		id: 'Basket Case-Green Day',
+		title: 'Basket Case',
+		artists: ['Green Day'],
+	});
+});
+
+it('NormalizeLfmSearchTrack normalizes Feel Good Inc. correctly', () => {
+	const result = normalizeLfmSearchTrack(LfmSearchFeelGoodInc);
+	expect(result).toEqual({
+		id: 'Feel Good Inc.-Gorillaz',
+		title: 'Feel Good Inc.',
+		artists: ['Gorillaz'],
+	});
+});
+
+it('NormalizeLfmSearchTrack uses mbid as id when mbid is present', () => {
+	const result = normalizeLfmSearchTrack({
+		name: 'Basket Case',
+		artist: 'Green Day',
+		mbid: '02265e4d-191a-4f31-ac24-97410a85450c',
+		listeners: '2568825',
+		url: 'https://www.last.fm/music/Green+Day/_/Basket+Case',
+	});
+	expect(result.id).toBe('02265e4d-191a-4f31-ac24-97410a85450c');
+	expect(result.mbid).toBe('02265e4d-191a-4f31-ac24-97410a85450c');
+});
+
+it('NormalizeLfmSearchTracks normalizes an array of tracks correctly', () => {
+	const result = normalizeLfmSearchTracks([LfmSearchBasketCase, LfmSearchFeelGoodInc]);
+	expect(result).toEqual([
+		{
+			id: 'Basket Case-Green Day',
+			title: 'Basket Case',
+			artists: ['Green Day'],
+		},
+		{
+			id: 'Feel Good Inc.-Gorillaz',
+			title: 'Feel Good Inc.',
+			artists: ['Gorillaz'],
 		},
 	]);
 });
