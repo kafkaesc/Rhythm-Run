@@ -27,6 +27,7 @@ In order to call APIs you will need to create a `.env.local` file.
 
 ```
 GET_SONG_BPM_KEY=<YOUR_KEY_HERE>
+LAST_FM_KEY=<YOUR_KEY_HERE>
 SPOTIFY_CLIENT_ID=<YOUR_KEY_HERE>
 SPOTIFY_CLIENT_SECRET=<YOUR_KEY_HERE>
 ```
@@ -48,6 +49,7 @@ Once the project is installed and set up, running it just takes two steps:
 ## 🔌 APIs
 
 - [GetSongBpm](https://getsongbpm.com)
+- [Last.fm](https://www.last.fm/api)
 - [MusicBrainz](musicbrainz.org)
 - [Spotify](https://developer.spotify.com/documentation/web-api)
 
