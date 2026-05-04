@@ -17,9 +17,10 @@ const SearchIcon = () => (
 
 type LfmArtistSearchProps = {
 	add?: (artist: LfmArtist) => void;
+	title?: string;
 };
 
-export default function LfmArtistSearch({ add }: LfmArtistSearchProps) {
+export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { artists, loading, error } = useLastFmArtistSearch(query);
@@ -39,7 +40,10 @@ export default function LfmArtistSearch({ add }: LfmArtistSearchProps) {
 	}
 
 	return (
-		<div>
+		<fieldset className="border-0 m-0 min-w-0 p-0">
+			<legend className="text-2xl font-bold">
+				{title || 'Select up to 5 artists'}
+			</legend>
 			<form onSubmit={onSubmit}>
 				<div className="flex items-center gap-2">
 					<Input
@@ -76,6 +80,6 @@ export default function LfmArtistSearch({ add }: LfmArtistSearchProps) {
 				/>
 			</form>
 			<ArtistList add={add} artists={artists} toArtist={normalizeLfmArtist} />
-		</div>
+		</fieldset>
 	);
 }

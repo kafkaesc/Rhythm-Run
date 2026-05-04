@@ -1,45 +1,15 @@
-import { MbTrack } from '@/models/musicBrainz';
+import { LfmTopTrack } from '@/models/lastFm';
 import { Track } from '@/models/rhythmRun';
 
-const MB_RECORDING_BROWSE = 'https://musicbrainz.org/ws/2/recording';
-const MB_USER_AGENT = 'rhythm-run/0.1.0';
-const MB_BROWSE_LIMIT = '100';
+export { fetchArtistTopTracks } from '@/lib/lastfm';
 
 const GSB_SEARCH_ENDPOINT = 'https://api.getsong.co/search/';
 const GSB_RATE_LIMIT_MS = 750;
 
-/** Fetches up to 100 recordings for an artist from MusicBrainz by MBID. */
-export async function fetchArtistRecordings(
-	artistMbid: string,
-): Promise<MbTrack[]> {
-	// TODO: check cache for artistMbid before fetching
-
-	const url = new URL(MB_RECORDING_BROWSE);
-	url.searchParams.set('artist', artistMbid);
-	url.searchParams.set('inc', 'artist-credits');
-	url.searchParams.set('limit', MB_BROWSE_LIMIT);
-	url.searchParams.set('fmt', 'json');
-
-	const res = await fetch(url, {
-		headers: { 'User-Agent': MB_USER_AGENT },
-	});
-
-	if (!res.ok) throw new Error(`MusicBrainz API error: ${res.status}`);
-
-	const data = await res.json();
-	const recordings = (data.recordings as MbTrack[]) ?? [];
-
-	const seen = new Set<string>();
-	return recordings.filter((rec) => {
-		const key = rec.title.toLowerCase();
-		if (seen.has(key)) return false;
-		seen.add(key);
-		return true;
-	});
-}
-
-/** Looks up the tempo for a single recording via GetSongBPM by title + artist.
- *  Returns null if not found or the request fails. */
+/**
+ * Looks up the tempo for a single recording via GetSongBPM by title + artist.
+ * Returns null if not found or the request fails.
+ */
 async function fetchGsbTempo(
 	title: string,
 	artist: string,
@@ -52,7 +22,9 @@ async function fetchGsbTempo(
 	url.searchParams.set('limit', '1');
 
 	const res = await fetch(url);
-	if (!res.ok) return null;
+	if (!res.ok) {
+		return null;
+	}
 
 	let data;
 	try {
@@ -62,35 +34,49 @@ async function fetchGsbTempo(
 	}
 	const results = data.search;
 
-	if (!Array.isArray(results) || results.length === 0) return null;
+	if (!Array.isArray(results) || results.length === 0) {
+		return null;
+	}
 	const tempo = (results[0] as { tempo?: string })?.tempo;
 	return tempo ? parseInt(tempo, 10) : null;
 }
 
-/** Yields enriched Track objects one at a time, one GSB request per second. */
+/**
+ * Yields enriched Track objects one at a time, one GSB request per second.
+ * Only processes tracks that have MBIDs.
+ */
 export async function* enrichWithTempoStream(
-	recordings: MbTrack[],
+	tracks: LfmTopTrack[],
 	apiKey: string,
 ): AsyncGenerator<Track> {
-	for (let i = 0; i < recordings.length; i++) {
-		const rec = recordings[i];
-		const artist = rec['artist-credit']
-			.map((c) => c.name + (c.joinphrase ?? ''))
-			.join('');
+	const seen = new Set<string>();
+	const tracksWithMbid = tracks.filter((t) => {
+		if (!t.mbid) {
+			return false;
+		}
+		if (seen.has(t.mbid)) {
+			return false;
+		}
+		seen.add(t.mbid);
+		return true;
+	});
 
-		const bpm = await fetchGsbTempo(rec.title, artist, apiKey);
+	for (let i = 0; i < tracksWithMbid.length; i++) {
+		const track = tracksWithMbid[i];
+		const bpm = await fetchGsbTempo(track.name, track.artist.name, apiKey);
 
 		yield {
-			id: rec.id,
-			title: rec.title,
-			artists: [artist],
+			id: track.mbid,
+			title: track.name,
+			artists: [track.artist.name],
+			mbid: track.mbid,
 			...(bpm !== null && { bpm }),
 		};
 
-		if (i < recordings.length - 1)
+		if (i < tracksWithMbid.length - 1) {
 			await new Promise<void>((resolve) =>
 				setTimeout(resolve, GSB_RATE_LIMIT_MS),
 			);
+		}
 	}
-	// TODO: store complete track list in cache keyed by artistMbid
 }
