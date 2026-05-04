@@ -40,7 +40,9 @@ export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
 
 		fetch(url)
 			.then((res) => {
-				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`GetSongBPM API error: ${res.status}`);
+				}
 				return res.json() as Promise<GsbArtist[]>;
 			})
 			.then((data) => {
@@ -85,7 +87,9 @@ export function useGsbSongSearch(song: string | null): GsbSongResult {
 
 		fetch(url)
 			.then((res) => {
-				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`GetSongBPM API error: ${res.status}`);
+				}
 				return res.json() as Promise<GsbSong[]>;
 			})
 			.then((data) => {
@@ -130,7 +134,9 @@ export function useGsbTempoSearch(bpm: number | null): GsbTempoResult {
 
 		fetch(url)
 			.then((res) => {
-				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`GetSongBPM API error: ${res.status}`);
+				}
 				return res.json() as Promise<GsbTempo[]>;
 			})
 			.then((data) => {
