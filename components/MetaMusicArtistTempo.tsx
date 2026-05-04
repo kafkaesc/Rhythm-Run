@@ -2,16 +2,17 @@
 
 import { useState } from 'react';
 import Button from '@/components/elements/Button';
+import H2 from './elements/H2';
 import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
 import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
 import BpmSelector from '@/components/BpmSelector';
-import MbArtistSearch from '@/components/MbArtistSearch';
+import LfmArtistSearch from '@/components/LfmArtistSearch';
 import SearchStatus from '@/components/SearchStatus';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
-import { normalizeMbArtist } from '@/lib/normalize';
-import { MbArtist } from '@/models/musicBrainz';
+import { normalizeLfmArtist } from '@/lib/normalize';
+import { LfmArtist } from '@/models/lastFm';
 import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
 
 export default function MetaMusicArtistTempo() {
@@ -24,8 +25,8 @@ export default function MetaMusicArtistTempo() {
 		add,
 		remove,
 		clear: clearArtists,
-	} = useSet<MbArtist>({
-		key: (a) => a.id,
+	} = useSet<LfmArtist>({
+		key: (a) => a.mbid || a.name,
 		limit: 5,
 	});
 	const { tracks, loading, error } = useMetaMusicArtistTempo(
@@ -40,34 +41,46 @@ export default function MetaMusicArtistTempo() {
 	};
 
 	const loadMbids = () => {
-		setMmQuery({ mbids: artists.map((a) => a.id), tempo: selectedTempo });
+		const mbids = artists.map((a) => a.mbid).filter(Boolean);
+		setMmQuery({ mbids, tempo: selectedTempo });
 	};
 
 	return (
 		<>
 			<BpmSelector onChange={setSelectedTempo} />
-			<MbArtistSearch add={add} />
+			<LfmArtistSearch add={add} />
 			<ArtistList
 				artists={artists}
 				remove={remove}
-				toArtist={normalizeMbArtist}
+				toArtist={normalizeLfmArtist}
 			/>
-			<ArtistTempoQueryDisplay artists={artists} tempo={selectedTempo} />
-			<Button buttonStyle="black-white" mini onClick={loadMbids} type="button">
-				Load
-			</Button>
-			<Button buttonStyle="black-white" mini onClick={clearAll} type="button">
-				Clear
-			</Button>
-			<SearchStatus
-				errMessage="Error with the MetaMusic response"
-				loading={loading}
-				err={error}
-			/>
-			{tracks &&
-				tracks.map((tr) => (
-					<P key={tr.id}>{`${tr.artists} - ${tr.title} - bpm: ${tr.bpm}`}</P>
-				))}
+
+			<div className="flex flex-col items-center gap-2">
+				<div>
+					<ArtistTempoQueryDisplay artists={artists} tempo={selectedTempo} />
+				</div>
+				<div className="flex gap-3">
+					<Button buttonStyle="black-white" onClick={loadMbids} type="button">
+						Find Tracks
+					</Button>
+					<Button buttonStyle="black-white" onClick={clearAll} type="button">
+						Clear All
+					</Button>
+				</div>
+				<SearchStatus
+					errMessage="Error with the MetaMusic response"
+					loading={loading}
+					err={error}
+				/>
+			</div>
+			{tracks && (
+				<>
+					<H2>Matching Tracks</H2>
+					{tracks.map((tr) => (
+						<P key={tr.id}>{`${tr.artists} - ${tr.title} - bpm: ${tr.bpm}`}</P>
+					))}
+				</>
+			)}
 		</>
 	);
 }

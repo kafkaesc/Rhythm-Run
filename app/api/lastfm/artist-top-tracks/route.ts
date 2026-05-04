@@ -2,10 +2,12 @@
 // this is a server-only route for proxying Last.fm API requests
 
 import { NextRequest, NextResponse } from 'next/server';
+import { fetchArtistTopTracks } from '@/lib/lastfm';
 
-const LASTFM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
+const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
 
 export async function GET(request: NextRequest) {
+	// Verify the Last.fm API key
 	const apiKey = process.env.LAST_FM_KEY;
 	if (!apiKey) {
 		return NextResponse.json(
@@ -14,9 +16,9 @@ export async function GET(request: NextRequest) {
 		);
 	}
 
+	// Verify that an mbid or artist parameter was passed
 	const mbid = request.nextUrl.searchParams.get('mbid');
 	const artist = request.nextUrl.searchParams.get('artist');
-
 	if (!mbid && !artist) {
 		return NextResponse.json(
 			{ error: 'mbid or artist is required' },
@@ -24,24 +26,35 @@ export async function GET(request: NextRequest) {
 		);
 	}
 
-	const url = new URL(LASTFM_ENDPOINT);
+	// Call the fetchArtistTopTracks function if mbid is provided
+	if (mbid) {
+		try {
+			return NextResponse.json(await fetchArtistTopTracks(mbid, apiKey));
+		} catch {
+			return NextResponse.json({ error: 'Last.fm API error' }, { status: 502 });
+		}
+	}
+
+	// Otherwise construct the Last.fm request by artist name
+	const url = new URL(LAST_FM_ENDPOINT);
 	url.searchParams.set('method', 'artist.gettoptracks');
 	url.searchParams.set('api_key', apiKey);
 	url.searchParams.set('format', 'json');
-	if (mbid) url.searchParams.set('mbid', mbid);
-	else if (artist) url.searchParams.set('artist', artist);
+	url.searchParams.set('artist', artist!);
 
+	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);
-
-	if (!res.ok)
+	if (!res.ok) {
 		return NextResponse.json(
 			{ error: 'Last.fm API error' },
 			{ status: res.status },
 		);
+	}
 
 	const data = await res.json();
 	const tracks = data.toptracks?.track ?? [];
 
-	// Last.fm returns a single object instead of an array when there is only one result
+	// Last.fm returns a single object instead of an array
+	// if there is only one result
 	return NextResponse.json(Array.isArray(tracks) ? tracks : [tracks]);
 }

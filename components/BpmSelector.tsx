@@ -34,7 +34,9 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 
 	return (
 		<fieldset className="border-0 m-0 min-w-0 p-0">
-			<legend className="text-2xl font-bold">{title || 'Select Tempo'}</legend>
+			<legend className="text-2xl font-bold">
+				{title || 'Select target tempo'}
+			</legend>
 			<div className="flex items-center gap-3">
 				{/* The draggable slider for BPM */}
 				<input

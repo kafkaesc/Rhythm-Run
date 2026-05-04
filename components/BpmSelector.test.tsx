@@ -3,7 +3,7 @@ import BpmSelector from './BpmSelector';
 
 it('Renders the default title', () => {
 	render(<BpmSelector />);
-	const group = screen.getByRole('group', { name: /select tempo/i });
+	const group = screen.getByRole('group', { name: /select target tempo/i });
 	expect(group).toBeInTheDocument();
 });
 

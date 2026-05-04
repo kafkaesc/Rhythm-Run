@@ -3,9 +3,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const LASTFM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
+const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
 
 export async function GET(request: NextRequest) {
+	// Verify the Last.fm API key
 	const apiKey = process.env.LAST_FM_KEY;
 	if (!apiKey) {
 		return NextResponse.json(
@@ -14,34 +15,37 @@ export async function GET(request: NextRequest) {
 		);
 	}
 
+	// Verify the track parameter was passed
 	const track = request.nextUrl.searchParams.get('track');
 	if (!track) {
-		return NextResponse.json(
-			{ error: 'track is required' },
-			{ status: 400 },
-		);
+		return NextResponse.json({ error: 'track is required' }, { status: 400 });
 	}
 
-	const url = new URL(LASTFM_ENDPOINT);
+	// Construct the request for Last.fm
+	const url = new URL(LAST_FM_ENDPOINT);
 	url.searchParams.set('method', 'track.search');
 	url.searchParams.set('track', track);
 	url.searchParams.set('api_key', apiKey);
 	url.searchParams.set('format', 'json');
 
 	const artist = request.nextUrl.searchParams.get('artist');
-	if (artist) url.searchParams.set('artist', artist);
+	if (artist) {
+		url.searchParams.set('artist', artist);
+	}
 
+	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);
-
-	if (!res.ok)
+	if (!res.ok) {
 		return NextResponse.json(
 			{ error: 'Last.fm API error' },
 			{ status: res.status },
 		);
+	}
 
 	const data = await res.json();
 	const tracks = data.results?.trackmatches?.track ?? [];
 
-	// Last.fm returns a single object instead of an array when there is only one result
+	// Last.fm returns a single object instead of an array
+	// if there is only one result
 	return NextResponse.json(Array.isArray(tracks) ? tracks : [tracks]);
 }

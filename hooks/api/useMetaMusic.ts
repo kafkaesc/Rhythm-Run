@@ -17,7 +17,7 @@ export function useMetaMusicArtistTempo(
 	);
 
 	// TODO: This is a wide epsilon while debugging, change to 0 when ready
-	const DEFAULT_EPSILON = 40;
+	const DEFAULT_EPSILON = 10;
 	const DEFAULT_TEMPO = 120;
 	const mbidKey = mbidList.join(',');
 
@@ -40,10 +40,14 @@ export function useMetaMusicArtistTempo(
 		(async () => {
 			try {
 				const res = await fetch(url, { signal: controller.signal });
-				if (!res.ok) throw new Error(`MetaMusic API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`MetaMusic API error: ${res.status}`);
+				}
 
 				const reader = res.body?.getReader();
-				if (!reader) throw new Error('No response body');
+				if (!reader) {
+					throw new Error('No response body');
+				}
 
 				const decoder = new TextDecoder();
 				let buffer = '';
@@ -51,14 +55,18 @@ export function useMetaMusicArtistTempo(
 
 				while (true) {
 					const { done, value } = await reader.read();
-					if (done) break;
+					if (done) {
+						break;
+					}
 
 					buffer += decoder.decode(value, { stream: true });
 					const lines = buffer.split('\n');
 					buffer = lines.pop() ?? '';
 
 					for (const line of lines) {
-						if (!line.trim()) continue;
+						if (!line.trim()) {
+							continue;
+						}
 						try {
 							const track = JSON.parse(line) as Track;
 							tracks.push(track);
@@ -69,7 +77,9 @@ export function useMetaMusicArtistTempo(
 					}
 				}
 			} catch (err: unknown) {
-				if ((err as Error).name === 'AbortError') return;
+				if ((err as Error).name === 'AbortError') {
+					return;
+				}
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',

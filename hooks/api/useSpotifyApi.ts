@@ -31,13 +31,16 @@ let tokenCache: { token: string; expiresAt: number } | null = null;
  */
 function getCachedToken(): Promise<string> {
 	// If there is a cached token and it's not yet expired, return it
-	if (tokenCache && Date.now() < tokenCache.expiresAt)
+	if (tokenCache && Date.now() < tokenCache.expiresAt) {
 		return Promise.resolve(tokenCache.token);
+	}
 
 	// Fetch a new token from Spotify
 	return fetch(LOCAL_TOKEN_ENDPOINT)
 		.then((res) => {
-			if (!res.ok) throw new Error(`Token error: ${res.status}`);
+			if (!res.ok) {
+				throw new Error(`Token error: ${res.status}`);
+			}
 			return res.json() as Promise<{ accessToken: string; expiresIn: number }>;
 		})
 		.then(({ accessToken, expiresIn }) => {
@@ -81,7 +84,9 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 				});
 			})
 			.then((res) => {
-				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`Spotify API error: ${res.status}`);
+				}
 				return res.json() as Promise<{ artists: { items: SpotifyArtist[] } }>;
 			})
 			.then((data) => {
@@ -136,7 +141,9 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 			})
 			.then((res) => {
 				// Check for errors before returning a JSON promise of the data
-				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`Spotify API error: ${res.status}`);
+				}
 				return res.json() as Promise<{ tracks: { items: SpotifyTrack[] } }>;
 			})
 			.then((data) => {
@@ -191,7 +198,9 @@ export function useSpotifyTempoSearch({
 	useEffect(() => {
 		const hasSeed = seedTrack || seedArtist || seedGenre;
 
-		if (!bpm || !hasSeed) return;
+		if (!bpm || !hasSeed) {
+			return;
+		}
 
 		dispatch({ type: 'fetch' });
 
@@ -201,9 +210,15 @@ export function useSpotifyTempoSearch({
 				const url = new URL(SPOTIFY_RECOMMENDATIONS_ENDPOINT);
 				url.searchParams.set('target_tempo', String(bpm));
 				url.searchParams.set('limit', SPOTIFY_RECOMMENDATIONS_LIMIT);
-				if (seedTrack) url.searchParams.set('seed_tracks', seedTrack);
-				if (seedArtist) url.searchParams.set('seed_artists', seedArtist);
-				if (seedGenre) url.searchParams.set('seed_genres', seedGenre);
+				if (seedTrack) {
+					url.searchParams.set('seed_tracks', seedTrack);
+				}
+				if (seedArtist) {
+					url.searchParams.set('seed_artists', seedArtist);
+				}
+				if (seedGenre) {
+					url.searchParams.set('seed_genres', seedGenre);
+				}
 
 				// Call the Spotify API with the access token
 				return fetch(url, {
@@ -212,7 +227,9 @@ export function useSpotifyTempoSearch({
 			})
 			.then((res) => {
 				// Check for errors before returning a JSON promise of the data
-				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`Spotify API error: ${res.status}`);
+				}
 				return res.json() as Promise<{ tracks: SpotifyTrack[] }>;
 			})
 			.then((data) => {

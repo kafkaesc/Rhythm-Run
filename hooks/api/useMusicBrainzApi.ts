@@ -39,7 +39,9 @@ export function useMusicBrainzArtistSearch(
 
 		fetch(url)
 			.then((res) => {
-				if (!res.ok) throw new Error(`MusicBrainz API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`MusicBrainz API error: ${res.status}`);
+				}
 				return res.json() as Promise<MbArtist[]>;
 			})
 			.then((data) => {
@@ -84,7 +86,9 @@ export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {
 
 		fetch(url)
 			.then((res) => {
-				if (!res.ok) throw new Error(`MusicBrainz API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`MusicBrainz API error: ${res.status}`);
+				}
 				return res.json() as Promise<MbTrack[]>;
 			})
 			.then((data) => {

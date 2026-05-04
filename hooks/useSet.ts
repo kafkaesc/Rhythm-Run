@@ -7,7 +7,8 @@ type useSetArgs<T> = {
 	key?: (item: T) => unknown;
 };
 
-/** A hook to manage a set of items with an optional limit and basic utility functions
+/**
+ * A hook to manage a set of items with an optional limit and basic utility functions
  * - limit: the maximum number of items allowed in the set
  * - key: a function that returns a unique identifier for an item, use to prevent duplicates
  */

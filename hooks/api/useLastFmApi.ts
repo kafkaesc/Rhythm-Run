@@ -40,7 +40,9 @@ export function useLastFmArtistSearch(artist: string | null): LfmArtistResult {
 
 		fetch(url)
 			.then((res) => {
-				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`Last.fm API error: ${res.status}`);
+				}
 				return res.json() as Promise<LfmArtist[]>;
 			})
 			.then((data) => {
@@ -89,12 +91,17 @@ export function useLastFmArtistTopTracks(
 			LOCAL_ARTIST_TOP_TRACKS_ENDPOINT,
 			window.location.origin,
 		);
-		if (mbid) url.searchParams.set('mbid', mbid);
-		else if (artist) url.searchParams.set('artist', artist);
+		if (mbid) {
+			url.searchParams.set('mbid', mbid);
+		} else if (artist) {
+			url.searchParams.set('artist', artist);
+		}
 
 		fetch(url)
 			.then((res) => {
-				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`Last.fm API error: ${res.status}`);
+				}
 				return res.json() as Promise<LfmTopTrack[]>;
 			})
 			.then((data) => {
@@ -141,11 +148,15 @@ export function useLastFmTrackSearch(
 
 		const url = new URL(LOCAL_TRACK_SEARCH_ENDPOINT, window.location.origin);
 		url.searchParams.set('track', track);
-		if (artist) url.searchParams.set('artist', artist);
+		if (artist) {
+			url.searchParams.set('artist', artist);
+		}
 
 		fetch(url)
 			.then((res) => {
-				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
+				if (!res.ok) {
+					throw new Error(`Last.fm API error: ${res.status}`);
+				}
 				return res.json() as Promise<LfmSearchTrack[]>;
 			})
 			.then((data) => {
