@@ -48,9 +48,9 @@ Once the project is installed and set up, running it just takes two steps:
 
 ## 🔌 APIs
 
-- [GetSongBpm](https://getsongbpm.com)
+- [GetSongBpm](https://getsongbpm.com/api)
 - [Last.fm](https://www.last.fm/api)
-- [MusicBrainz](musicbrainz.org)
+- [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API)
 - [Spotify](https://developer.spotify.com/documentation/web-api)
 
 ## 🎯 Testing
