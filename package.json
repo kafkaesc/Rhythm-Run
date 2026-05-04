@@ -13,6 +13,7 @@
 		"test:ci": "jest --ci --coverage"
 	},
 	"dependencies": {
+		"@iconify-json/akar-icons": "^1.2.7",
 		"@iconify-json/lucide": "^1.2.101",
 		"@iconify/react": "^6.0.2",
 		"clsx": "^2.1.1",
