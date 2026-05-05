@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface Artist {
 	genres: string[];
 	getSongBpmId?: string;
@@ -5,6 +7,11 @@ export interface Artist {
 	mbid?: string;
 	name: string;
 	spotifyId?: string;
+}
+
+export interface ReactNodeAndKey {
+	key: string;
+	node: ReactNode;
 }
 
 export interface Track {
