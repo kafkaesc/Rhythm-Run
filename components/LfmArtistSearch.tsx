@@ -47,6 +47,7 @@ export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="lfm-artist-search-status"
 						id="lfm-artist-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
@@ -76,6 +77,7 @@ export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 				<SearchStatus
 					err={error}
 					errMessage="Error with the Last.fm response"
+					id="lfm-artist-search-status"
 					loading={loading}
 				/>
 			</form>

@@ -44,6 +44,7 @@ export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="gsb-track-search-status"
 						id="gsb-track-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
@@ -73,6 +74,7 @@ export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 				<SearchStatus
 					err={error}
 					errMessage="Error with the GetSongBPM response"
+					id="gsb-track-search-status"
 					loading={loading}
 				/>
 			</form>

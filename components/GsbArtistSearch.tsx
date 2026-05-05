@@ -44,6 +44,7 @@ export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="gsb-artist-search-status"
 						id="gsb-artist-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
@@ -73,6 +74,7 @@ export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 				<SearchStatus
 					err={error}
 					errMessage="Error with the GetSongBPM response"
+					id="gsb-artist-search-status"
 					loading={loading}
 				/>
 			</form>

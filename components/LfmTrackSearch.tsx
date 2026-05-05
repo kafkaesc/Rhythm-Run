@@ -40,6 +40,7 @@ export default function LfmTrackSearch({ add }: LfmSearchTrackSearchProps) {
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="lfm-track-search-status"
 						id="lfm-track-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
@@ -69,6 +70,7 @@ export default function LfmTrackSearch({ add }: LfmSearchTrackSearchProps) {
 				<SearchStatus
 					err={error}
 					errMessage="Error with the Last.fm response"
+					id="lfm-track-search-status"
 					loading={loading}
 				/>
 			</form>

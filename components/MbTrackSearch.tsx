@@ -40,6 +40,7 @@ export default function MbTrackSearch({ add }: MbTrackSearchProps) {
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="mb-track-search-status"
 						id="mb-track-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
@@ -69,6 +70,7 @@ export default function MbTrackSearch({ add }: MbTrackSearchProps) {
 				<SearchStatus
 					err={error}
 					errMessage="Error with the MusicBrainz response"
+					id="mb-track-search-status"
 					loading={loading}
 				/>
 			</form>
