@@ -1,19 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
+import ClearIcon from '@/components/icons/ClearIcon';
+import SearchIcon from '@/components/icons/SearchIcon';
 import ArtistList from '@/components/ArtistList';
 import SearchStatus from '@/components/SearchStatus';
 import { useGsbArtistSearch } from '@/hooks/api/useGetSongBpmApi';
 import { normalizeGsbArtist } from '@/lib/normalize';
 import { GsbArtist } from '@/models/getSongBpm';
-
-const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
-const SearchIcon = () => (
-	<Icon icon="lucide:search" aria-hidden="true" className="-translate-y-px" />
-);
 
 type GsbArtistSearchProps = {
 	add?: (artist: GsbArtist) => void;
@@ -56,7 +52,7 @@ export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 						disabled={input.length === 0}
 						type="submit"
 					>
-						<SearchIcon />
+						<SearchIcon aria-hidden="true" />
 						<span className="hidden md:inline">Search</span>
 					</Button>
 					<Button
@@ -66,7 +62,7 @@ export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 						type="button"
 						onClick={clear}
 					>
-						<ClearIcon />
+						<ClearIcon aria-hidden="true" />
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>

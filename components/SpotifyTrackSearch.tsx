@@ -1,19 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
+import ClearIcon from '@/components/icons/ClearIcon';
+import SearchIcon from '@/components/icons/SearchIcon';
 import TrackList from '@/components/TrackList';
 import SearchStatus from '@/components/SearchStatus';
 import { useSpotifyTrackSearch } from '@/hooks/api/useSpotifyApi';
 import { normalizeSpotifyTrack } from '@/lib/normalize';
 import { SpotifyTrack } from '@/models/spotify';
-
-const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
-const SearchIcon = () => (
-	<Icon icon="lucide:search" aria-hidden="true" className="-translate-y-px" />
-);
 
 type SpotifyTrackSearchProps = {
 	add?: (track: SpotifyTrack) => void;
@@ -59,7 +55,7 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 						disabled={input.length === 0}
 						type="submit"
 					>
-						<SearchIcon />
+						<SearchIcon aria-hidden="true" />
 						<span className="hidden md:inline">Search</span>
 					</Button>
 					<Button
@@ -69,7 +65,7 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 						type="button"
 						onClick={clear}
 					>
-						<ClearIcon />
+						<ClearIcon aria-hidden="true" />
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>
