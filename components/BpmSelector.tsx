@@ -17,6 +17,12 @@ type BpmSelectorProps = {
 	title?: string;
 };
 
+/**
+ * Slider and number input for selecting a target BPM within a fixed range.
+ *
+ * @param onChange - Callback fired when the BPM value changes
+ * @param title - Overrides the default fieldset legend
+ */
 export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 	const [bpm, setBpm] = useState(DEFAULT_BPM);
 
@@ -39,10 +45,14 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 			</legend>
 			<div className="flex items-center gap-3">
 				{/* The draggable slider for BPM */}
+				<label htmlFor="bpm-range" className="sr-only">
+					BPM slider
+				</label>
 				<input
 					aria-controls="bpm-input"
 					aria-valuetext={`${bpm} BPM`}
 					className="flex-1 cursor-pointer"
+					id="bpm-range"
 					max={MAX_BPM}
 					min={MIN_BPM}
 					onChange={(e) => handleChange(Number(e.target.value))}
@@ -56,6 +66,9 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 					value={bpm}
 				/>
 				{/* Number input with up/down buttons */}
+				<label htmlFor="bpm-input" className="sr-only">
+					BPM value
+				</label>
 				<Input
 					className="w-20"
 					id="bpm-input"
