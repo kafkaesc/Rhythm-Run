@@ -38,9 +38,13 @@ export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
+				<label htmlFor="gsb-artist-search" className="sr-only">
+					Artist name
+				</label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						id="gsb-artist-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Find an artist via GetSongBPM"

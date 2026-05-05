@@ -41,9 +41,13 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
+				<label htmlFor="spotify-track-search" className="sr-only">
+					Track name
+				</label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						id="spotify-track-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Search Spotify"

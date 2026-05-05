@@ -34,9 +34,13 @@ export default function MbTrackSearch({ add }: MbTrackSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
+				<label htmlFor="mb-track-search" className="sr-only">
+					Track name
+				</label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						id="mb-track-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Find a track via MusicBrainz"
