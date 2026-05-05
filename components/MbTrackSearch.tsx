@@ -15,6 +15,12 @@ type MbTrackSearchProps = {
 	add?: (track: MbTrack) => void;
 };
 
+/**
+ * Search form for querying the MusicBrainz API by track name.
+ * Renders the response track list once the search completes.
+ *
+ * @param add - Optional callback to add a selected track from the search results
+ */
 export default function MbTrackSearch({ add }: MbTrackSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');

@@ -18,6 +18,8 @@ type GsbArtistSearchProps = {
 /**
  * Search form for querying the GetSongBPM API by artist name.
  * Renders the response artist list once the search completes.
+ * 
+ * @param add - Optional callback to add a selected artist from the search results
  */
 export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 	const [input, setInput] = useState('');

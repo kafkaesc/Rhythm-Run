@@ -16,6 +16,13 @@ type LfmArtistSearchProps = {
 	title?: string;
 };
 
+/**
+ * Search form for querying the Last.fm API by artist name.
+ * Renders the response artist list once the search completes.
+ *
+ * @param add - Optional callback to add a selected artist from the search results
+ * @param title - Overrides the default fieldset legend
+ */
 export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search

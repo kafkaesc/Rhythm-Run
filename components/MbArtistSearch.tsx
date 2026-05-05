@@ -15,6 +15,12 @@ type MbArtistSearchProps = {
 	add?: (artist: MbArtist) => void;
 };
 
+/**
+ * Search form for querying the MusicBrainz API by artist name.
+ * Renders the response artist list once the search completes.
+ *
+ * @param add - Optional callback to add a selected artist from the search results
+ */
 export default function MbArtistSearch({ add }: MbArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search

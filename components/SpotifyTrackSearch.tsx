@@ -18,6 +18,8 @@ type SpotifyTrackSearchProps = {
 /**
  * Search form for querying the Spotify API by track name.
  * Renders the response track list once the search completes.
+ *
+ * @param add - Optional callback to add a selected track from the search results
  */
 export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior

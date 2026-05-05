@@ -18,6 +18,8 @@ type GsbTrackSearchProps = {
 /**
  * Search form for querying the GetSongBPM API by track name.
  * Renders the response track list once the search completes.
+ *
+ * @param add - Optional callback to add a selected track from the search results
  */
 export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 	const [input, setInput] = useState('');

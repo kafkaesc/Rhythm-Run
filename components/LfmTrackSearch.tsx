@@ -15,6 +15,12 @@ type LfmSearchTrackSearchProps = {
 	add?: (track: LfmSearchTrack) => void;
 };
 
+/**
+ * Search form for querying the Last.fm API by track name.
+ * Renders the response track list once the search completes.
+ *
+ * @param add - Optional callback to add a selected track from the search results
+ */
 export default function LfmTrackSearch({ add }: LfmSearchTrackSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');

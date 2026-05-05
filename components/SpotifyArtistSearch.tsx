@@ -18,6 +18,8 @@ type SpotifyArtistSearchProps = {
 /**
  * Search form for querying the Spotify API by artist name.
  * Renders the response artist list once the search completes.
+ *
+ * @param add - Optional callback to add a selected artist from the search results
  */
 export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
