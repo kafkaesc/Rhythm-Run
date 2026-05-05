@@ -8,11 +8,12 @@ import SearchIcon from '@/components/icons/SearchIcon';
 import ArtistList from '@/components/ArtistList';
 import SearchStatus from '@/components/SearchStatus';
 import { useMusicBrainzArtistSearch } from '@/hooks/api/useMusicBrainzApi';
-import { MbArtist } from '@/models/musicBrainz';
 import { normalizeMbArtist } from '@/lib/normalize';
+import { MbArtist } from '@/models/musicBrainz';
 
 type MbArtistSearchProps = {
 	add?: (artist: MbArtist) => void;
+	title?: string;
 };
 
 /**
@@ -20,8 +21,9 @@ type MbArtistSearchProps = {
  * Renders the response artist list once the search completes.
  *
  * @param add - Optional callback to add a selected artist from the search results
+ * @param title - Overrides the default label
  */
-export default function MbArtistSearch({ add }: MbArtistSearchProps) {
+export default function MbArtistSearch({ add, title }: MbArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { artists, loading, error } = useMusicBrainzArtistSearch(query);
@@ -43,8 +45,8 @@ export default function MbArtistSearch({ add }: MbArtistSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<label htmlFor="mb-artist-search" className="sr-only">
-					Artist name
+				<label htmlFor="mb-artist-search" className="text-2xl font-bold">
+					{title || 'Artist name'}
 				</label>
 				<div className="flex items-center gap-2">
 					<Input

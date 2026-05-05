@@ -13,6 +13,7 @@ import { MbTrack } from '@/models/musicBrainz';
 
 type MbTrackSearchProps = {
 	add?: (track: MbTrack) => void;
+	title?: string;
 };
 
 /**
@@ -20,8 +21,9 @@ type MbTrackSearchProps = {
  * Renders the response track list once the search completes.
  *
  * @param add - Optional callback to add a selected track from the search results
+ * @param title - Overrides the default label
  */
-export default function MbTrackSearch({ add }: MbTrackSearchProps) {
+export default function MbTrackSearch({ add, title }: MbTrackSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');
 	const { tracks, loading, error } = useMusicBrainzTrackSearch(query);
@@ -40,8 +42,8 @@ export default function MbTrackSearch({ add }: MbTrackSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<label htmlFor="mb-track-search" className="sr-only">
-					Track name
+				<label htmlFor="mb-track-search" className="text-2xl font-bold">
+					{title || 'Track name'}
 				</label>
 				<div className="flex items-center gap-2">
 					<Input

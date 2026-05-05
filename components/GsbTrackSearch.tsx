@@ -13,6 +13,7 @@ import { GsbSong } from '@/models/getSongBpm';
 
 type GsbTrackSearchProps = {
 	add?: (track: GsbSong) => void;
+	title?: string;
 };
 
 /**
@@ -20,8 +21,9 @@ type GsbTrackSearchProps = {
  * Renders the response track list once the search completes.
  *
  * @param add - Optional callback to add a selected track from the search results
+ * @param title - Overrides the default label
  */
-export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
+export default function GsbTrackSearch({ add, title }: GsbTrackSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');
 	const { songs, loading, error } = useGsbSongSearch(query);
@@ -40,8 +42,8 @@ export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<label htmlFor="gsb-track-search" className="sr-only">
-					Track name
+				<label htmlFor="gsb-track-search" className="text-2xl font-bold">
+					{title || 'Track name'}
 				</label>
 				<div className="flex items-center gap-2">
 					<Input

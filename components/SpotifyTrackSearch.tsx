@@ -13,6 +13,7 @@ import { SpotifyTrack } from '@/models/spotify';
 
 type SpotifyTrackSearchProps = {
 	add?: (track: SpotifyTrack) => void;
+	title?: string;
 };
 
 /**
@@ -20,18 +21,20 @@ type SpotifyTrackSearchProps = {
  * Renders the response track list once the search completes.
  *
  * @param add - Optional callback to add a selected track from the search results
+ * @param title - Overrides the default label
  */
-export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
+export default function SpotifyTrackSearch({
+	add,
+	title,
+}: SpotifyTrackSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { tracks, loading, error } = useSpotifyTrackSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
-
 		// If a previous search is still running, don't trigger another
 		if (loading) return;
-
 		setQuery(input);
 	}
 
@@ -43,8 +46,8 @@ export default function SpotifyTrackSearch({ add }: SpotifyTrackSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<label htmlFor="spotify-track-search" className="sr-only">
-					Track name
+				<label htmlFor="spotify-track-search" className="text-2xl font-bold">
+					{title || 'Track name'}
 				</label>
 				<div className="flex items-center gap-2">
 					<Input

@@ -13,6 +13,7 @@ import { SpotifyArtist } from '@/models/spotify';
 
 type SpotifyArtistSearchProps = {
 	add?: (artist: SpotifyArtist) => void;
+	title?: string;
 };
 
 /**
@@ -20,18 +21,20 @@ type SpotifyArtistSearchProps = {
  * Renders the response artist list once the search completes.
  *
  * @param add - Optional callback to add a selected artist from the search results
+ * @param title - Overrides the default label
  */
-export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
+export default function SpotifyArtistSearch({
+	add,
+	title,
+}: SpotifyArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { artists, loading, error } = useSpotifyArtistSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
-
 		// If a previous search is still running, don't trigger another
 		if (loading) return;
-
 		setQuery(input);
 	}
 
@@ -43,8 +46,8 @@ export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<label htmlFor="spotify-artist-search" className="sr-only">
-					Artist name
+				<label htmlFor="spotify-artist-search" className="text-2xl font-bold">
+					{title || 'Artist name'}
 				</label>
 				<div className="flex items-center gap-2">
 					<Input

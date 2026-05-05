@@ -7,12 +7,13 @@ import ClearIcon from '@/components/icons/ClearIcon';
 import SearchIcon from '@/components/icons/SearchIcon';
 import TrackList from '@/components/TrackList';
 import SearchStatus from '@/components/SearchStatus';
+import { useLastFmTrackSearch } from '@/hooks/api/useLastFmApi';
 import { normalizeLfmSearchTrack } from '@/lib/normalize';
 import { LfmSearchTrack } from '@/models/lastFm';
-import { useLastFmTrackSearch } from '@/hooks/api/useLastFmApi';
 
 type LfmSearchTrackSearchProps = {
 	add?: (track: LfmSearchTrack) => void;
+	title?: string;
 };
 
 /**
@@ -20,14 +21,19 @@ type LfmSearchTrackSearchProps = {
  * Renders the response track list once the search completes.
  *
  * @param add - Optional callback to add a selected track from the search results
+ * @param title - Overrides the default label
  */
-export default function LfmTrackSearch({ add }: LfmSearchTrackSearchProps) {
+export default function LfmTrackSearch({
+	add,
+	title,
+}: LfmSearchTrackSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');
 	const { tracks, loading, error } = useLastFmTrackSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
+		// If a previous search is still running, don't trigger another
 		if (loading) return;
 		setQuery(input);
 	}
@@ -40,8 +46,8 @@ export default function LfmTrackSearch({ add }: LfmSearchTrackSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<label htmlFor="lfm-track-search" className="sr-only">
-					Track name
+				<label htmlFor="lfm-track-search" className="text-2xl font-bold">
+					{title || 'Track name'}
 				</label>
 				<div className="flex items-center gap-2">
 					<Input

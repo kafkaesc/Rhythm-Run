@@ -13,21 +13,24 @@ import { GsbArtist } from '@/models/getSongBpm';
 
 type GsbArtistSearchProps = {
 	add?: (artist: GsbArtist) => void;
+	title?: string;
 };
 
 /**
  * Search form for querying the GetSongBPM API by artist name.
  * Renders the response artist list once the search completes.
- * 
+ *
  * @param add - Optional callback to add a selected artist from the search results
+ * @param title - Overrides the default label
  */
-export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
+export default function GsbArtistSearch({ add, title }: GsbArtistSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');
 	const { artists, loading, error } = useGsbArtistSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
+		// If a previous search is still running, don't trigger another
 		if (loading) return;
 		setQuery(input);
 	}
@@ -40,8 +43,8 @@ export default function GsbArtistSearch({ add }: GsbArtistSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<label htmlFor="gsb-artist-search" className="sr-only">
-					Artist name
+				<label htmlFor="gsb-artist-search" className="text-2xl font-bold">
+					{title || 'Artist name'}
 				</label>
 				<div className="flex items-center gap-2">
 					<Input
