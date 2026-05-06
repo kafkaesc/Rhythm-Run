@@ -2,15 +2,15 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import GsbTrackSearch from './GsbTrackSearch';
 
-const mockUseGsbSongSearch = jest.fn();
-mockUseGsbSongSearch.mockReturnValue({
-	songs: null,
+const mockUseGsbTrackSearch = jest.fn();
+mockUseGsbTrackSearch.mockReturnValue({
+	tracks: null,
 	loading: null,
 	error: null,
 });
 
 jest.mock('../hooks/api/useGetSongBpmApi', () => ({
-	useGsbSongSearch: (...args: unknown[]) => mockUseGsbSongSearch(...args),
+	useGsbTrackSearch: (...args: unknown[]) => mockUseGsbTrackSearch(...args),
 }));
 
 it('Renders the search input', () => {
@@ -56,8 +56,8 @@ it('Clears the input when clear button is clicked', async () => {
 });
 
 it('Renders loading status display when loading', () => {
-	mockUseGsbSongSearch.mockReturnValueOnce({
-		songs: null,
+	mockUseGsbTrackSearch.mockReturnValueOnce({
+		tracks: null,
 		loading: true,
 		error: null,
 	});
@@ -67,8 +67,8 @@ it('Renders loading status display when loading', () => {
 });
 
 it('Renders error status display when there is an error', () => {
-	mockUseGsbSongSearch.mockReturnValueOnce({
-		songs: null,
+	mockUseGsbTrackSearch.mockReturnValueOnce({
+		tracks: null,
 		loading: null,
 		error: 'Some error',
 	});
@@ -78,8 +78,8 @@ it('Renders error status display when there is an error', () => {
 });
 
 it('Does not trigger a new search when the state is loading', async () => {
-	mockUseGsbSongSearch.mockReturnValue({
-		songs: null,
+	mockUseGsbTrackSearch.mockReturnValue({
+		tracks: null,
 		loading: true,
 		error: null,
 	});
@@ -88,9 +88,9 @@ it('Does not trigger a new search when the state is loading', async () => {
 	await userEvent.type(input, 'Basket Case');
 	const searchBtn = screen.getByRole('button', { name: /^search$/i });
 	await userEvent.click(searchBtn);
-	expect(mockUseGsbSongSearch).not.toHaveBeenCalledWith('Basket Case');
-	mockUseGsbSongSearch.mockReturnValue({
-		songs: null,
+	expect(mockUseGsbTrackSearch).not.toHaveBeenCalledWith('Basket Case');
+	mockUseGsbTrackSearch.mockReturnValue({
+		tracks: null,
 		loading: null,
 		error: null,
 	});

@@ -1,4 +1,4 @@
-import { GsbArtist, GsbSong } from '@/models/getSongBpm';
+import { GsbArtist, GsbTrack } from '@/models/getSongBpm';
 import { LfmArtist, LfmSearchTrack, LfmTopTrack } from '@/models/lastFm';
 import { SpotifyArtist, SpotifyTrack } from '@/models/spotify';
 import { Artist, Track } from '@/models/rhythmRun';
@@ -15,8 +15,8 @@ export function normalizeGsbArtist(artist: GsbArtist): Artist {
 	};
 }
 
-/** Normalizes a GsbSong from the GetSongBPM API into the common Track shape */
-export function normalizeGsbTrack(track: GsbSong): Track {
+/** Normalizes a GsbTrack from the GetSongBPM API into the common Track shape */
+export function normalizeGsbTrack(track: GsbTrack): Track {
 	return {
 		id: track.id,
 		getSongBpmId: track.id,

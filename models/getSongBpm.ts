@@ -14,7 +14,7 @@ export interface GsbArtist {
 	uri: string;
 }
 
-export interface GsbSong {
+export interface GsbTrack {
 	acousticness: number;
 	album: GsbAlbum;
 	artist: GsbArtist;
@@ -43,14 +43,14 @@ export type GsbArtistResult = {
 	error: string | null;
 };
 
-export type GsbSongResult = {
-	songs: GsbSong[] | null;
+export type GsbTrackResult = {
+	tracks: GsbTrack[] | null;
 	loading: boolean;
 	error: string | null;
 };
 
 export type GsbTempoResult = {
-	songs: GsbTempo[] | null;
+	tracks: GsbTempo[] | null;
 	loading: boolean;
 	error: string | null;
 };

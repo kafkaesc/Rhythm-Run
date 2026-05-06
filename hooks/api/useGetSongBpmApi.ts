@@ -5,19 +5,20 @@ import { initialState, reducer } from '@/hooks/api/asyncReducer';
 import {
 	GsbArtist,
 	GsbArtistResult,
-	GsbSong,
-	GsbSongResult,
+	GsbTrack,
+	GsbTrackResult,
 	GsbTempo,
 	GsbTempoResult,
 } from '@/models/getSongBpm';
 
 // GetSongBPM API, https://getsongbpm.com/api
 const LOCAL_ARTIST_ENDPOINT = '/api/gsb/artist';
-const LOCAL_SONG_ENDPOINT = '/api/gsb/song';
+const LOCAL_TRACK_ENDPOINT = '/api/gsb/song';
 const LOCAL_TEMPO_ENDPOINT = '/api/gsb/tempo';
 
 /**
  * Calls the GetSongBPM API to search for artists matching a name.
+ *
  * @param artist - Artist name to search for.
  * @returns A {@link GsbArtistResult}
  */
@@ -64,33 +65,34 @@ export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
 }
 
 /**
- * Calls the GetSongBPM API to search for songs matching a title.
- * @param song - Song title to search for.
- * @returns A {@link GsbSongResult}
+ * Calls the GetSongBPM API to search for tracks matching a title.
+ *
+ * @param track - Track title to search for.
+ * @returns A {@link GsbTrackResult}
  */
-export function useGsbSongSearch(song: string | null): GsbSongResult {
+export function useGsbTrackSearch(track: string | null): GsbTrackResult {
 	const [state, dispatch] = useReducer(
-		reducer<GsbSong[]>,
-		initialState<GsbSong[]>(),
+		reducer<GsbTrack[]>,
+		initialState<GsbTrack[]>(),
 	);
 
 	useEffect(() => {
-		if (!song) {
+		if (!track) {
 			dispatch({ type: 'clear' });
 			return;
 		}
 
 		dispatch({ type: 'fetch' });
 
-		const url = new URL(LOCAL_SONG_ENDPOINT, window.location.origin);
-		url.searchParams.set('song', song);
+		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
+		url.searchParams.set('song', track);
 
 		fetch(url)
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`GetSongBPM API error: ${res.status}`);
 				}
-				return res.json() as Promise<GsbSong[]>;
+				return res.json() as Promise<GsbTrack[]>;
 			})
 			.then((data) => {
 				dispatch({ type: 'success', data });
@@ -101,10 +103,10 @@ export function useGsbSongSearch(song: string | null): GsbSongResult {
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
-	}, [song]);
+	}, [track]);
 
 	return {
-		songs: state.data,
+		tracks: state.data,
 		loading: state.status === 'loading',
 		error: state.error,
 	};
@@ -112,6 +114,7 @@ export function useGsbSongSearch(song: string | null): GsbSongResult {
 
 /**
  * Calls the GetSongBPM API to search for tracks matching a target BPM.
+ *
  * @param bpm - Target tempo in beats per minute.
  * @returns A {@link GsbTempoResult}
  */
@@ -151,7 +154,7 @@ export function useGsbTempoSearch(bpm: number | null): GsbTempoResult {
 	}, [bpm]);
 
 	return {
-		songs: state.data,
+		tracks: state.data,
 		loading: state.status === 'loading',
 		error: state.error,
 	};

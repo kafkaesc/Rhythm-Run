@@ -7,12 +7,12 @@ import ClearIcon from '@/components/icons/ClearIcon';
 import SearchIcon from '@/components/icons/SearchIcon';
 import SearchStatus from '@/components/SearchStatus';
 import TrackList from '@/components/TrackList';
-import { useGsbSongSearch } from '@/hooks/api/useGetSongBpmApi';
+import { useGsbTrackSearch } from '@/hooks/api/useGetSongBpmApi';
 import { normalizeGsbTrack } from '@/lib/normalize';
-import { GsbSong } from '@/models/getSongBpm';
+import { GsbTrack } from '@/models/getSongBpm';
 
 type GsbTrackSearchProps = {
-	add?: (track: GsbSong) => void;
+	add?: (track: GsbTrack) => void;
 	title?: string;
 };
 
@@ -26,7 +26,7 @@ type GsbTrackSearchProps = {
 export default function GsbTrackSearch({ add, title }: GsbTrackSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');
-	const { songs, loading, error } = useGsbSongSearch(query);
+	const { tracks, loading, error } = useGsbTrackSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
@@ -82,7 +82,7 @@ export default function GsbTrackSearch({ add, title }: GsbTrackSearchProps) {
 					loading={loading}
 				/>
 			</form>
-			<TrackList tracks={songs} add={add} toTrack={normalizeGsbTrack} />
+			<TrackList tracks={tracks} add={add} toTrack={normalizeGsbTrack} />
 		</div>
 	);
 }
