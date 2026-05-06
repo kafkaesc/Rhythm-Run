@@ -30,7 +30,7 @@ export default function TrackList<T>({
 
 	return (
 		<div className="max-h-[11em] overflow-y-auto">
-			<hr />
+			<hr aria-hidden="true" />
 			{tracks.map((tr) => {
 				const item = toTrack(tr);
 				return (
@@ -64,7 +64,7 @@ export default function TrackList<T>({
 								&quot;{item.title}&quot; by {item.artists.join(', ')}
 							</span>
 						</div>
-						<hr />
+						<hr aria-hidden="true" />
 					</div>
 				);
 			})}
