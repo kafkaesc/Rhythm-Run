@@ -29,7 +29,8 @@ async function fetchGsbTempo(
 	let data;
 	try {
 		data = await res.json();
-	} catch {
+	} catch (err) {
+		console.error('Failed to parse GetSongBPM response as JSON', err);
 		return null;
 	}
 	const results = data.search;
