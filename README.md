@@ -12,8 +12,8 @@ Rhythm Run is a Next.js app for finding tracks to match your pace.
 
 ## 📋 Prerequisites
 
-- Node 18+
-- pnpm
+- [Node 18+](https://nodejs.org)
+- [pnpm](https://pnpm.io)
 
 ## 📦 Installation & Operation
 
@@ -41,10 +41,16 @@ Once the project is installed and set up, running it just takes two steps:
 
 ## 🛠️ Tech Stack
 
-- Next 16
-- TypeScript 5
-- React 19
-- Tailwind 4
+- [Next 16](https://nextjs.org)
+- [TypeScript 5](https://www.typescriptlang.org)
+- [React 19](https://react.dev)
+- [Tailwind 4](https://tailwindcss.com)
+
+## 📚 Libraries
+
+- [clsx](https://github.com/lukeed/clsx)
+- [Iconify](https://iconify.design)
+- [tailwind-merge](https://github.com/dcastil/tailwind-merge)
 
 ## 🔌 APIs
 
