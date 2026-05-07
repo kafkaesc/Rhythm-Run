@@ -35,10 +35,11 @@ export function useMusicBrainzArtistSearch(
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
 		url.searchParams.set('artist', artist);
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`MusicBrainz API error: ${res.status}`);
@@ -49,11 +50,14 @@ export function useMusicBrainzArtistSearch(
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [artist]);
 
 	return {
@@ -83,10 +87,11 @@ export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
 		url.searchParams.set('track', track);
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`MusicBrainz API error: ${res.status}`);
@@ -97,11 +102,14 @@ export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [track]);
 
 	return {

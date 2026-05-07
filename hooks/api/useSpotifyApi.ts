@@ -31,9 +31,8 @@ let tokenCache: { token: string; expiresAt: number } | null = null;
  */
 function getCachedToken(): Promise<string> {
 	// If there is a cached token and it's not yet expired, return it
-	if (tokenCache && Date.now() < tokenCache.expiresAt) {
+	if (tokenCache && Date.now() < tokenCache.expiresAt)
 		return Promise.resolve(tokenCache.token);
-	}
 
 	// Fetch a new token from Spotify
 	return fetch(LOCAL_TOKEN_ENDPOINT)
@@ -72,6 +71,8 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
+
 		getCachedToken()
 			.then((accessToken) => {
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
@@ -80,6 +81,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 				url.searchParams.set('limit', SPOTIFY_SEARCH_LIMIT);
 
 				return fetch(url, {
+					signal: controller.signal,
 					headers: { Authorization: `Bearer ${accessToken}` },
 				});
 			})
@@ -93,11 +95,14 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 				return dispatch({ type: 'success', data: data.artists.items });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [query]);
 
 	return {
@@ -126,6 +131,8 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
+
 		getCachedToken()
 			.then((accessToken) => {
 				// Build the URI
@@ -136,6 +143,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 
 				// Call the Spotify API with the access token
 				return fetch(url, {
+					signal: controller.signal,
 					headers: { Authorization: `Bearer ${accessToken}` },
 				});
 			})
@@ -151,11 +159,14 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 				return dispatch({ type: 'success', data: data.tracks.items });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [query]);
 
 	return {
@@ -204,6 +215,8 @@ export function useSpotifyTempoSearch({
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
+
 		getCachedToken()
 			.then((accessToken) => {
 				// Build the URI
@@ -222,6 +235,7 @@ export function useSpotifyTempoSearch({
 
 				// Call the Spotify API with the access token
 				return fetch(url, {
+					signal: controller.signal,
 					headers: { Authorization: `Bearer ${accessToken}` },
 				});
 			})
@@ -237,11 +251,14 @@ export function useSpotifyTempoSearch({
 				return dispatch({ type: 'success', data: data.tracks });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [bpm, seedTrack, seedArtist, seedGenre]);
 
 	return {

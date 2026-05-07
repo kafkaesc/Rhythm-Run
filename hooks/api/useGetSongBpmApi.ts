@@ -36,10 +36,11 @@ export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
 		url.searchParams.set('artist', artist);
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`GetSongBPM API error: ${res.status}`);
@@ -50,11 +51,14 @@ export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [artist]);
 
 	return {
@@ -84,10 +88,11 @@ export function useGsbTrackSearch(track: string | null): GsbTrackResult {
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
 		url.searchParams.set('song', track);
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`GetSongBPM API error: ${res.status}`);
@@ -98,11 +103,14 @@ export function useGsbTrackSearch(track: string | null): GsbTrackResult {
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [track]);
 
 	return {
@@ -132,10 +140,11 @@ export function useGsbTempoSearch(bpm: number | null): GsbTempoResult {
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(LOCAL_TEMPO_ENDPOINT, window.location.origin);
 		url.searchParams.set('bpm', String(bpm));
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`GetSongBPM API error: ${res.status}`);
@@ -146,11 +155,14 @@ export function useGsbTempoSearch(bpm: number | null): GsbTempoResult {
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [bpm]);
 
 	return {
