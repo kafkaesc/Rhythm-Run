@@ -32,13 +32,32 @@ export async function GET(request: NextRequest) {
 		);
 	}
 
-	// Check for the tempo and epsilon details in the request
+	// Check and validate the tempo and epsilon details in the request
 	const tempo = request.nextUrl.searchParams.get('tempo');
 	const epsilon = request.nextUrl.searchParams.get('epsilon');
-	const minBpm =
-		tempo && epsilon ? parseInt(tempo, 10) - parseInt(epsilon, 10) : null;
-	const maxBpm =
-		tempo && epsilon ? parseInt(tempo, 10) + parseInt(epsilon, 10) : null;
+
+	if (tempo === null) {
+		return NextResponse.json({ error: 'tempo is required' }, { status: 400 });
+	}
+
+	const tempoNum = parseInt(tempo, 10);
+	if (isNaN(tempoNum)) {
+		return NextResponse.json(
+			{ error: 'tempo must be a number' },
+			{ status: 400 },
+		);
+	}
+
+	const epsilonNum = epsilon !== null ? parseInt(epsilon, 10) : 0;
+	if (isNaN(epsilonNum)) {
+		return NextResponse.json(
+			{ error: 'epsilon must be a number' },
+			{ status: 400 },
+		);
+	}
+
+	const minBpm = tempoNum - epsilonNum;
+	const maxBpm = tempoNum + epsilonNum;
 
 	// Fetch the top tracks for each artist, staggered by 1 second
 	// to avoid calling the Last.fm API too quickly

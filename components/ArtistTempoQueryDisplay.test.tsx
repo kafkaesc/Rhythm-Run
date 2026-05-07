@@ -4,7 +4,7 @@ import { MbDaftPunk, MbGreenDay } from '@/mocks/MbArtistMocks';
 
 it('Renders ____ for tempo when tempo is not provided', () => {
 	render(<ArtistTempoQueryDisplay />);
-	const p = screen.getByText(/____.*tempo/i);
+	const p = screen.getByText(/____.*bpm/i);
 	expect(p).toBeInTheDocument();
 });
 
@@ -22,7 +22,7 @@ it('Renders ____ for artists when artists is an empty array', () => {
 
 it('Renders the tempo when provided', () => {
 	render(<ArtistTempoQueryDisplay tempo={120} />);
-	const p = screen.getByText(/120.*tempo/i);
+	const p = screen.getByText(/120.*bpm/i);
 	expect(p).toBeInTheDocument();
 });
 

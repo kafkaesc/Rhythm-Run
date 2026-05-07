@@ -11,10 +11,11 @@ import {
 
 // MusicBrainz API, https://musicbrainz.org/doc/MusicBrainz_API
 const LOCAL_ARTIST_ENDPOINT = '/api/musicbrainz/artist';
-const LOCAL_RECORDING_ENDPOINT = '/api/musicbrainz/recording';
+const LOCAL_TRACK_ENDPOINT = '/api/musicbrainz/recording';
 
 /**
  * Calls the MusicBrainz API to search for artists matching a name.
+ *
  * @param artist - Artist name to search for.
  * @returns A {@link MbArtistResult}
  */
@@ -34,10 +35,11 @@ export function useMusicBrainzArtistSearch(
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
 		url.searchParams.set('artist', artist);
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`MusicBrainz API error: ${res.status}`);
@@ -48,11 +50,14 @@ export function useMusicBrainzArtistSearch(
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [artist]);
 
 	return {
@@ -63,7 +68,8 @@ export function useMusicBrainzArtistSearch(
 }
 
 /**
- * Calls the MusicBrainz API to search for recordings matching a title.
+ * Calls the MusicBrainz API to search for tracks matching a title.
+ *
  * @param track - Track title to search for.
  * @returns A {@link MbTrackResult}
  */
@@ -81,10 +87,11 @@ export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {
 
 		dispatch({ type: 'fetch' });
 
-		const url = new URL(LOCAL_RECORDING_ENDPOINT, window.location.origin);
+		const controller = new AbortController();
+		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
 		url.searchParams.set('track', track);
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`MusicBrainz API error: ${res.status}`);
@@ -95,11 +102,14 @@ export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [track]);
 
 	return {

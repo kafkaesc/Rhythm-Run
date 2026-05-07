@@ -19,7 +19,7 @@ export default function ArtistTempoQueryDisplay({
 
 	return (
 		<P>
-			I want tracks at a {t} tempo{e} from {a}
+			I want tracks at a {t} bpm{e} from {a}
 		</P>
 	);
 }

@@ -1,10 +1,15 @@
-import { GsbArtist, GsbSong } from '@/models/getSongBpm';
+import { GsbArtist, GsbTrack } from '@/models/getSongBpm';
 import { LfmArtist, LfmSearchTrack, LfmTopTrack } from '@/models/lastFm';
 import { SpotifyArtist, SpotifyTrack } from '@/models/spotify';
 import { Artist, Track } from '@/models/rhythmRun';
 import { MbArtist, MbTrack } from '@/models/musicBrainz';
 
-/** Normalizes a GsbArtist from the GetSongBPM API into the common Artist shape */
+/**
+ * Normalizes a {@link GsbArtist} from the GetSongBPM API into the common {@link Artist} shape
+ *
+ * @param artist - {@link GsbArtist} object
+ * @returns - a normalized {@link Artist} object matching the argument
+ * */
 export function normalizeGsbArtist(artist: GsbArtist): Artist {
 	return {
 		id: artist.id,
@@ -15,14 +20,13 @@ export function normalizeGsbArtist(artist: GsbArtist): Artist {
 	};
 }
 
-/** Normalizes an array of GsbArtist objects from the GetSongBPM API
- * into the common Artist shape */
-export function normalizeGsbArtists(artists: GsbArtist[]): Artist[] {
-	return artists.map(normalizeGsbArtist);
-}
-
-/** Normalizes a GsbSong from the GetSongBPM API into the common Track shape */
-export function normalizeGsbTrack(track: GsbSong): Track {
+/**
+ * Normalizes a {@link GsbTrack} from the GetSongBPM API into the common {@link Track} shape
+ *
+ * @param track - {@link GsbTrack} object
+ * @returns - a normalized {@link Track} object matching the argument
+ */
+export function normalizeGsbTrack(track: GsbTrack): Track {
 	return {
 		id: track.id,
 		getSongBpmId: track.id,
@@ -33,13 +37,12 @@ export function normalizeGsbTrack(track: GsbSong): Track {
 	};
 }
 
-/** Normalizes an array of GsbSong objects from the GetSongBPM API
- * into the common Track shape */
-export function normalizeGsbTracks(tracks: GsbSong[]): Track[] {
-	return tracks.map(normalizeGsbTrack);
-}
-
-/** Normalizes a LfmArtist from the Last.fm API into the common Artist shape */
+/**
+ * Normalizes a {@link LfmArtist} from the Last.fm API into the common {@link Artist} shape
+ *
+ * @param artist - {@link LfmArtist} object
+ * @returns - a normalized {@link Artist} object matching the argument
+ */
 export function normalizeLfmArtist(artist: LfmArtist): Artist {
 	return {
 		id: artist.mbid || artist.name,
@@ -49,13 +52,12 @@ export function normalizeLfmArtist(artist: LfmArtist): Artist {
 	};
 }
 
-/** Normalizes an array of LfmArtist objects from the Last.fm API
- * into the common Artist shape */
-export function normalizeLfmArtists(artists: LfmArtist[]): Artist[] {
-	return artists.map(normalizeLfmArtist);
-}
-
-/** Normalizes a LfmSearchTrack from the Last.fm API into the common Track shape */
+/**
+ * Normalizes a {@link LfmSearchTrack} from the Last.fm API into the common {@link Track} shape
+ *
+ * @param track - {@link LfmSearchTrack} object
+ * @returns - a normalized {@link Track} object matching the argument
+ */
 export function normalizeLfmSearchTrack(track: LfmSearchTrack): Track {
 	return {
 		id: track.mbid || `${track.name}-${track.artist}`,
@@ -65,13 +67,12 @@ export function normalizeLfmSearchTrack(track: LfmSearchTrack): Track {
 	};
 }
 
-/** Normalizes an array of LfmSearchTrack objects from the Last.fm API
- * into the common Track shape */
-export function normalizeLfmSearchTracks(tracks: LfmSearchTrack[]): Track[] {
-	return tracks.map(normalizeLfmSearchTrack);
-}
-
-/** Normalizes a LfmTopTrack from the Last.fm API into the common Track shape */
+/**
+ * Normalizes a {@link LfmTopTrack} from the Last.fm API into the common {@link Track} shape
+ *
+ * @param track - {@link LfmTopTrack} object
+ * @returns - a normalized {@link Track} object matching the argument
+ */
 export function normalizeLfmTopTrack(track: LfmTopTrack): Track {
 	return {
 		id: track.mbid || track.name,
@@ -81,13 +82,12 @@ export function normalizeLfmTopTrack(track: LfmTopTrack): Track {
 	};
 }
 
-/** Normalizes an array of LfmTopTrack objects from the Last.fm API
- * into the common Track shape */
-export function normalizeLfmTopTracks(tracks: LfmTopTrack[]): Track[] {
-	return tracks.map(normalizeLfmTopTrack);
-}
-
-/** Normalizes a MbArtist from the MusicBrainz API into the common Artist shape */
+/**
+ * Normalizes a {@link MbArtist} from the MusicBrainz API into the common {@link Artist} shape
+ *
+ * @param artist - {@link MbArtist} object
+ * @returns - a normalized {@link Artist} object matching the argument
+ */
 export function normalizeMbArtist(artist: MbArtist): Artist {
 	return {
 		id: artist.id,
@@ -97,13 +97,12 @@ export function normalizeMbArtist(artist: MbArtist): Artist {
 	};
 }
 
-/** Normalizes an array of MbArtist objects from the MusicBrainz API
- * into the common Artist shape */
-export function normalizeMbArtists(artists: MbArtist[]): Artist[] {
-	return artists.map(normalizeMbArtist);
-}
-
-/** Normalizes a MbTrack from the MusicBrainz API into the common Track shape */
+/**
+ * Normalizes a {@link MbTrack} from the MusicBrainz API into the common {@link Track} shape
+ *
+ * @param track - {@link MbTrack} object
+ * @returns - a normalized {@link Track} object matching the argument
+ */
 export function normalizeMbTrack(track: MbTrack): Track {
 	return {
 		id: track.id,
@@ -114,13 +113,12 @@ export function normalizeMbTrack(track: MbTrack): Track {
 	};
 }
 
-/** Normalizes an array of MbTrack objects from the MusicBrainz API
- * into the common Track shape */
-export function normalizeMbTracks(tracks: MbTrack[]): Track[] {
-	return tracks.map(normalizeMbTrack);
-}
-
-/** Normalizes a SpotifyArtist from the Spotify API into the common Artist shape */
+/**
+ * Normalizes a {@link SpotifyArtist} from the Spotify API into the common {@link Artist} shape
+ *
+ * @param artist - {@link SpotifyArtist} object
+ * @returns - a normalized {@link Artist} object matching the argument
+ */
 export function normalizeSpotifyArtist(artist: SpotifyArtist): Artist {
 	return {
 		id: artist.id,
@@ -130,13 +128,12 @@ export function normalizeSpotifyArtist(artist: SpotifyArtist): Artist {
 	};
 }
 
-/** Normalizes an array of SpotifyArtist objects from the Spotify API
- * into the common Artist shape */
-export function normalizeSpotifyArtists(artists: SpotifyArtist[]): Artist[] {
-	return artists.map(normalizeSpotifyArtist);
-}
-
-/** Normalizes a SpotifyTrack from the Spotify API into the common Track shape */
+/**
+ * Normalizes a {@link SpotifyTrack} from the Spotify API into the common {@link Track} shape
+ *
+ * @param track - {@link SpotifyTrack} object
+ * @returns - a normalized {@link Track} object matching the argument
+ */
 export function normalizeSpotifyTrack(track: SpotifyTrack): Track {
 	return {
 		id: track.id,
@@ -144,10 +141,4 @@ export function normalizeSpotifyTrack(track: SpotifyTrack): Track {
 		title: track.name,
 		artists: track.artists.map((ar) => ar.name),
 	};
-}
-
-/** Normalizes an array of SpotifyTrack objects from the Spotify API
- * into the common Track shape */
-export function normalizeSpotifyTracks(tracks: SpotifyTrack[]): Track[] {
-	return tracks.map(normalizeSpotifyTrack);
 }

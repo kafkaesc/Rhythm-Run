@@ -1,32 +1,32 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
+import ClearIcon from '@/components/icons/ClearIcon';
+import SearchIcon from '@/components/icons/SearchIcon';
 import SearchStatus from '@/components/SearchStatus';
 import TrackList from '@/components/TrackList';
-import { useGsbSongSearch } from '@/hooks/api/useGetSongBpmApi';
+import { useGsbTrackSearch } from '@/hooks/api/useGetSongBpmApi';
 import { normalizeGsbTrack } from '@/lib/normalize';
-import { GsbSong } from '@/models/getSongBpm';
-
-const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
-const SearchIcon = () => (
-	<Icon icon="lucide:search" aria-hidden="true" className="-translate-y-px" />
-);
+import { GsbTrack } from '@/models/getSongBpm';
 
 type GsbTrackSearchProps = {
-	add?: (track: GsbSong) => void;
+	add?: (track: GsbTrack) => void;
+	title?: string;
 };
 
 /**
  * Search form for querying the GetSongBPM API by track name.
  * Renders the response track list once the search completes.
+ *
+ * @param add - Optional callback to add a selected track from the search results
+ * @param title - Overrides the default label
  */
-export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
+export default function GsbTrackSearch({ add, title }: GsbTrackSearchProps) {
 	const [input, setInput] = useState('');
 	const [query, setQuery] = useState('');
-	const { songs, loading, error } = useGsbSongSearch(query);
+	const { tracks, loading, error } = useGsbTrackSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
@@ -42,9 +42,14 @@ export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
+				<label htmlFor="gsb-track-search" className="text-2xl font-bold">
+					{title || 'Track name'}
+				</label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="gsb-track-search-status"
+						id="gsb-track-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Find a track via GetSongBPM"
@@ -56,7 +61,7 @@ export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 						disabled={input.length === 0}
 						type="submit"
 					>
-						<SearchIcon />
+						<SearchIcon aria-hidden="true" />
 						<span className="hidden md:inline">Search</span>
 					</Button>
 					<Button
@@ -66,17 +71,18 @@ export default function GsbTrackSearch({ add }: GsbTrackSearchProps) {
 						type="button"
 						onClick={clear}
 					>
-						<ClearIcon />
+						<ClearIcon aria-hidden="true" />
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>
 				<SearchStatus
 					err={error}
 					errMessage="Error with the GetSongBPM response"
+					id="gsb-track-search-status"
 					loading={loading}
 				/>
 			</form>
-			<TrackList tracks={songs} add={add} toTrack={normalizeGsbTrack} />
+			<TrackList tracks={tracks} add={add} toTrack={normalizeGsbTrack} />
 		</div>
 	);
 }

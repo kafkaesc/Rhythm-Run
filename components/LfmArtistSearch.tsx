@@ -1,25 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
+import ClearIcon from '@/components/icons/ClearIcon';
+import SearchIcon from '@/components/icons/SearchIcon';
 import ArtistList from '@/components/ArtistList';
 import SearchStatus from '@/components/SearchStatus';
 import { useLastFmArtistSearch } from '@/hooks/api/useLastFmApi';
-import { LfmArtist } from '@/models/lastFm';
 import { normalizeLfmArtist } from '@/lib/normalize';
-
-const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
-const SearchIcon = () => (
-	<Icon icon="lucide:search" aria-hidden="true" className="-translate-y-px" />
-);
+import { LfmArtist } from '@/models/lastFm';
 
 type LfmArtistSearchProps = {
 	add?: (artist: LfmArtist) => void;
 	title?: string;
 };
 
+/**
+ * Search form for querying the Last.fm API by artist name.
+ * Renders the response artist list once the search completes.
+ *
+ * @param add - Optional callback to add a selected artist from the search results
+ * @param title - Overrides the default label
+ */
 export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
@@ -27,10 +30,8 @@ export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
-
 		// If a previous search is still running, don't trigger another
 		if (loading) return;
-
 		setQuery(input);
 	}
 
@@ -40,14 +41,16 @@ export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 	}
 
 	return (
-		<fieldset className="border-0 m-0 min-w-0 p-0">
-			<legend className="text-2xl font-bold">
-				{title || 'Select up to 5 artists'}
-			</legend>
+		<div>
 			<form onSubmit={onSubmit}>
+				<label htmlFor="lfm-artist-search" className="text-2xl font-bold">
+					{title || 'Select up to 5 artists'}
+				</label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="lfm-artist-search-status"
+						id="lfm-artist-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Find an artist via Last.fm"
@@ -59,7 +62,7 @@ export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 						disabled={input.length === 0}
 						type="submit"
 					>
-						<SearchIcon />
+						<SearchIcon aria-hidden="true" />
 						<span className="hidden md:inline">Search</span>
 					</Button>
 					<Button
@@ -69,17 +72,18 @@ export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 						type="button"
 						onClick={clear}
 					>
-						<ClearIcon />
+						<ClearIcon aria-hidden="true" />
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>
 				<SearchStatus
 					err={error}
 					errMessage="Error with the Last.fm response"
+					id="lfm-artist-search-status"
 					loading={loading}
 				/>
 			</form>
 			<ArtistList add={add} artists={artists} toArtist={normalizeLfmArtist} />
-		</fieldset>
+		</div>
 	);
 }

@@ -1,39 +1,40 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
+import ClearIcon from '@/components/icons/ClearIcon';
+import SearchIcon from '@/components/icons/SearchIcon';
 import ArtistList from '@/components/ArtistList';
 import SearchStatus from '@/components/SearchStatus';
 import { useSpotifyArtistSearch } from '@/hooks/api/useSpotifyApi';
 import { normalizeSpotifyArtist } from '@/lib/normalize';
 import { SpotifyArtist } from '@/models/spotify';
 
-const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
-const SearchIcon = () => (
-	<Icon icon="lucide:search" aria-hidden="true" className="-translate-y-px" />
-);
-
 type SpotifyArtistSearchProps = {
 	add?: (artist: SpotifyArtist) => void;
+	title?: string;
 };
 
 /**
  * Search form for querying the Spotify API by artist name.
  * Renders the response artist list once the search completes.
+ *
+ * @param add - Optional callback to add a selected artist from the search results
+ * @param title - Overrides the default label
  */
-export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
+export default function SpotifyArtistSearch({
+	add,
+	title,
+}: SpotifyArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { artists, loading, error } = useSpotifyArtistSearch(query);
 
 	function onSubmit(ev: React.SyntheticEvent<HTMLFormElement>) {
 		ev.preventDefault();
-
 		// If a previous search is still running, don't trigger another
 		if (loading) return;
-
 		setQuery(input);
 	}
 
@@ -45,9 +46,14 @@ export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
+				<label htmlFor="spotify-artist-search" className="text-2xl font-bold">
+					{title || 'Artist name'}
+				</label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="spotify-artist-search-status"
+						id="spotify-artist-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Search Spotify"
@@ -59,7 +65,7 @@ export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
 						disabled={input.length === 0}
 						type="submit"
 					>
-						<SearchIcon />
+						<SearchIcon aria-hidden="true" />
 						<span className="hidden md:inline">Search</span>
 					</Button>
 					<Button
@@ -69,13 +75,14 @@ export default function SpotifyArtistSearch({ add }: SpotifyArtistSearchProps) {
 						type="button"
 						onClick={clear}
 					>
-						<ClearIcon />
+						<ClearIcon aria-hidden="true" />
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>
 				<SearchStatus
 					err={error}
 					errMessage="Error with the Spotify response"
+					id="spotify-artist-search-status"
 					loading={loading}
 				/>
 			</form>

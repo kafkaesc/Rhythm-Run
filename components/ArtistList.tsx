@@ -23,7 +23,7 @@ export default function ArtistList<T>({
 
 	return (
 		<div className="max-h-[11em] overflow-y-auto">
-			<hr />
+			<hr aria-hidden="true" />
 			{artists.map((ar) => {
 				const item = toArtist(ar);
 				return (
@@ -55,7 +55,7 @@ export default function ArtistList<T>({
 							)}
 							<span>{item.name}</span>
 						</div>
-						<hr />
+						<hr aria-hidden="true" />
 					</div>
 				);
 			})}

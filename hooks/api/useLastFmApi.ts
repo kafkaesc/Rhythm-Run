@@ -35,10 +35,11 @@ export function useLastFmArtistSearch(artist: string | null): LfmArtistResult {
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(LOCAL_ARTIST_SEARCH_ENDPOINT, window.location.origin);
 		url.searchParams.set('artist', artist);
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`Last.fm API error: ${res.status}`);
@@ -49,11 +50,14 @@ export function useLastFmArtistSearch(artist: string | null): LfmArtistResult {
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [artist]);
 
 	return {
@@ -87,6 +91,7 @@ export function useLastFmArtistTopTracks(
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(
 			LOCAL_ARTIST_TOP_TRACKS_ENDPOINT,
 			window.location.origin,
@@ -97,7 +102,7 @@ export function useLastFmArtistTopTracks(
 			url.searchParams.set('artist', artist);
 		}
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`Last.fm API error: ${res.status}`);
@@ -108,11 +113,14 @@ export function useLastFmArtistTopTracks(
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [mbid, artist]);
 
 	return {
@@ -146,13 +154,14 @@ export function useLastFmTrackSearch(
 
 		dispatch({ type: 'fetch' });
 
+		const controller = new AbortController();
 		const url = new URL(LOCAL_TRACK_SEARCH_ENDPOINT, window.location.origin);
 		url.searchParams.set('track', track);
 		if (artist) {
 			url.searchParams.set('artist', artist);
 		}
 
-		fetch(url)
+		fetch(url, { signal: controller.signal })
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(`Last.fm API error: ${res.status}`);
@@ -163,11 +172,14 @@ export function useLastFmTrackSearch(
 				dispatch({ type: 'success', data });
 			})
 			.catch((err: unknown) => {
+				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
 					error: err instanceof Error ? err.message : 'Unknown error',
 				});
 			});
+
+		return () => controller.abort();
 	}, [track, artist]);
 
 	return {

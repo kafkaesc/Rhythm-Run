@@ -1,8 +1,8 @@
 // cspell:disable
 
-import { GsbSong } from '@/models/getSongBpm';
+import { GsbTrack } from '@/models/getSongBpm';
 
-export const GsbBasketCase: GsbSong = {
+export const GsbBasketCase: GsbTrack = {
 	acousticness: 1,
 	album: {
 		title: 'Dookie',
@@ -27,7 +27,7 @@ export const GsbBasketCase: GsbSong = {
 	uri: 'https://getsongbpm.com/song/basket-case/N7rQD',
 };
 
-export const GsbFeelGoodInc: GsbSong = {
+export const GsbFeelGoodInc: GsbTrack = {
 	acousticness: 1,
 	album: {
 		title: 'Demon Days',
@@ -52,7 +52,7 @@ export const GsbFeelGoodInc: GsbSong = {
 	uri: 'https://getsongbpm.com/song/feel-good-incpoint/D95mAy',
 };
 
-export const GsbPortionsForFoxes: GsbSong = {
+export const GsbPortionsForFoxes: GsbTrack = {
 	acousticness: 1,
 	album: {
 		title: 'More Adventurous',
@@ -77,7 +77,7 @@ export const GsbPortionsForFoxes: GsbSong = {
 	uri: 'https://getsongbpm.com/song/portions-for-foxes/Ko3Yl',
 };
 
-export const GsbSugarWereGoinDown: GsbSong = {
+export const GsbSugarWereGoinDown: GsbTrack = {
 	acousticness: 1,
 	album: {
 		title: 'From Under the Cork Tree',

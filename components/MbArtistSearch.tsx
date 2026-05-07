@@ -1,25 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
+import ClearIcon from '@/components/icons/ClearIcon';
+import SearchIcon from '@/components/icons/SearchIcon';
 import ArtistList from '@/components/ArtistList';
 import SearchStatus from '@/components/SearchStatus';
 import { useMusicBrainzArtistSearch } from '@/hooks/api/useMusicBrainzApi';
-import { MbArtist } from '@/models/musicBrainz';
 import { normalizeMbArtist } from '@/lib/normalize';
-
-const ClearIcon = () => <Icon icon="lucide:x-circle" aria-hidden="true" />;
-const SearchIcon = () => (
-	<Icon icon="lucide:search" aria-hidden="true" className="-translate-y-px" />
-);
+import { MbArtist } from '@/models/musicBrainz';
 
 type MbArtistSearchProps = {
 	add?: (artist: MbArtist) => void;
+	title?: string;
 };
 
-export default function MbArtistSearch({ add }: MbArtistSearchProps) {
+/**
+ * Search form for querying the MusicBrainz API by artist name.
+ * Renders the response artist list once the search completes.
+ *
+ * @param add - Optional callback to add a selected artist from the search results
+ * @param title - Overrides the default label
+ */
+export default function MbArtistSearch({ add, title }: MbArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { artists, loading, error } = useMusicBrainzArtistSearch(query);
@@ -41,9 +45,14 @@ export default function MbArtistSearch({ add }: MbArtistSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
+				<label htmlFor="mb-artist-search" className="text-2xl font-bold">
+					{title || 'Artist name'}
+				</label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
+						aria-describedby="mb-artist-search-status"
+						id="mb-artist-search"
 						name="searchQuery"
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Find an artist via MusicBrainz"
@@ -55,7 +64,7 @@ export default function MbArtistSearch({ add }: MbArtistSearchProps) {
 						disabled={input.length === 0}
 						type="submit"
 					>
-						<SearchIcon />
+						<SearchIcon aria-hidden="true" />
 						<span className="hidden md:inline">Search</span>
 					</Button>
 					<Button
@@ -65,13 +74,14 @@ export default function MbArtistSearch({ add }: MbArtistSearchProps) {
 						type="button"
 						onClick={clear}
 					>
-						<ClearIcon />
+						<ClearIcon aria-hidden="true" />
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>
 				<SearchStatus
 					err={error}
 					errMessage="Error with the MusicBrainz response"
+					id="mb-artist-search-status"
 					loading={loading}
 				/>
 			</form>

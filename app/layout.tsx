@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Container from '@/components/layout/Container';
+import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/navigation/Navbar';
 
 const geistSans = Geist({
@@ -40,12 +41,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
 				<script dangerouslySetInnerHTML={{ __html: themeScript }} />
 			</head>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}
 			>
-				<Container>
+				<Container className="grow">
 					<Navbar />
 					{children}
 				</Container>
+				<Footer />
 			</body>
 		</html>
 	);
