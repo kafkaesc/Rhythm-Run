@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Button from '@/components/elements/Button';
-import H2 from './elements/H2';
+import H2 from '@/components/elements/H2';
 import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
 import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
@@ -54,7 +54,6 @@ export default function MetaMusicArtistTempo() {
 				remove={remove}
 				toArtist={normalizeLfmArtist}
 			/>
-
 			<div className="flex flex-col items-center gap-2">
 				<div>
 					<ArtistTempoQueryDisplay artists={artists} tempo={selectedTempo} />
