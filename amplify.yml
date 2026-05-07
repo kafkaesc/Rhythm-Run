@@ -1,10 +1,4 @@
 version: 1
-env:
-  secrets:
-    - GET_SONG_BPM_KEY
-    - LAST_FM_KEY
-    - SPOTIFY_CLIENT_ID
-    - SPOTIFY_CLIENT_SECRET
 frontend:
   phases:
     preBuild:
