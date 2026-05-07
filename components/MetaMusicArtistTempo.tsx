@@ -7,6 +7,7 @@ import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
 import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
 import BpmSelector from '@/components/BpmSelector';
+import EpsilonSelector from '@/components/EpsilonSelector';
 import LfmArtistSearch from '@/components/LfmArtistSearch';
 import SearchStatus from '@/components/SearchStatus';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
@@ -19,7 +20,8 @@ export default function MetaMusicArtistTempo() {
 	const [mmQuery, setMmQuery] = useState<MetaMusicArtistTempoQuery | null>(
 		null,
 	);
-	const [selectedTempo, setSelectedTempo] = useState(160);
+	const [tempo, setTempo] = useState(160);
+	const [epsilon, setEpsilon] = useState(4);
 	const {
 		set: artists,
 		add,
@@ -42,12 +44,19 @@ export default function MetaMusicArtistTempo() {
 
 	const loadMbids = () => {
 		const mbids = artists.map((a) => a.mbid).filter(Boolean);
-		setMmQuery({ mbids, tempo: selectedTempo });
+		setMmQuery({ mbids, tempo, epsilon });
 	};
 
 	return (
 		<>
-			<BpmSelector onChange={setSelectedTempo} />
+			<div className="flex flex-col sm:flex-row gap-3">
+				<div className="flex-1">
+					<BpmSelector onChange={setTempo} />
+				</div>
+				<div className="shrink-0">
+					<EpsilonSelector onChange={setEpsilon} />
+				</div>
+			</div>
 			<LfmArtistSearch add={add} />
 			<ArtistList
 				artists={artists}
@@ -56,10 +65,19 @@ export default function MetaMusicArtistTempo() {
 			/>
 			<div className="flex flex-col items-center gap-2">
 				<div>
-					<ArtistTempoQueryDisplay artists={artists} tempo={selectedTempo} />
+					<ArtistTempoQueryDisplay
+						artists={artists}
+						tempo={tempo}
+						epsilon={epsilon}
+					/>
 				</div>
 				<div className="flex gap-3">
-					<Button buttonStyle="black-white" onClick={loadMbids} type="button">
+					<Button
+						buttonStyle="black-white"
+						disabled={artists.length === 0}
+						onClick={loadMbids}
+						type="button"
+					>
 						Find Tracks
 					</Button>
 					<Button buttonStyle="black-white" onClick={clearAll} type="button">

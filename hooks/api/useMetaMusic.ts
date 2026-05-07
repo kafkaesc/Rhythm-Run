@@ -16,9 +16,8 @@ export function useMetaMusicArtistTempo(
 		initialState<Track[]>(),
 	);
 
-	// TODO: This is a wide epsilon while debugging, change to 0 when ready
-	const DEFAULT_EPSILON = 10;
-	const DEFAULT_TEMPO = 120;
+	const DEFAULT_EPSILON = 4;
+	const DEFAULT_TEMPO = 160;
 	const mbidKey = mbidList.join(',');
 
 	useEffect(() => {
