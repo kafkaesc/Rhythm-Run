@@ -13,8 +13,6 @@ jobs:
       - uses: actions/checkout@v4
       # Install pnpm into the runner
       - uses: pnpm/action-setup@v4
-        with:
-          version: latest
       # Install node on the runner
       - uses: actions/setup-node@v4
         with:
