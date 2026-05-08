@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import Button from '@/components/elements/Button';
 import H2 from '@/components/elements/H2';
-import P from '@/components/elements/P';
 import ArtistList from '@/components/ArtistList';
 import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
 import BpmSelector from '@/components/BpmSelector';
 import EpsilonSelector from '@/components/EpsilonSelector';
 import LfmArtistSearch from '@/components/LfmArtistSearch';
 import SearchStatus from '@/components/SearchStatus';
+import TrackTable from '@/components/TrackTable';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
 import { normalizeLfmArtist } from '@/lib/normalize';
@@ -26,7 +26,6 @@ export default function MetaMusicArtistTempo() {
 		set: artists,
 		add,
 		remove,
-		clear: clearArtists,
 	} = useSet<LfmArtist>({
 		key: (a) => a.mbid || a.name,
 		limit: 5,
@@ -37,8 +36,7 @@ export default function MetaMusicArtistTempo() {
 		mmQuery?.epsilon ?? null,
 	);
 
-	const clearAll = () => {
-		clearArtists();
+	const clearResults = () => {
 		setMmQuery(null);
 	};
 
@@ -73,15 +71,19 @@ export default function MetaMusicArtistTempo() {
 				</div>
 				<div className="flex gap-3">
 					<Button
-						buttonStyle="black-white"
+						buttonStyle="primary"
 						disabled={artists.length === 0}
 						onClick={loadMbids}
 						type="button"
 					>
 						Find Tracks
 					</Button>
-					<Button buttonStyle="black-white" onClick={clearAll} type="button">
-						Clear All
+					<Button
+						buttonStyle="black-white"
+						onClick={clearResults}
+						type="button"
+					>
+						Clear Results
 					</Button>
 				</div>
 				<SearchStatus
@@ -93,9 +95,7 @@ export default function MetaMusicArtistTempo() {
 			{tracks && (
 				<>
 					<H2>Matching Tracks</H2>
-					{tracks.map((tr) => (
-						<P key={tr.id}>{`${tr.artists} - ${tr.title} - bpm: ${tr.bpm}`}</P>
-					))}
+					<TrackTable tracks={tracks} />
 				</>
 			)}
 		</>
