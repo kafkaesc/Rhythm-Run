@@ -51,6 +51,7 @@ Once the project is installed and set up, running it just takes two steps:
 - [clsx](https://github.com/lukeed/clsx)
 - [Iconify](https://iconify.design)
 - [tailwind-merge](https://github.com/dcastil/tailwind-merge)
+- [TanStack Table](https://tanstack.com/table/latest)
 
 ## 🔌 APIs
 
