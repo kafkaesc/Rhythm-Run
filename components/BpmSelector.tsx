@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Input from '@/components/elements/Input';
 
 const DEFAULT_BPM = 160;
@@ -25,6 +25,8 @@ type BpmSelectorProps = {
  */
 export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 	const [bpm, setBpm] = useState(DEFAULT_BPM);
+	const [inputValue, setInputValue] = useState(String(DEFAULT_BPM));
+	const commitNextChangeRef = useRef(false);
 
 	// Native range input uses CSS accent-color which delegates rendering
 	// to the browser, so the color won't match other UI elements. Instead
@@ -32,10 +34,47 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 	// on the track.
 	const fillPercent = ((bpm - MIN_BPM) / (MAX_BPM - MIN_BPM)) * 100;
 
-	function handleChange(value: number) {
-		const clampValue = clamp(value);
-		setBpm(clampValue);
-		onChange?.(clampValue);
+	// Clamps value to the valid BPM range, then syncs
+	// the slider, number input, and onChange callback
+	function commitValue(value: number) {
+		const clamped = clamp(value);
+		setBpm(clamped);
+		setInputValue(String(clamped));
+		onChange?.(clamped);
+	}
+
+	// Commits the typed value on blur, or resets the input to
+	// the last valid BPM if the blur value is invalid
+	function handleInputBlur() {
+		const parsed = Number(inputValue);
+		if (!isNaN(parsed) && inputValue !== '') {
+			commitValue(parsed);
+		} else {
+			setInputValue(String(bpm));
+		}
+	}
+
+	// Updates the display value on every keystroke, and
+	// commits immediately if the change was triggered by an arrow key
+	function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+		setInputValue(e.target.value);
+		if (commitNextChangeRef.current) {
+			commitNextChangeRef.current = false;
+			const parsed = Number(e.target.value);
+			if (!isNaN(parsed) && e.target.value !== '') {
+				commitValue(parsed);
+			}
+		}
+	}
+
+	// Flags arrow key presses so the next change event commits,
+	// and triggers a commit immediately on Enter
+	function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+		if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+			commitNextChangeRef.current = true;
+		} else if (e.key === 'Enter') {
+			handleInputBlur();
+		}
 	}
 
 	return (
@@ -55,7 +94,7 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 					id="bpm-range"
 					max={MAX_BPM}
 					min={MIN_BPM}
-					onChange={(e) => handleChange(Number(e.target.value))}
+					onChange={(e) => commitValue(Number(e.target.value))}
 					// Is this worth it for the slider to match the rest of the UI? Maybe
 					style={
 						{
@@ -74,9 +113,11 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 					id="bpm-input"
 					max={MAX_BPM}
 					min={MIN_BPM}
-					onChange={(e) => handleChange(Number(e.target.value))}
+					onBlur={handleInputBlur}
+					onChange={handleInputChange}
+					onKeyDown={handleInputKeyDown}
 					type="number"
-					value={bpm}
+					value={inputValue}
 				/>
 			</div>
 		</fieldset>
