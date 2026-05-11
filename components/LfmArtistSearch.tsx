@@ -5,14 +5,15 @@ import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
 import ClearIcon from '@/components/icons/ClearIcon';
 import SearchIcon from '@/components/icons/SearchIcon';
-import ArtistList from '@/components/ArtistList';
+import ArtistSearchList from '@/components/ArtistSearchList';
 import SearchStatus from '@/components/SearchStatus';
 import { useLastFmArtistSearch } from '@/hooks/api/useLastFmApi';
-import { normalizeLfmArtist } from '@/lib/normalize';
 import { LfmArtist } from '@/models/lastFm';
 
 type LfmArtistSearchProps = {
 	add?: (artist: LfmArtist) => void;
+	remove?: (artist: LfmArtist) => void;
+	selected?: LfmArtist[];
 	title?: string;
 };
 
@@ -21,9 +22,11 @@ type LfmArtistSearchProps = {
  * Renders the response artist list once the search completes.
  *
  * @param add - Optional callback to add a selected artist from the search results
+ * @param remove - Optional callback to remove a selected artist
+ * @param selected - Artists already selected; shown at top of list and excluded from results
  * @param title - Overrides the default label
  */
-export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
+export default function LfmArtistSearch({ add, remove, selected, title }: LfmArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { artists, loading, error } = useLastFmArtistSearch(query);
@@ -83,7 +86,12 @@ export default function LfmArtistSearch({ add, title }: LfmArtistSearchProps) {
 					loading={loading}
 				/>
 			</form>
-			<ArtistList add={add} artists={artists} toArtist={normalizeLfmArtist} />
+			<ArtistSearchList
+				add={add}
+				remove={remove}
+				results={artists}
+				selected={selected ?? []}
+			/>
 		</div>
 	);
 }
