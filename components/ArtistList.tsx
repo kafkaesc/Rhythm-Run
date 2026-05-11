@@ -1,10 +1,7 @@
-import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
+import AddIcon from '@/components/icons/AddIcon';
+import RemoveIcon from '@/components/icons/RemoveIcon';
 import { Artist } from '@/models/rhythmRun';
-
-const AddIcon = () => <Icon icon="lucide:plus" height={16} width={16} />;
-
-const RemoveIcon = () => <Icon icon="lucide:x" height={16} width={16} />;
 
 type ArtistListProps<T> = {
 	add?: (artist: T) => void;
@@ -38,7 +35,7 @@ export default function ArtistList<T>({
 									type="button"
 									onClick={() => add(ar)}
 								>
-									<AddIcon />
+									<AddIcon height={16} width={16} />
 								</Button>
 							)}
 							{remove && (
@@ -50,7 +47,7 @@ export default function ArtistList<T>({
 									type="button"
 									onClick={() => remove(ar)}
 								>
-									<RemoveIcon />
+									<RemoveIcon height={16} width={16} />
 								</Button>
 							)}
 							<span>{item.name}</span>
