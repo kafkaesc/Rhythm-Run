@@ -79,7 +79,7 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 
 	return (
 		<fieldset className="border-0 m-0 min-w-0 p-0">
-			<legend className="text-2xl font-bold">
+			<legend className="text-xl font-bold md:text-2xl">
 				{title || 'Select target tempo'}
 			</legend>
 			<div className="flex items-center gap-3">

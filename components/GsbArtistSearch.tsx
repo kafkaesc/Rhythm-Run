@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
 import ClearIcon from '@/components/icons/ClearIcon';
 import SearchIcon from '@/components/icons/SearchIcon';
 import ArtistList from '@/components/ArtistList';
@@ -43,9 +44,9 @@ export default function GsbArtistSearch({ add, title }: GsbArtistSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<label htmlFor="gsb-artist-search" className="text-2xl font-bold">
+				<Label htmlFor="gsb-artist-search">
 					{title || 'Artist name'}
-				</label>
+				</Label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
