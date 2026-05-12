@@ -45,15 +45,19 @@ export default function MetaMusicArtistTempo() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex flex-col sm:flex-row gap-3">
-				<div className="flex-1">
-					<BpmSelector onChange={setTempo} />
-				</div>
-				<div className="shrink-0">
-					<EpsilonSelector onChange={setEpsilon} />
-				</div>
-			</div>
-			<LfmArtistSearch add={add} remove={remove} selected={artists} />
+			{!mmQuery && (
+				<>
+					<div className="flex flex-col sm:flex-row gap-3">
+						<div className="flex-1">
+							<BpmSelector onChange={setTempo} />
+						</div>
+						<div className="shrink-0">
+							<EpsilonSelector onChange={setEpsilon} />
+						</div>
+					</div>
+					<LfmArtistSearch add={add} remove={remove} selected={artists} />
+				</>
+			)}
 			<div className="flex flex-col items-center gap-2">
 				<div>
 					<ArtistTempoQueryDisplay
