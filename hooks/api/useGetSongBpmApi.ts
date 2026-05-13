@@ -40,11 +40,14 @@ export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
 		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
 		url.searchParams.set('artist', artist);
 
-		fetch(url, { signal: controller.signal })
+		fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: controller.signal,
+		})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`GetSongBPM API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
 				return res.json() as Promise<GsbArtist[]>;
 			})
 			.then((data) => {
@@ -92,11 +95,14 @@ export function useGsbTrackSearch(track: string | null): GsbTrackResult {
 		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
 		url.searchParams.set('song', track);
 
-		fetch(url, { signal: controller.signal })
+		fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: controller.signal,
+		})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`GetSongBPM API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
 				return res.json() as Promise<GsbTrack[]>;
 			})
 			.then((data) => {
@@ -144,11 +150,14 @@ export function useGsbTempoSearch(bpm: number | null): GsbTempoResult {
 		const url = new URL(LOCAL_TEMPO_ENDPOINT, window.location.origin);
 		url.searchParams.set('bpm', String(bpm));
 
-		fetch(url, { signal: controller.signal })
+		fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: controller.signal,
+		})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`GetSongBPM API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
 				return res.json() as Promise<GsbTempo[]>;
 			})
 			.then((data) => {
