@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Button from '@/components/elements/Button';
 import H2 from '@/components/elements/H2';
-import ArtistList from '@/components/ArtistList';
 import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
 import BpmSelector from '@/components/BpmSelector';
 import EpsilonSelector from '@/components/EpsilonSelector';
@@ -12,7 +11,6 @@ import SearchStatus from '@/components/SearchStatus';
 import TrackTable from '@/components/TrackTable';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
-import { normalizeLfmArtist } from '@/lib/normalize';
 import { LfmArtist } from '@/models/lastFm';
 import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
 
@@ -46,21 +44,20 @@ export default function MetaMusicArtistTempo() {
 	};
 
 	return (
-		<>
-			<div className="flex flex-col sm:flex-row gap-3">
-				<div className="flex-1">
-					<BpmSelector onChange={setTempo} />
-				</div>
-				<div className="shrink-0">
-					<EpsilonSelector onChange={setEpsilon} />
-				</div>
-			</div>
-			<LfmArtistSearch add={add} />
-			<ArtistList
-				artists={artists}
-				remove={remove}
-				toArtist={normalizeLfmArtist}
-			/>
+		<div className="flex flex-col gap-4">
+			{!mmQuery && (
+				<>
+					<div className="flex flex-col sm:flex-row gap-3">
+						<div className="flex-1">
+							<BpmSelector onChange={setTempo} />
+						</div>
+						<div className="shrink-0">
+							<EpsilonSelector onChange={setEpsilon} />
+						</div>
+					</div>
+					<LfmArtistSearch add={add} remove={remove} selected={artists} />
+				</>
+			)}
 			<div className="flex flex-col items-center gap-2">
 				<div>
 					<ArtistTempoQueryDisplay
@@ -98,6 +95,6 @@ export default function MetaMusicArtistTempo() {
 					<TrackTable tracks={tracks} />
 				</>
 			)}
-		</>
+		</div>
 	);
 }

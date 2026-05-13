@@ -20,6 +20,18 @@ it('Renders the search input', () => {
 	expect(input).toBeInTheDocument();
 });
 
+it('Renders the default label when no title is provided', () => {
+	render(<LfmArtistSearch />);
+	const label = screen.getByText(/select up to 5 artists/i);
+	expect(label).toBeInTheDocument();
+});
+
+it('Renders the title prop when provided', () => {
+	render(<LfmArtistSearch title="Select Your Faves" />);
+	const label = screen.getByText('Select Your Faves');
+	expect(label).toBeInTheDocument();
+});
+
 it('Renders the search button', () => {
 	render(<LfmArtistSearch />);
 	// Must be an exact match to avoid the clear button being selected via "clear search"
@@ -71,7 +83,7 @@ it('Renders error status display when there is an error', () => {
 	mockUseLastFmArtistSearch.mockReturnValueOnce({
 		artists: null,
 		loading: null,
-		error: 'Some error',
+		error: "I can't let you do that Star Fox",
 	});
 	render(<LfmArtistSearch />);
 	const errDisplay = screen.getByText(/error with the last\.fm response/i);

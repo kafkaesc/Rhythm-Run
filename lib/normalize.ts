@@ -9,7 +9,7 @@ import { MbArtist, MbTrack } from '@/models/musicBrainz';
  *
  * @param artist - {@link GsbArtist} object
  * @returns - a normalized {@link Artist} object matching the argument
- * */
+ */
 export function normalizeGsbArtist(artist: GsbArtist): Artist {
 	return {
 		id: artist.id,

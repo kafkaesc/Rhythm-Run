@@ -47,10 +47,11 @@ it('Changing the slider updates the number input', () => {
 	expect(spinner).toHaveValue(180);
 });
 
-it('Changing the number input updates the slider', () => {
+it('Changing the number input updates the slider on blur', () => {
 	render(<BpmSelector />);
 	const spinner = screen.getByRole('spinbutton');
 	fireEvent.change(spinner, { target: { value: '140' } });
+	fireEvent.blur(spinner);
 	const slider = screen.getByRole('slider');
 	expect(slider).toHaveValue('140');
 });
@@ -63,11 +64,12 @@ it('Calls onChange with the new value when slider changes', () => {
 	expect(onChange).toHaveBeenCalledWith(170);
 });
 
-it('Calls onChange with the new value when number input changes', () => {
+it('Calls onChange with the new value when number input blurs', () => {
 	const onChange = jest.fn();
 	render(<BpmSelector onChange={onChange} />);
 	const spinner = screen.getByRole('spinbutton');
 	fireEvent.change(spinner, { target: { value: '150' } });
+	fireEvent.blur(spinner);
 	expect(onChange).toHaveBeenCalledWith(150);
 });
 
@@ -76,6 +78,7 @@ it('Clamps value to MIN_BPM when input is below 60', () => {
 	render(<BpmSelector onChange={onChange} />);
 	const spinner = screen.getByRole('spinbutton');
 	fireEvent.change(spinner, { target: { value: '10' } });
+	fireEvent.blur(spinner);
 	expect(onChange).toHaveBeenCalledWith(60);
 	expect(spinner).toHaveValue(60);
 });
@@ -85,6 +88,42 @@ it('Clamps value to MAX_BPM when input is above 220', () => {
 	render(<BpmSelector onChange={onChange} />);
 	const spinner = screen.getByRole('spinbutton');
 	fireEvent.change(spinner, { target: { value: '300' } });
+	fireEvent.blur(spinner);
 	expect(onChange).toHaveBeenCalledWith(220);
 	expect(spinner).toHaveValue(220);
+});
+
+it('Commits value when ArrowUp is pressed', () => {
+	const onChange = jest.fn();
+	render(<BpmSelector onChange={onChange} />);
+	const spinner = screen.getByRole('spinbutton');
+	fireEvent.keyDown(spinner, { key: 'ArrowUp' });
+	fireEvent.change(spinner, { target: { value: '161' } });
+	expect(onChange).toHaveBeenCalledWith(161);
+});
+
+it('Commits value when ArrowDown is pressed', () => {
+	const onChange = jest.fn();
+	render(<BpmSelector onChange={onChange} />);
+	const spinner = screen.getByRole('spinbutton');
+	fireEvent.keyDown(spinner, { key: 'ArrowDown' });
+	fireEvent.change(spinner, { target: { value: '159' } });
+	expect(onChange).toHaveBeenCalledWith(159);
+});
+
+it('Commits value when Enter is pressed', () => {
+	const onChange = jest.fn();
+	render(<BpmSelector onChange={onChange} />);
+	const spinner = screen.getByRole('spinbutton');
+	fireEvent.change(spinner, { target: { value: '140' } });
+	fireEvent.keyDown(spinner, { key: 'Enter' });
+	expect(onChange).toHaveBeenCalledWith(140);
+});
+
+it('Resets to last valid BPM when input is cleared and blurred', () => {
+	render(<BpmSelector />);
+	const spinner = screen.getByRole('spinbutton');
+	fireEvent.change(spinner, { target: { value: '' } });
+	fireEvent.blur(spinner);
+	expect(spinner).toHaveValue(160);
 });

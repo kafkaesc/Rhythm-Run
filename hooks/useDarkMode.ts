@@ -13,6 +13,7 @@ function subscribe(callback: () => void) {
 
 /**
  * Subscribes to the current dark mode state and provides a toggle function.
+ * 
  * @returns An object containing:
  * - `isDark` (whether dark mode is active)
  * - `toggle` (a function to switch between light and dark mode)
