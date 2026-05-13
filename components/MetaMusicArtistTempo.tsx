@@ -7,6 +7,7 @@ import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
 import BpmSelector from '@/components/BpmSelector';
 import EpsilonSelector from '@/components/EpsilonSelector';
 import LfmArtistSearch from '@/components/LfmArtistSearch';
+import LoadingMessages from '@/components/LoadingMessages';
 import SearchStatus from '@/components/SearchStatus';
 import TrackTable from '@/components/TrackTable';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
@@ -28,7 +29,7 @@ export default function MetaMusicArtistTempo() {
 		key: (a) => a.mbid || a.name,
 		limit: 5,
 	});
-	const { tracks, loading, error } = useMetaMusicArtistTempo(
+	const { tracks, loading, streaming, error } = useMetaMusicArtistTempo(
 		mmQuery?.mbids ?? [],
 		mmQuery?.tempo ?? null,
 		mmQuery?.epsilon ?? null,
@@ -84,9 +85,11 @@ export default function MetaMusicArtistTempo() {
 					</Button>
 				</div>
 				<SearchStatus
+					err={error}
 					errMessage="Error with the MetaMusic response"
 					loading={loading}
-					err={error}
+					streaming={streaming}
+					streamingMessage={<LoadingMessages />}
 				/>
 			</div>
 			{tracks && (
