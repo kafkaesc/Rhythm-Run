@@ -14,7 +14,12 @@ async function streamArtistTracks(
 ) {
 	try {
 		// Fetch the stream, throwing an error if not Ok
-		const res = await fetch(url, { signal: abortSignal });
+		const res = await fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: abortSignal,
+		});
 		if (!res.ok) throw new Error(`MetaMusic API error: ${res.status}`);
 
 		// Create reader on the response body for line-by-line streaming

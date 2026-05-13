@@ -26,6 +26,7 @@ After first downloading this project, run `pnpm install` from the root folder to
 In order to call APIs you will need to create a `.env.local` file.
 
 ```
+NEXT_PUBLIC_INTERNAL_API_KEY<YOUR_KEY_HERE>
 GET_SONG_BPM_KEY=<YOUR_KEY_HERE>
 LAST_FM_KEY=<YOUR_KEY_HERE>
 SPOTIFY_CLIENT_ID=<YOUR_KEY_HERE>

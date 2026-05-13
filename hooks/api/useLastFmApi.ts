@@ -18,6 +18,7 @@ const LOCAL_TRACK_SEARCH_ENDPOINT = '/api/lastfm/track-search';
 
 /**
  * Calls the Last.fm API to search for artists matching a name.
+ *
  * @param artist - Artist name to search for.
  * @returns A {@link LfmArtistResult}
  */
@@ -39,11 +40,14 @@ export function useLastFmArtistSearch(artist: string | null): LfmArtistResult {
 		const url = new URL(LOCAL_ARTIST_SEARCH_ENDPOINT, window.location.origin);
 		url.searchParams.set('artist', artist);
 
-		fetch(url, { signal: controller.signal })
+		fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: controller.signal,
+		})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`Last.fm API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
 				return res.json() as Promise<LfmArtist[]>;
 			})
 			.then((data) => {
@@ -70,6 +74,7 @@ export function useLastFmArtistSearch(artist: string | null): LfmArtistResult {
 /**
  * Calls the Last.fm API for the top tracks of an artist.
  * Accepts either an artist MBID or name; MBID is preferred when available.
+ *
  * @param mbid - MusicBrainz ID of the artist
  * @param artist - Artist name (used only if mbid is not provided)
  * @returns A {@link LfmTopTrackResult}
@@ -96,17 +101,18 @@ export function useLastFmArtistTopTracks(
 			LOCAL_ARTIST_TOP_TRACKS_ENDPOINT,
 			window.location.origin,
 		);
-		if (mbid) {
-			url.searchParams.set('mbid', mbid);
-		} else if (artist) {
-			url.searchParams.set('artist', artist);
-		}
 
-		fetch(url, { signal: controller.signal })
+		if (mbid) url.searchParams.set('mbid', mbid);
+		else if (artist) url.searchParams.set('artist', artist);
+
+		fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: controller.signal,
+		})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`Last.fm API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
 				return res.json() as Promise<LfmTopTrack[]>;
 			})
 			.then((data) => {
@@ -157,15 +163,16 @@ export function useLastFmTrackSearch(
 		const controller = new AbortController();
 		const url = new URL(LOCAL_TRACK_SEARCH_ENDPOINT, window.location.origin);
 		url.searchParams.set('track', track);
-		if (artist) {
-			url.searchParams.set('artist', artist);
-		}
+		if (artist) url.searchParams.set('artist', artist);
 
-		fetch(url, { signal: controller.signal })
+		fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: controller.signal,
+		})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`Last.fm API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
 				return res.json() as Promise<LfmSearchTrack[]>;
 			})
 			.then((data) => {

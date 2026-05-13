@@ -39,11 +39,15 @@ export function useMusicBrainzArtistSearch(
 		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
 		url.searchParams.set('artist', artist);
 
-		fetch(url, { signal: controller.signal })
+		fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: controller.signal,
+		})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`MusicBrainz API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`MusicBrainz API error: ${res.status}`);
+
 				return res.json() as Promise<MbArtist[]>;
 			})
 			.then((data) => {
@@ -91,11 +95,14 @@ export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {
 		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
 		url.searchParams.set('track', track);
 
-		fetch(url, { signal: controller.signal })
+		fetch(url, {
+			headers: {
+				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+			},
+			signal: controller.signal,
+		})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`MusicBrainz API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`MusicBrainz API error: ${res.status}`);
 				return res.json() as Promise<MbTrack[]>;
 			})
 			.then((data) => {

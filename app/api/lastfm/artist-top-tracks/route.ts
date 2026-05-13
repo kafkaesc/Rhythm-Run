@@ -3,28 +3,30 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchArtistTopTracks } from '@/lib/lastfm';
+import { requireApiKey } from '@/lib/api-auth';
 
 const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
 
 export async function GET(request: NextRequest) {
+	const authError = requireApiKey(request);
+	if (authError) return authError;
+
 	// Verify the Last.fm API key
 	const apiKey = process.env.LAST_FM_KEY;
-	if (!apiKey) {
+	if (!apiKey)
 		return NextResponse.json(
 			{ error: 'Error with Last.fm API key' },
 			{ status: 500 },
 		);
-	}
 
 	// Verify that an mbid or artist parameter was passed
 	const mbid = request.nextUrl.searchParams.get('mbid');
 	const artist = request.nextUrl.searchParams.get('artist');
-	if (!mbid && !artist) {
+	if (!mbid && !artist)
 		return NextResponse.json(
 			{ error: 'mbid or artist is required' },
 			{ status: 400 },
 		);
-	}
 
 	// Call the fetchArtistTopTracks function if mbid is provided
 	if (mbid) {
@@ -44,12 +46,11 @@ export async function GET(request: NextRequest) {
 
 	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);
-	if (!res.ok) {
+	if (!res.ok)
 		return NextResponse.json(
 			{ error: 'Last.fm API error' },
 			{ status: res.status },
 		);
-	}
 
 	const data = await res.json();
 	const tracks = data.toptracks?.track ?? [];

@@ -19,7 +19,7 @@ const SPOTIFY_RECOMMENDATIONS_ENDPOINT = `${SPOTIFY_BASE_URL}/recommendations`;
 
 // Endpoint parameters
 const SPOTIFY_SEARCH_LIMIT = '10'; // Spotify API won't allow more than 10
-const SPOTIFY_RECOMMENDATIONS_LIMIT = '10'; // TODO: Test the limit when this is working
+const SPOTIFY_RECOMMENDATIONS_LIMIT = '10';
 
 // Contains a cached Spotify access token and its expiration time,
 // null => no token yet or expired token was flushed
@@ -27,6 +27,7 @@ let tokenCache: { token: string; expiresAt: number } | null = null;
 
 /**
  * Returns a cached Spotify access token, or fetches a new one if the cache is empty or expired.
+ *
  * @returns A promise that resolves to a valid access token string.
  */
 function getCachedToken(): Promise<string> {
@@ -35,11 +36,13 @@ function getCachedToken(): Promise<string> {
 		return Promise.resolve(tokenCache.token);
 
 	// Fetch a new token from Spotify
-	return fetch(LOCAL_TOKEN_ENDPOINT)
+	return fetch(LOCAL_TOKEN_ENDPOINT, {
+		headers: {
+			'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
+		},
+	})
 		.then((res) => {
-			if (!res.ok) {
-				throw new Error(`Token error: ${res.status}`);
-			}
+			if (!res.ok) throw new Error(`Token error: ${res.status}`);
 			return res.json() as Promise<{ accessToken: string; expiresIn: number }>;
 		})
 		.then(({ accessToken, expiresIn }) => {
@@ -54,6 +57,7 @@ function getCachedToken(): Promise<string> {
 
 /**
  * Calls the Spotify API to search for artists matching the query.
+ *
  * @param query - The search string to look up on Spotify.
  * @returns A {@link SpotifyArtistResult}
  */
@@ -86,9 +90,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 				});
 			})
 			.then((res) => {
-				if (!res.ok) {
-					throw new Error(`Spotify API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
 				return res.json() as Promise<{ artists: { items: SpotifyArtist[] } }>;
 			})
 			.then((data) => {
@@ -114,6 +116,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 
 /**
  * Calls the Spotify API to search for tracks matching the query.
+ *
  * @param query - The search string to look up on Spotify.
  * @returns A {@link SpotifyTrackResult}
  */
@@ -149,9 +152,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 			})
 			.then((res) => {
 				// Check for errors before returning a JSON promise of the data
-				if (!res.ok) {
-					throw new Error(`Spotify API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
 				return res.json() as Promise<{ tracks: { items: SpotifyTrack[] } }>;
 			})
 			.then((data) => {
@@ -189,6 +190,7 @@ type TempoSearchParams = {
  * At least one seed (track ID, artist ID, or genre name) must be provided alongside a BPM.
  * Track IDs and artist IDs will need to be obtained by first searching
  * with {@link useSpotifyTrackSearch} or a similar method.
+ *
  * @param bpm - Target tempo in beats per minute (BPM)
  * @param seedArtist - A Spotify artist ID
  * @param seedGenre - A genre name
@@ -209,9 +211,7 @@ export function useSpotifyTempoSearch({
 	useEffect(() => {
 		const hasSeed = seedTrack || seedArtist || seedGenre;
 
-		if (!bpm || !hasSeed) {
-			return;
-		}
+		if (!bpm || !hasSeed) return;
 
 		dispatch({ type: 'fetch' });
 
@@ -223,15 +223,9 @@ export function useSpotifyTempoSearch({
 				const url = new URL(SPOTIFY_RECOMMENDATIONS_ENDPOINT);
 				url.searchParams.set('target_tempo', String(bpm));
 				url.searchParams.set('limit', SPOTIFY_RECOMMENDATIONS_LIMIT);
-				if (seedTrack) {
-					url.searchParams.set('seed_tracks', seedTrack);
-				}
-				if (seedArtist) {
-					url.searchParams.set('seed_artists', seedArtist);
-				}
-				if (seedGenre) {
-					url.searchParams.set('seed_genres', seedGenre);
-				}
+				if (seedTrack) url.searchParams.set('seed_tracks', seedTrack);
+				if (seedArtist) url.searchParams.set('seed_artists', seedArtist);
+				if (seedGenre) url.searchParams.set('seed_genres', seedGenre);
 
 				// Call the Spotify API with the access token
 				return fetch(url, {
@@ -241,9 +235,8 @@ export function useSpotifyTempoSearch({
 			})
 			.then((res) => {
 				// Check for errors before returning a JSON promise of the data
-				if (!res.ok) {
-					throw new Error(`Spotify API error: ${res.status}`);
-				}
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+
 				return res.json() as Promise<{ tracks: SpotifyTrack[] }>;
 			})
 			.then((data) => {
