@@ -30,7 +30,7 @@ export default function EpsilonSelector({
 
 	return (
 		<fieldset className="border-0 m-0 min-w-0 p-0">
-			<legend className="text-2xl font-bold">{title || 'Tempo range'}</legend>
+			<legend className="text-xl font-bold md:text-2xl">{title || 'Tempo range'}</legend>
 			<label htmlFor="epsilon-input" className="sr-only">
 				Plus or minus
 			</label>

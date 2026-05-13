@@ -2,7 +2,12 @@ import { LfmTopTrack } from '@/models/lastFm';
 
 const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
 
-/** Fetch the top tracks for an artist from Last.fm by MBID. */
+/**
+ * Fetch the top tracks for an artist from Last.fm by MBID.
+ *
+ * @param artistMbid - MusicBrainz ID for an artist
+ * @param apiKey - Last.fm API key
+ */
 export async function fetchArtistTopTracks(
 	artistMbid: string,
 	apiKey: string,
@@ -16,9 +21,7 @@ export async function fetchArtistTopTracks(
 
 	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);
-	if (!res.ok) {
-		throw new Error(`Last.fm API error: ${res.status}`);
-	}
+	if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
 
 	// If there are no tracks return an empty array. Last.fm can return a
 	// single object instead of an array if there is only one result, so
