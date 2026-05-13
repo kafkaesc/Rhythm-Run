@@ -9,6 +9,7 @@ export function initialState<T>(): AsyncState<T> {
 
 /**
  * Reducer function for async fetch state transitions for a given data type, T.
+ *
  * @param _state - The current state (unused; each action returns a full replacement).
  * @param action - The action describing the transition: 'fetch', 'success', 'error', or 'clear'.
  * @returns A new {@link AsyncState} reflecting the dispatched action.
@@ -19,6 +20,8 @@ export function reducer<T>(
 ): AsyncState<T> {
 	if (action.type === 'fetch')
 		return { status: 'loading', data: null, error: null };
+	if (action.type === 'streaming')
+		return { status: 'streaming', data: action.data, error: null };
 	if (action.type === 'success')
 		return { status: 'success', data: action.data, error: null };
 	if (action.type === 'error')
