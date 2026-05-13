@@ -2,16 +2,19 @@
 // this is a server-only route for proxying MusicBrainz API requests
 
 import { NextRequest, NextResponse } from 'next/server';
+import { requireApiKey } from '@/lib/api-auth';
 
 const MB_ARTIST_ENDPOINT = 'https://musicbrainz.org/ws/2/artist';
 const MB_SEARCH_LIMIT = '100';
 
 export async function GET(request: NextRequest) {
+	const authError = requireApiKey(request);
+	if (authError) return authError;
+
 	const artist = request.nextUrl.searchParams.get('artist');
 
-	if (!artist) {
+	if (!artist)
 		return NextResponse.json({ error: 'artist is required' }, { status: 400 });
-	}
 
 	const url = new URL(MB_ARTIST_ENDPOINT);
 	url.searchParams.set('query', `artist:"${artist}"`);

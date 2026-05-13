@@ -1,18 +1,21 @@
 // NEVER use client here:
 // this is a server-only route for fetching the Spotify access token
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { requireApiKey } from '@/lib/api-auth';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+	const authError = requireApiKey(request);
+	if (authError) return authError;
+
 	const clientId = process.env.SPOTIFY_CLIENT_ID;
 	const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-	if (!clientId || !clientSecret) {
+	if (!clientId || !clientSecret)
 		return NextResponse.json(
 			{ error: 'Spotify credentials not configured' },
 			{ status: 500 },
 		);
-	}
 
 	const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString(
 		'base64',

@@ -3,58 +3,56 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchArtistTopTracks, enrichWithTempoStream } from '@/lib/metamusic';
+import { requireApiKey } from '@/lib/api-auth';
 
 export async function GET(request: NextRequest) {
+	const authError = requireApiKey(request);
+	if (authError) return authError;
+
 	// Verify the GetSongBPM API key
 	const gsbApiKey = process.env.GET_SONG_BPM_KEY;
-	if (!gsbApiKey) {
+	if (!gsbApiKey)
 		return NextResponse.json(
 			{ error: 'Missing GetSongBPM API key' },
 			{ status: 500 },
 		);
-	}
 
 	// Verify the Last.fm API key
 	const lastFmApiKey = process.env.LAST_FM_KEY;
-	if (!lastFmApiKey) {
+	if (!lastFmApiKey)
 		return NextResponse.json(
 			{ error: 'Missing Last.fm API key' },
 			{ status: 500 },
 		);
-	}
 
 	// Verify that artist mbid(s) have been passed
 	const artistMbids = request.nextUrl.searchParams.getAll('artistMbid');
-	if (!artistMbids.length) {
+	if (!artistMbids.length)
 		return NextResponse.json(
 			{ error: 'artistMbid is required' },
 			{ status: 400 },
 		);
-	}
 
 	// Check and validate the tempo and epsilon details in the request
 	const tempo = request.nextUrl.searchParams.get('tempo');
 	const epsilon = request.nextUrl.searchParams.get('epsilon');
 
-	if (tempo === null) {
+	if (tempo === null)
 		return NextResponse.json({ error: 'tempo is required' }, { status: 400 });
-	}
 
 	const tempoNum = parseInt(tempo, 10);
-	if (isNaN(tempoNum)) {
+	if (isNaN(tempoNum))
 		return NextResponse.json(
 			{ error: 'tempo must be a number' },
 			{ status: 400 },
 		);
-	}
 
 	const epsilonNum = epsilon !== null ? parseInt(epsilon, 10) : 0;
-	if (isNaN(epsilonNum)) {
+	if (isNaN(epsilonNum))
 		return NextResponse.json(
 			{ error: 'epsilon must be a number' },
 			{ status: 400 },
 		);
-	}
 
 	const minBpm = tempoNum - epsilonNum;
 	const maxBpm = tempoNum + epsilonNum;

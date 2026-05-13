@@ -2,24 +2,26 @@
 // this is a server-only route for proxying GetSongBPM API requests
 
 import { NextRequest, NextResponse } from 'next/server';
+import { requireApiKey } from '@/lib/api-auth';
 
 const GSB_TEMPO_ENDPOINT = 'https://api.getsong.co/tempo/';
 
 export async function GET(request: NextRequest) {
+	const authError = requireApiKey(request);
+	if (authError) return authError;
+
 	// Retrieve credentials for Get Song BPM API access
 	const apiKey = process.env.GET_SONG_BPM_KEY;
-	if (!apiKey) {
+	if (!apiKey)
 		return NextResponse.json(
 			{ error: 'Error with GetSongBPM API key' },
 			{ status: 500 },
 		);
-	}
 
 	// Extract the requested bpm
 	const bpm = request.nextUrl.searchParams.get('bpm');
-	if (!bpm) {
+	if (!bpm)
 		return NextResponse.json({ error: 'bpm is required' }, { status: 400 });
-	}
 
 	// Create the URI to request from Get Song BPM
 	const uri = new URL(GSB_TEMPO_ENDPOINT);

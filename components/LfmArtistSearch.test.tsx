@@ -108,3 +108,12 @@ it('Does not trigger a new search when the state is loading', async () => {
 		error: null,
 	});
 });
+
+it('Triggers a search with the entered text on form submit', async () => {
+	render(<LfmArtistSearch />);
+	const input = screen.getByRole('textbox');
+	await userEvent.type(input, 'Rilo Kiley');
+	const searchBtn = screen.getByRole('button', { name: /^search$/i });
+	await userEvent.click(searchBtn);
+	expect(mockUseLastFmArtistSearch).toHaveBeenCalledWith('Rilo Kiley');
+});

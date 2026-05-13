@@ -10,6 +10,11 @@ it('Has reducer return a loading state on a fetch action', () => {
 	expect(state).toEqual({ status: 'loading', data: null, error: null });
 });
 
+it('Has reducer return a streaming state with data on a streaming action', () => {
+	const state = reducer(initialState(), { type: 'streaming', data: ['a', 'b'] });
+	expect(state).toEqual({ status: 'streaming', data: ['a', 'b'], error: null });
+});
+
 it('Has reducer return a success state with data on a success action', () => {
 	const state = reducer(initialState(), { type: 'success', data: ['a', 'b'] });
 	expect(state).toEqual({ status: 'success', data: ['a', 'b'], error: null });
