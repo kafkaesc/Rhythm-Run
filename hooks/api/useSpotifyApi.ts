@@ -3,6 +3,12 @@
 import { useReducer, useEffect } from 'react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
 import {
+	SPOTIFY_SEARCH_ENDPOINT,
+	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
+	SPOTIFY_SEARCH_LIMIT,
+	SPOTIFY_RECOMMENDATIONS_LIMIT,
+} from '@/lib/spotify';
+import {
 	SpotifyArtist,
 	SpotifyArtistResult,
 	SpotifyTrack,
@@ -10,16 +16,7 @@ import {
 } from '@/models/spotify';
 
 const MILLISECONDS_IN_SECOND = 1000; // https://en.wikipedia.org/wiki/Millisecond
-
-// Spotify API Endpoints, https://developer.spotify.com/documentation/web-api
 const LOCAL_TOKEN_ENDPOINT = '/api/spotify/token';
-const SPOTIFY_BASE_URL = 'https://api.spotify.com/v1';
-const SPOTIFY_SEARCH_ENDPOINT = `${SPOTIFY_BASE_URL}/search`;
-const SPOTIFY_RECOMMENDATIONS_ENDPOINT = `${SPOTIFY_BASE_URL}/recommendations`;
-
-// Endpoint parameters
-const SPOTIFY_SEARCH_LIMIT = '10'; // Spotify API won't allow more than 10
-const SPOTIFY_RECOMMENDATIONS_LIMIT = '10';
 
 // Contains a cached Spotify access token and its expiration time,
 // null => no token yet or expired token was flushed

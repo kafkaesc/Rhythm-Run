@@ -2,8 +2,9 @@
 // this is a server-only MetaMusic route — it orchestrates calls across multiple APIs
 
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchArtistTopTracks, enrichWithTempoStream } from '@/lib/metamusic';
 import { requireApiKey } from '@/lib/api-auth';
+import { inRange } from '@/lib/math';
+import { fetchArtistTopTracks, enrichWithTempoStream } from '@/lib/metamusic';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);
@@ -54,9 +55,6 @@ export async function GET(request: NextRequest) {
 			{ status: 400 },
 		);
 
-	const minBpm = tempoNum - epsilonNum;
-	const maxBpm = tempoNum + epsilonNum;
-
 	// Fetch the top tracks for each artist, staggered by 1 second
 	// to avoid calling the Last.fm API too quickly
 	let tracks;
@@ -83,13 +81,11 @@ export async function GET(request: NextRequest) {
 		async start(controller) {
 			try {
 				for await (const track of enrichWithTempoStream(tracks, gsbApiKey)) {
-					if (minBpm && (track.bpm ?? 0) < minBpm) {
-						continue;
-					}
-					if (maxBpm && (track.bpm ?? Infinity) > maxBpm) {
-						continue;
-					}
-					controller.enqueue(encoder.encode(JSON.stringify(track) + '\n'));
+					if (
+						track.bpm !== undefined &&
+						inRange(track.bpm, tempoNum, epsilonNum)
+					)
+						controller.enqueue(encoder.encode(JSON.stringify(track) + '\n'));
 				}
 			} finally {
 				controller.close();

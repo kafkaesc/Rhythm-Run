@@ -2,14 +2,11 @@
 
 import { useState } from 'react';
 import Input from '@/components/elements/Input';
+import { DEFAULT_EPSILON } from '@/lib/constants';
+import { clamp } from '@/lib/math';
 
-const DEFAULT_EPSILON = 4;
 const MAX_EPSILON = 20;
 const MIN_EPSILON = 0;
-
-function clamp(value: number) {
-	return Math.min(MAX_EPSILON, Math.max(MIN_EPSILON, value));
-}
 
 type EpsilonSelectorProps = {
 	onChange?: (epsilon: number) => void;
@@ -23,14 +20,16 @@ export default function EpsilonSelector({
 	const [epsilon, setEpsilon] = useState(DEFAULT_EPSILON);
 
 	function handleChange(value: number) {
-		const clampValue = clamp(value);
+		const clampValue = clamp(value, MIN_EPSILON, MAX_EPSILON);
 		setEpsilon(clampValue);
 		onChange?.(clampValue);
 	}
 
 	return (
 		<fieldset className="border-0 m-0 min-w-0 p-0">
-			<legend className="text-xl font-bold md:text-2xl">{title || 'Tempo range'}</legend>
+			<legend className="text-xl font-bold md:text-2xl">
+				{title || 'Tempo range'}
+			</legend>
 			<label htmlFor="epsilon-input" className="sr-only">
 				Plus or minus
 			</label>

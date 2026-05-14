@@ -3,9 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
-
-const MB_ARTIST_ENDPOINT = 'https://musicbrainz.org/ws/2/artist';
-const MB_SEARCH_LIMIT = '100';
+import { MB_ARTIST_ENDPOINT, MB_SEARCH_LIMIT } from '@/lib/musicbrainz';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);

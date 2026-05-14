@@ -2,15 +2,11 @@
 
 import { useRef, useState } from 'react';
 import Input from '@/components/elements/Input';
+import { DEFAULT_BPM } from '@/lib/constants';
+import { clamp } from '@/lib/math';
 
-const DEFAULT_BPM = 160;
 const MAX_BPM = 220;
 const MIN_BPM = 60;
-
-// https://www.youtube.com/watch?v=sVOpqbJYXp8
-function clamp(value: number) {
-	return Math.min(MAX_BPM, Math.max(MIN_BPM, value));
-}
 
 type BpmSelectorProps = {
 	onChange?: (bpm: number) => void;
@@ -37,7 +33,7 @@ export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
 	// Clamps value to the valid BPM range, then syncs
 	// the slider, number input, and onChange callback
 	function commitValue(value: number) {
-		const clamped = clamp(value);
+		const clamped = clamp(value, MIN_BPM, MAX_BPM);
 		setBpm(clamped);
 		setInputValue(String(clamped));
 		onChange?.(clamped);

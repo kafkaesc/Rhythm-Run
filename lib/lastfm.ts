@@ -1,6 +1,7 @@
 import { LfmTopTrack } from '@/models/lastFm';
 
-const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
+// https://www.last.fm/api
+export const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
 
 /**
  * Fetch the top tracks for an artist from Last.fm by MBID.

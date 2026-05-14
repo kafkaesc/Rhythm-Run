@@ -3,8 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
-
-const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
+import { LAST_FM_ENDPOINT } from '@/lib/lastfm';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);
