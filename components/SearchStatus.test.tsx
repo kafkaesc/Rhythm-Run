@@ -6,7 +6,7 @@ it('Renders the error message when err is truthy', () => {
 		<SearchStatus
 			err="error"
 			errMessage="I'm afraid I can't do that"
-			loading={null}
+			loading={false}
 		/>,
 	);
 	const status = screen.getByText(/I can't do that/i);
@@ -15,7 +15,7 @@ it('Renders the error message when err is truthy', () => {
 
 it('Does not render the error message when err is null', () => {
 	render(
-		<SearchStatus err={null} errMessage="Error with the API" loading={null} />,
+		<SearchStatus err={null} errMessage="Error with the API" loading={false} />,
 	);
 	const status = screen.queryByText(/error with the api/i);
 	expect(status).not.toBeInTheDocument();
@@ -31,7 +31,7 @@ it('Renders loading text when loading is true', () => {
 
 it('Does not render loading text when loading is null', () => {
 	render(
-		<SearchStatus err={null} errMessage="Error with the API" loading={null} />,
+		<SearchStatus err={null} errMessage="Error with the API" loading={false} />,
 	);
 	const status = screen.queryByText(/loading/i);
 	expect(status).not.toBeInTheDocument();
@@ -39,7 +39,7 @@ it('Does not render loading text when loading is null', () => {
 
 it('Renders a non-breaking space when there is no error and not loading', () => {
 	render(
-		<SearchStatus err={null} errMessage="Error with the API" loading={null} />,
+		<SearchStatus err={null} errMessage="Error with the API" loading={false} />,
 	);
 	const status = screen.getByText(/\u00A0/, { normalizer: (text) => text });
 	expect(status).toBeInTheDocument();
@@ -55,7 +55,7 @@ it('Does not render a non-breaking space when loading', () => {
 
 it('Does not render a non-breaking space when there is an error', () => {
 	render(
-		<SearchStatus err="error" errMessage="Error with the API" loading={null} />,
+		<SearchStatus err="error" errMessage="Error with the API" loading={false} />,
 	);
 	const status = screen.queryByText(/\u00A0/, { normalizer: (text) => text });
 	expect(status).not.toBeInTheDocument();

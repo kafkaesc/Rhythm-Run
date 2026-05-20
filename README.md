@@ -31,6 +31,8 @@ GET_SONG_BPM_KEY=<YOUR_KEY_HERE>
 LAST_FM_KEY=<YOUR_KEY_HERE>
 SPOTIFY_CLIENT_ID=<YOUR_KEY_HERE>
 SPOTIFY_CLIENT_SECRET=<YOUR_KEY_HERE>
+UPSTASH_REDIS_REST_URL=<YOUR_URL_HERE>
+UPSTASH_REDIS_REST_TOKEN=<YOUR_KEY_HERE>
 ```
 
 ### Run
@@ -46,6 +48,7 @@ Once the project is installed and set up, running it just takes two steps:
 - [TypeScript 5](https://www.typescriptlang.org)
 - [React 19](https://react.dev)
 - [Tailwind 4](https://tailwindcss.com)
+- [Redis](https://redis.io)
 
 ## 📚 Libraries
 
@@ -53,6 +56,7 @@ Once the project is installed and set up, running it just takes two steps:
 - [Iconify](https://iconify.design)
 - [tailwind-merge](https://github.com/dcastil/tailwind-merge)
 - [TanStack Table](https://tanstack.com/table/latest)
+- [Upstash/Redis](https://upstash.com)
 
 ## 🔌 APIs
 

@@ -26,6 +26,7 @@
 		"mbids",
 		"metamusic",
 		"musicbrainz",
-		"playcount"
+		"playcount",
+		"upstash"
 	]
 }

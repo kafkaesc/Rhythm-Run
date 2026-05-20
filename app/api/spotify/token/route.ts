@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
+import { SPOTIFY_ACCOUNTS_ENDPOINT } from '@/lib/spotify';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
 		'base64',
 	);
 
-	const res = await fetch('https://accounts.spotify.com/api/token', {
+	const res = await fetch(SPOTIFY_ACCOUNTS_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			Authorization: `Basic ${credentials}`,

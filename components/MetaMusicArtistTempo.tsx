@@ -12,6 +12,7 @@ import SearchStatus from '@/components/SearchStatus';
 import TrackTable from '@/components/TrackTable';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
+import { DEFAULT_BPM, DEFAULT_EPSILON } from '@/lib/constants';
 import { LfmArtist } from '@/models/lastFm';
 import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
 
@@ -19,8 +20,8 @@ export default function MetaMusicArtistTempo() {
 	const [mmQuery, setMmQuery] = useState<MetaMusicArtistTempoQuery | null>(
 		null,
 	);
-	const [tempo, setTempo] = useState(160);
-	const [epsilon, setEpsilon] = useState(4);
+	const [tempo, setTempo] = useState(DEFAULT_BPM);
+	const [epsilon, setEpsilon] = useState(DEFAULT_EPSILON);
 	const {
 		set: artists,
 		add,

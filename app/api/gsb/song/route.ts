@@ -3,8 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
-
-const GSB_SEARCH_ENDPOINT = 'https://api.getsong.co/search/';
+import { GSB_SEARCH_ENDPOINT } from '@/lib/metamusic';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);

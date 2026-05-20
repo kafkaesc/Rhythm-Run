@@ -2,6 +2,7 @@
 
 import { useReducer, useEffect, Dispatch } from 'react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import { DEFAULT_BPM } from '@/lib/constants';
 import { AsyncAction } from '@/models/async';
 import { Track } from '@/models/rhythmRun';
 
@@ -83,8 +84,8 @@ export function useMetaMusicArtistTempo(
 	const mbidKey = mbidList.join(',');
 
 	// Fallback values because we really expect these in the request
-	const FALLBACK_EPSILON = 4;
-	const FALLBACK_TEMPO = 160;
+	const FALLBACK_EPSILON = 0;
+	const FALLBACK_TEMPO = DEFAULT_BPM;
 
 	useEffect(() => {
 		// If there are no MBIDs, return immediately

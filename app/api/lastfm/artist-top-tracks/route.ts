@@ -2,10 +2,8 @@
 // this is a server-only route for proxying Last.fm API requests
 
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchArtistTopTracks } from '@/lib/lastfm';
 import { requireApiKey } from '@/lib/api-auth';
-
-const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
+import { fetchArtistTopTracks, LAST_FM_ENDPOINT } from '@/lib/lastfm';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);
