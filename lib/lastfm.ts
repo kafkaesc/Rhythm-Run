@@ -19,6 +19,7 @@ export async function fetchArtistTopTracks(
 	url.searchParams.set('api_key', apiKey);
 	url.searchParams.set('format', 'json');
 	url.searchParams.set('mbid', artistMbid);
+	url.searchParams.set('limit', '100');
 
 	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);

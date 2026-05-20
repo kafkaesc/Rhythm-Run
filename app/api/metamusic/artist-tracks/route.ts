@@ -3,8 +3,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
+import { getCachedTracks, setCachedTracks } from '@/lib/cache';
 import { inRange } from '@/lib/math';
 import { fetchArtistTopTracks, enrichWithTempoStream } from '@/lib/metamusic';
+import { Track } from '@/models/rhythmRun';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);
@@ -38,9 +40,11 @@ export async function GET(request: NextRequest) {
 	const tempo = request.nextUrl.searchParams.get('tempo');
 	const epsilon = request.nextUrl.searchParams.get('epsilon');
 
+	// Error if the tempo is not provided, it's critical
 	if (tempo === null)
 		return NextResponse.json({ error: 'tempo is required' }, { status: 400 });
 
+	// Validate the tempo
 	const tempoNum = parseInt(tempo, 10);
 	if (isNaN(tempoNum))
 		return NextResponse.json(
@@ -48,6 +52,7 @@ export async function GET(request: NextRequest) {
 			{ status: 400 },
 		);
 
+	// Validate the epsilon or set to zero
 	const epsilonNum = epsilon !== null ? parseInt(epsilon, 10) : 0;
 	if (isNaN(epsilonNum))
 		return NextResponse.json(
@@ -55,23 +60,36 @@ export async function GET(request: NextRequest) {
 			{ status: 400 },
 		);
 
-	// Fetch the top tracks for each artist, staggered by 1 second
+	// Check cache for each artist, separating hits from misses
+	const cachedTracks: Track[][] = [];
+	const uncachedMbids: string[] = [];
+	for (const mbid of artistMbids) {
+		const cached = await getCachedTracks(mbid);
+		if (cached !== null) cachedTracks.push(cached);
+		else uncachedMbids.push(mbid);
+	}
+
+	// For uncached artists, fetch top tracks from Last.fm, staggered by 1 second
 	// to avoid calling the Last.fm API too quickly
-	let tracks;
-	try {
-		const tracksByArtist = await Promise.all(
-			artistMbids.map((mbid, i) =>
-				new Promise<void>((resolve) => setTimeout(resolve, i * 1000)).then(() =>
-					fetchArtistTopTracks(mbid, lastFmApiKey),
+	let uncachedTracksByArtist: {
+		mbid: string;
+		tracks: Awaited<ReturnType<typeof fetchArtistTopTracks>>;
+	}[] = [];
+	if (uncachedMbids.length > 0) {
+		try {
+			uncachedTracksByArtist = await Promise.all(
+				uncachedMbids.map((mbid, i) =>
+					new Promise<void>((resolve) => setTimeout(resolve, i * 1000))
+						.then(() => fetchArtistTopTracks(mbid, lastFmApiKey))
+						.then((tracks) => ({ mbid, tracks })),
 				),
-			),
-		);
-		tracks = tracksByArtist.flat();
-	} catch {
-		return NextResponse.json(
-			{ error: 'Failed to fetch top tracks from Last.fm' },
-			{ status: 502 },
-		);
+			);
+		} catch {
+			return NextResponse.json(
+				{ error: 'Failed to fetch top tracks from Last.fm' },
+				{ status: 502 },
+			);
+		}
 	}
 
 	// Construct a web stream as a response to return tracks as they are
@@ -80,12 +98,29 @@ export async function GET(request: NextRequest) {
 	const stream = new ReadableStream({
 		async start(controller) {
 			try {
-				for await (const track of enrichWithTempoStream(tracks, gsbApiKey)) {
-					if (
-						track.bpm !== undefined &&
-						inRange(track.bpm, tempoNum, epsilonNum)
-					)
-						controller.enqueue(encoder.encode(JSON.stringify(track) + '\n'));
+				// Send cached tracks immediately, filtered to the requested BPM range
+				for (const tracks of cachedTracks) {
+					for (const tr of tracks) {
+						if (tr.bpm !== undefined && inRange(tr.bpm, tempoNum, epsilonNum))
+							controller.enqueue(encoder.encode(JSON.stringify(tr) + '\n'));
+					}
+				}
+
+				// Enrich uncached artists one at a time, streaming and caching results
+				for (const { mbid, tracks } of uncachedTracksByArtist) {
+					const enriched: Track[] = [];
+					for await (const track of enrichWithTempoStream(tracks, gsbApiKey)) {
+						enriched.push(track);
+						if (
+							track.bpm !== undefined &&
+							inRange(track.bpm, tempoNum, epsilonNum)
+						)
+							controller.enqueue(encoder.encode(JSON.stringify(track) + '\n'));
+					}
+					await setCachedTracks(
+						mbid,
+						enriched.filter((t) => t.bpm !== undefined),
+					);
 				}
 			} finally {
 				controller.close();
