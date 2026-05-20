@@ -5,7 +5,7 @@ type SearchStatusProps = {
 	err: string | boolean | null;
 	errMessage?: ReactNode;
 	id?: string;
-	loading: boolean | null;
+	loading: boolean;
 	loadingMessage?: ReactNode;
 	streaming?: boolean;
 	streamingMessage?: ReactNode;

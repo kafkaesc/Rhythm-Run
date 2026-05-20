@@ -3,7 +3,8 @@ import { Track } from '@/models/rhythmRun';
 
 export { fetchArtistTopTracks } from '@/lib/lastfm';
 
-const GSB_SEARCH_ENDPOINT = 'https://api.getsong.co/search/';
+// https://getsongbpm.com/api
+export const GSB_SEARCH_ENDPOINT = 'https://api.getsong.co/search/';
 const GSB_RATE_LIMIT_MS = 750;
 
 /**
