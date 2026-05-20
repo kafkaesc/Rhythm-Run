@@ -51,10 +51,10 @@ export default function MetaMusicArtistTempo() {
 				<>
 					<div className="flex flex-col sm:flex-row gap-3">
 						<div className="flex-1">
-							<BpmSelector onChange={setTempo} />
+							<BpmSelector initialVal={tempo} onChange={setTempo} />
 						</div>
 						<div className="shrink-0">
-							<EpsilonSelector onChange={setEpsilon} />
+							<EpsilonSelector initialVal={epsilon} onChange={setEpsilon} />
 						</div>
 					</div>
 					<LfmArtistSearch add={add} remove={remove} selected={artists} />
