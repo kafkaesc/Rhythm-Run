@@ -9,15 +9,17 @@ const MAX_EPSILON = 20;
 const MIN_EPSILON = 0;
 
 type EpsilonSelectorProps = {
+	initialVal?: number;
 	onChange?: (epsilon: number) => void;
 	title?: string;
 };
 
 export default function EpsilonSelector({
+	initialVal = DEFAULT_EPSILON,
 	onChange,
 	title,
 }: EpsilonSelectorProps) {
-	const [epsilon, setEpsilon] = useState(DEFAULT_EPSILON);
+	const [epsilon, setEpsilon] = useState(initialVal);
 
 	function handleChange(value: number) {
 		const clampValue = clamp(value, MIN_EPSILON, MAX_EPSILON);
