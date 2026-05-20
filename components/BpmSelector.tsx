@@ -9,6 +9,7 @@ const MAX_BPM = 220;
 const MIN_BPM = 60;
 
 type BpmSelectorProps = {
+	initialVal?: number;
 	onChange?: (bpm: number) => void;
 	title?: string;
 };
@@ -16,12 +17,17 @@ type BpmSelectorProps = {
 /**
  * Slider and number input for selecting a target BPM within a fixed range.
  *
+ * @param initialVal - Optional initial BPM value, defaults to DEFAULT_BPM
  * @param onChange - Callback fired when the BPM value changes
  * @param title - Overrides the default fieldset legend
  */
-export default function BpmSelector({ onChange, title }: BpmSelectorProps) {
-	const [bpm, setBpm] = useState(DEFAULT_BPM);
-	const [inputValue, setInputValue] = useState(String(DEFAULT_BPM));
+export default function BpmSelector({
+	initialVal = DEFAULT_BPM,
+	onChange,
+	title,
+}: BpmSelectorProps) {
+	const [bpm, setBpm] = useState(initialVal);
+	const [inputValue, setInputValue] = useState(String(initialVal));
 	const commitNextChangeRef = useRef(false);
 
 	// Native range input uses CSS accent-color which delegates rendering
