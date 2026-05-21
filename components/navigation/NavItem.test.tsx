@@ -17,15 +17,15 @@ it('Renders an internal link with the correct href and text', () => {
 it('Applies active styles when the href matches the current page', () => {
 	mockUsePathname.mockReturnValue('/home');
 	render(<NavItem href="/home">Home</NavItem>);
-	const item = screen.getByRole('listitem');
-	expect(item).toHaveClass('bg-foreground', 'text-background');
+	const link = screen.getByRole('link', { name: /home/i });
+	expect(link).toHaveClass('bg-foreground', 'text-background');
 });
 
 it('Does not apply active styles when the href does not match the current page', () => {
 	mockUsePathname.mockReturnValue('/home');
 	render(<NavItem href="/about">About</NavItem>);
-	const item = screen.getByRole('listitem');
-	expect(item).not.toHaveClass('bg-foreground', 'text-background');
+	const link = screen.getByRole('link', { name: /about/i });
+	expect(link).not.toHaveClass('bg-foreground', 'text-background');
 });
 
 it('Renders an external link with the expected attributes', () => {
