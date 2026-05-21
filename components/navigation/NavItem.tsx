@@ -10,8 +10,10 @@ type NavItemProps = {
 };
 
 /**
- * A navigation list item that highlights itself when its href matches the current path.
- * Internal links use Next Link for client-side navigation; external links open in a new tab.
+ * A navigation list item that highlights itself when its href matches the
+ * current path. Internal links use Next Link for client-side navigation.
+ * External links open in a new tab.
+ *
  * @param href - The URL to navigate to
  * @param children - The link text or element
  */
@@ -20,17 +22,15 @@ export default function NavItem({ children, href }: NavItemProps) {
 	const pathname = usePathname();
 	const isActive = pathname === href;
 
-	const liStyles = cn(
-		'px-3 py-1 rounded-md transition-colors cursor-pointer',
+	const linkStyles = cn(
+		'block px-3 py-1 rounded-md transition-colors cursor-pointer no-underline text-inherit',
 		isActive ? 'bg-foreground text-background' : 'hover:bg-background-hover',
 	);
-
-	const linkStyles = 'no-underline text-inherit';
 
 	// Internal links use Next Link for client-side navigation
 	if (href.startsWith('/') || href.startsWith('#')) {
 		return (
-			<li className={liStyles}>
+			<li>
 				<Link className={linkStyles} href={href}>
 					{children}
 				</Link>
@@ -40,7 +40,7 @@ export default function NavItem({ children, href }: NavItemProps) {
 
 	// External links use an anchor element and open in a new tab
 	return (
-		<li className={liStyles}>
+		<li>
 			<a
 				className={linkStyles}
 				href={href}
