@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import SessionProvider from '@/components/auth/SessionProvider';
 import Container from '@/components/layout/Container';
 import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/navigation/Navbar';
@@ -43,11 +44,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}
 			>
-				<Container className="grow">
-					<Navbar />
-					{children}
-				</Container>
-				<Footer />
+				<SessionProvider>
+					<Container className="grow">
+						<Navbar />
+						{children}
+					</Container>
+					<Footer />
+				</SessionProvider>
 			</body>
 		</html>
 	);
