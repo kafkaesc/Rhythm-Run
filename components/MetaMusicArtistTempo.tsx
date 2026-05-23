@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@/components/elements/Button';
 import H2 from '@/components/elements/H2';
 import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
@@ -8,6 +8,7 @@ import BpmSelector from '@/components/BpmSelector';
 import EpsilonSelector from '@/components/EpsilonSelector';
 import LfmArtistSearch from '@/components/LfmArtistSearch';
 import LoadingMessages from '@/components/LoadingMessages';
+import ProxyWarning from '@/components/ProxyWarning';
 import SearchStatus from '@/components/SearchStatus';
 import TrackTable from '@/components/TrackTable';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
@@ -35,6 +36,16 @@ export default function MetaMusicArtistTempo() {
 		mmQuery?.tempo ?? null,
 		mmQuery?.epsilon ?? null,
 	);
+	const [slowLoad, setSlowLoad] = useState(false);
+
+	useEffect(() => {
+		if (!loading) return;
+		const timer = setTimeout(() => setSlowLoad(true), 20_000);
+		return () => {
+			clearTimeout(timer);
+			setSlowLoad(false);
+		};
+	}, [loading]);
 
 	const clearResults = () => {
 		setMmQuery(null);
@@ -92,6 +103,9 @@ export default function MetaMusicArtistTempo() {
 					streaming={streaming}
 					streamingMessage={<LoadingMessages />}
 				/>
+				{slowLoad && loading && (
+					<ProxyWarning artistCount={mmQuery?.mbids.length ?? 0} />
+				)}
 			</div>
 			{tracks && (
 				<>

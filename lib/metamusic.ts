@@ -5,7 +5,7 @@ export { fetchArtistTopTracks } from '@/lib/lastfm';
 
 // https://getsongbpm.com/api
 export const GSB_SEARCH_ENDPOINT = 'https://api.getsong.co/search/';
-const GSB_RATE_LIMIT_MS = 750;
+export const GSB_RATE_LIMIT_MS = 750;
 
 /**
  * Looks up the tempo for a single recording via GetSongBPM by title + artist.
