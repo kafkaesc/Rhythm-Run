@@ -41,7 +41,7 @@ export default function ProxyWarning({ artistCount }: ProxyWarningProps) {
 			<ClockAlertIcon className="shrink-0 self-center text-dark text-2xl" />
 			<P className="grow text-sm text-dark">
 				This may take a few minutes &mdash; your network is holding onto results
-				until everything is finished. This is common at workplaces that user
+				until everything is finished. This is common at workplaces that use
 				security software like Zscaler, Cisco Umbrella, or Prisma.{estimateText}
 			</P>
 		</div>
