@@ -1,6 +1,7 @@
 'use client';
 
 import { useReducer, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
 import {
 	SPOTIFY_SEARCH_ENDPOINT,
@@ -17,6 +18,15 @@ import {
 
 const MILLISECONDS_IN_SECOND = 1000; // https://en.wikipedia.org/wiki/Millisecond
 const LOCAL_TOKEN_ENDPOINT = '/api/spotify/token';
+
+/**
+ * Returns the user's Spotify access token, or null if there's no login.
+ * Used to prioritize user tokens requests over the Rhythm Run token.
+ */
+function useSpotifyToken(): string | null {
+	const { data: session } = useSession();
+	return session?.spotifyAccessToken ?? null;
+}
 
 // Contains a cached Spotify access token and its expiration time,
 // null => no token yet or expired token was flushed
@@ -63,6 +73,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 		reducer<SpotifyArtist[]>,
 		initialState<SpotifyArtist[]>(),
 	);
+	const token = useSpotifyToken();
 
 	useEffect(() => {
 		if (!query) {
@@ -74,7 +85,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 
 		const controller = new AbortController();
 
-		getCachedToken()
+		(token ? Promise.resolve(token) : getCachedToken())
 			.then((accessToken) => {
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
 				url.searchParams.set('q', query);
@@ -102,7 +113,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 			});
 
 		return () => controller.abort();
-	}, [query]);
+	}, [query, token]);
 
 	return {
 		artists: state.data,
@@ -122,6 +133,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 		reducer<SpotifyTrack[]>,
 		initialState<SpotifyTrack[]>(),
 	);
+	const token = useSpotifyToken();
 
 	useEffect(() => {
 		if (!query) {
@@ -133,7 +145,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 
 		const controller = new AbortController();
 
-		getCachedToken()
+		(token ? Promise.resolve(token) : getCachedToken())
 			.then((accessToken) => {
 				// Build the URI
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
@@ -165,7 +177,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 			});
 
 		return () => controller.abort();
-	}, [query]);
+	}, [query, token]);
 
 	return {
 		tracks: state.data,
