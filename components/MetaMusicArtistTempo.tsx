@@ -103,9 +103,6 @@ export default function MetaMusicArtistTempo() {
 					streaming={streaming}
 					streamingMessage={<LoadingMessages />}
 				/>
-				<div>
-					<ProxyWarning artistCount={3} />
-				</div>
 				{slowLoad && loading && (
 					<ProxyWarning artistCount={mmQuery?.mbids.length ?? 0} />
 				)}
