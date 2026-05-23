@@ -2,6 +2,7 @@ import { LfmTopTrack } from '@/models/lastFm';
 
 // https://www.last.fm/api
 export const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
+export const LFM_TOP_TRACKS_LIMIT = 100;
 
 /**
  * Fetch the top tracks for an artist from Last.fm by MBID.
@@ -19,7 +20,7 @@ export async function fetchArtistTopTracks(
 	url.searchParams.set('api_key', apiKey);
 	url.searchParams.set('format', 'json');
 	url.searchParams.set('mbid', artistMbid);
-	url.searchParams.set('limit', '100');
+	url.searchParams.set('limit', String(LFM_TOP_TRACKS_LIMIT));
 
 	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);
