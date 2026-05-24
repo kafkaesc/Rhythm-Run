@@ -3,11 +3,14 @@
 import { useReducer, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import { clamp } from '@/lib/math';
 import {
-	SPOTIFY_SEARCH_ENDPOINT,
 	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
-	SPOTIFY_SEARCH_LIMIT,
 	SPOTIFY_RECOMMENDATIONS_LIMIT,
+	SPOTIFY_SEARCH_ENDPOINT,
+	SPOTIFY_SEARCH_LIMIT,
+	SPOTIFY_TOP_ARTISTS_ENDPOINT,
+	SPOTIFY_TOP_ARTIST_LIMIT,
 } from '@/lib/spotify';
 import {
 	SpotifyArtist,
@@ -87,24 +90,29 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 
 		(token ? Promise.resolve(token) : getCachedToken())
 			.then((accessToken) => {
+				// Build the URI
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
 				url.searchParams.set('q', query);
 				url.searchParams.set('type', 'artist');
 				url.searchParams.set('limit', SPOTIFY_SEARCH_LIMIT);
 
+				// Call the Spotify API with the access token
 				return fetch(url, {
 					signal: controller.signal,
 					headers: { Authorization: `Bearer ${accessToken}` },
 				});
 			})
 			.then((res) => {
+				// Check for errors before returning a JSON promise of the data
 				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
 				return res.json() as Promise<{ artists: { items: SpotifyArtist[] } }>;
 			})
 			.then((data) => {
+				// Return the fetched artists
 				return dispatch({ type: 'success', data: data.artists.items });
 			})
 			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
 				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
@@ -169,6 +177,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 				return dispatch({ type: 'success', data: data.tracks.items });
 			})
 			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
 				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
@@ -181,6 +190,76 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 
 	return {
 		tracks: state.data,
+		loading: state.status === 'loading',
+		error: state.error,
+	};
+}
+
+/**
+ * Calls the Spotify API for the logged-in user's top artists by long-term listening history.
+ * Requires the user to be authenticated; returns null artists if not logged in.
+ *
+ * @param limit - Optional, default 10, number of top artists to return, clamped to [1–50]
+ * @param recent - Optional, default false, if true, returns recent top artists from the last 4 weeks
+ * @returns A {@link SpotifyArtistResult}
+ */
+export function useSpotifyTopArtists(
+	limit = 10,
+	recent = false,
+): SpotifyArtistResult {
+	const [state, dispatch] = useReducer(
+		reducer<SpotifyArtist[]>,
+		initialState<SpotifyArtist[]>(),
+	);
+	const token = useSpotifyToken();
+
+	useEffect(() => {
+		if (!token) return;
+
+		dispatch({ type: 'fetch' });
+
+		const controller = new AbortController();
+
+		if (limit < 1) console.warn('A value of 0 or less is not valid for limit');
+		if (limit > SPOTIFY_TOP_ARTIST_LIMIT)
+			console.warn(`Spotify won't allow a limit > ${SPOTIFY_TOP_ARTIST_LIMIT}`);
+
+		const clampedLimit = String(clamp(limit, 1, SPOTIFY_TOP_ARTIST_LIMIT));
+		const timeRange = recent ? 'short_term' : 'long_term';
+
+		// Build the URI
+		const url = new URL(SPOTIFY_TOP_ARTISTS_ENDPOINT);
+		url.searchParams.set('limit', clampedLimit);
+		url.searchParams.set('time_range', timeRange);
+
+		// Call the Spotify API with the access token
+		fetch(url, {
+			signal: controller.signal,
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => {
+				// Check for errors before returning a JSON promise of the data
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				return res.json() as Promise<{ items: SpotifyArtist[] }>;
+			})
+			.then((data) => {
+				// Return the fetched top artists
+				dispatch({ type: 'success', data: data.items });
+			})
+			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
+				if ((err as Error).name === 'AbortError') return;
+				dispatch({
+					type: 'error',
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			});
+
+		return () => controller.abort();
+	}, [token, limit, recent]);
+
+	return {
+		artists: state.data,
 		loading: state.status === 'loading',
 		error: state.error,
 	};
@@ -253,6 +332,7 @@ export function useSpotifyTempoSearch({
 				return dispatch({ type: 'success', data: data.tracks });
 			})
 			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
 				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
