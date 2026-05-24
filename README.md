@@ -64,6 +64,7 @@ Once the project is installed and set up, running it just takes two steps:
 - [Last.fm](https://www.last.fm/api)
 - [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API)
 - [Spotify](https://developer.spotify.com/documentation/web-api)
+- [Strava](https://developers.strava.com)
 
 ## 🎯 Testing
 
