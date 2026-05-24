@@ -1,7 +1,7 @@
 // https://developer.spotify.com/documentation/web-api/reference/get-an-artist
 export interface SpotifyArtist {
 	external_urls: { spotify: string };
-	genres: string[];
+	genres?: string[];
 	id: string;
 	images: { url: string; width: number; height: number }[];
 	name: string;
