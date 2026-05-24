@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
-import { GSB_SEARCH_ENDPOINT } from '@/lib/metamusic';
+import { GSB_SEARCH_ENDPOINT } from '@/lib/getsongbpm';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);

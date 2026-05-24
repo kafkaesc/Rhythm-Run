@@ -5,7 +5,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
 import { getCachedTracks, setCachedTracks } from '@/lib/cache';
 import { inRange } from '@/lib/math';
-import { fetchArtistTopTracks, enrichWithTempoStream } from '@/lib/metamusic';
+import { fetchArtistTopTracks } from '@/lib/lastfm';
+import { enrichWithTempoStream } from '@/lib/metamusic';
 import { Track } from '@/models/rhythmRun';
 
 export async function GET(request: NextRequest) {

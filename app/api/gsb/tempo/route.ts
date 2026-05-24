@@ -3,8 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
-
-const GSB_TEMPO_ENDPOINT = 'https://api.getsong.co/tempo/';
+import { GSB_TEMPO_ENDPOINT } from '@/lib/getsongbpm';
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);
