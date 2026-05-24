@@ -2,23 +2,23 @@
 
 import { useSession, signIn, signOut } from 'next-auth/react';
 import Button from '@/components/elements/Button';
-import SpotifyIcon from '@/components/icons/SpotifyIcon';
+import StravaIcon from '@/components/icons/StravaIcon';
 
 /**
- * Renders a Spotify login button when the user is unauthenticated, or their
+ * Renders a Strava login button when the user is unauthenticated, or their
  * display name and a logout button when they are logged in.
  */
-export default function SpotifyLoginButton() {
+export default function StravaLoginButton() {
 	const { data: session, status } = useSession();
 
 	// Loading the session, render nothing
 	if (status === 'loading') return null;
 
-	// User is logged in via Strava, hide this button
-	if (session?.stravaAccessToken) return null;
+	// User is logged in via Spotify, hide this button
+	if (session?.spotifyAccessToken) return null;
 
-	// User is logged in via Spotify, show their display name and a logout button
-	if (session?.spotifyAccessToken)
+	// User is logged in via Strava, show their display name and a logout button
+	if (session?.stravaAccessToken)
 		return (
 			<div className="flex items-center gap-2">
 				{session.user?.name && (
@@ -30,11 +30,11 @@ export default function SpotifyLoginButton() {
 			</div>
 		);
 
-	// User is not logged in, show the Spotify login button
+	// User is not logged in, show the Strava login button
 	return (
-		<Button buttonStyle="black-white" onClick={() => signIn('spotify')}>
+		<Button buttonStyle="black-white" onClick={() => signIn('strava')}>
 			<span className="inline-flex items-center gap-1">
-				<SpotifyIcon /> Login with Spotify
+				<StravaIcon /> Login with Strava
 			</span>
 		</Button>
 	);
