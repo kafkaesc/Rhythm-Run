@@ -124,7 +124,7 @@ export function normalizeSpotifyArtist(artist: SpotifyArtist): Artist {
 		id: artist.id,
 		spotifyId: artist.id,
 		name: artist.name,
-		genres: artist.genres,
+		genres: artist.genres ?? [],
 	};
 }
 

@@ -2,16 +2,6 @@
 
 import { GsbArtist } from '@/models/getSongBpm';
 
-export const GsbGreenDay: GsbArtist = {
-	from: 'US',
-	genres: ['pop', 'punk', 'rock'],
-	id: 'v9M',
-	mbid: '084308bd-1654-436f-ba03-df6697104e19',
-	name: 'Green Day',
-	similar: null,
-	uri: 'https://getsongbpm.com/artist/green-day/v9M',
-};
-
 export const GsbBadBunny: GsbArtist = {
 	from: 'PR',
 	genres: null,
@@ -71,6 +61,16 @@ export const GsbDaftPunk: GsbArtist = {
 		},
 	],
 	uri: 'https://getsongbpm.com/artist/daft-punk/j0B',
+};
+
+export const GsbGreenDay: GsbArtist = {
+	from: 'US',
+	genres: ['pop', 'punk', 'rock'],
+	id: 'v9M',
+	mbid: '084308bd-1654-436f-ba03-df6697104e19',
+	name: 'Green Day',
+	similar: null,
+	uri: 'https://getsongbpm.com/artist/green-day/v9M',
 };
 
 export const GsbShakira: GsbArtist = {

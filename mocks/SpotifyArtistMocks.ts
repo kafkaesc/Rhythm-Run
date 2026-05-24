@@ -80,6 +80,31 @@ export const SpGreenDay: SpotifyArtist = {
 	},
 };
 
+export const SpNullsleep: SpotifyArtist = {
+	id: '3Zi5OTxXEbUhHswcFlQMAO',
+	name: 'Nullsleep',
+	images: [
+		{
+			url: 'https://i.scdn.co/image/ab6761610000e5ebdfbb1ad908e17b13dcef766e',
+			height: 640,
+			width: 640,
+		},
+		{
+			url: 'https://i.scdn.co/image/ab67616100005174dfbb1ad908e17b13dcef766e',
+			height: 320,
+			width: 320,
+		},
+		{
+			url: 'https://i.scdn.co/image/ab6761610000f178dfbb1ad908e17b13dcef766e',
+			height: 160,
+			width: 160,
+		},
+	],
+	external_urls: {
+		spotify: 'https://open.spotify.com/artist/3Zi5OTxXEbUhHswcFlQMAO',
+	},
+};
+
 export const SpShakira: SpotifyArtist = {
 	id: '0EmeFodog0BfCgMzAIvKQp',
 	name: 'Shakira',

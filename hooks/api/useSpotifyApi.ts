@@ -3,7 +3,7 @@
 import { useReducer, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
-import { clamp } from '@/lib/math';
+import { clamp, MS_PER_SECOND } from '@/lib/math';
 import {
 	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
 	SPOTIFY_RECOMMENDATIONS_LIMIT,
@@ -19,7 +19,6 @@ import {
 	SpotifyTrackResult,
 } from '@/models/spotify';
 
-const MILLISECONDS_IN_SECOND = 1000; // https://en.wikipedia.org/wiki/Millisecond
 const LOCAL_TOKEN_ENDPOINT = '/api/spotify/token';
 
 /**
@@ -59,7 +58,8 @@ function getCachedToken(): Promise<string> {
 			// Cache the new token along with its expiration time
 			tokenCache = {
 				token: accessToken,
-				expiresAt: Date.now() + expiresIn * MILLISECONDS_IN_SECOND,
+				// Safety window of 60 seconds for tokens that are near-expired
+				expiresAt: Date.now() + (expiresIn - 60) * MS_PER_SECOND,
 			};
 			return accessToken;
 		});
@@ -214,7 +214,10 @@ export function useSpotifyTopArtists(
 	const token = useSpotifyToken();
 
 	useEffect(() => {
-		if (!token) return;
+		if (!token) {
+			dispatch({ type: 'clear' });
+			return;
+		}
 
 		dispatch({ type: 'fetch' });
 
