@@ -1,12 +1,16 @@
 'use client';
 
 import { useReducer, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import { clamp, MS_PER_SECOND } from '@/lib/math';
 import {
-	SPOTIFY_SEARCH_ENDPOINT,
 	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
-	SPOTIFY_SEARCH_LIMIT,
 	SPOTIFY_RECOMMENDATIONS_LIMIT,
+	SPOTIFY_SEARCH_ENDPOINT,
+	SPOTIFY_SEARCH_LIMIT,
+	SPOTIFY_TOP_ARTISTS_ENDPOINT,
+	SPOTIFY_TOP_ARTIST_LIMIT,
 } from '@/lib/spotify';
 import {
 	SpotifyArtist,
@@ -15,8 +19,16 @@ import {
 	SpotifyTrackResult,
 } from '@/models/spotify';
 
-const MILLISECONDS_IN_SECOND = 1000; // https://en.wikipedia.org/wiki/Millisecond
 const LOCAL_TOKEN_ENDPOINT = '/api/spotify/token';
+
+/**
+ * Returns the user's Spotify access token, or null if there's no login.
+ * Used to prioritize user tokens requests over the Rhythm Run token.
+ */
+function useSpotifyToken(): string | null {
+	const { data: session } = useSession();
+	return session?.spotifyAccessToken ?? null;
+}
 
 // Contains a cached Spotify access token and its expiration time,
 // null => no token yet or expired token was flushed
@@ -46,7 +58,8 @@ function getCachedToken(): Promise<string> {
 			// Cache the new token along with its expiration time
 			tokenCache = {
 				token: accessToken,
-				expiresAt: Date.now() + expiresIn * MILLISECONDS_IN_SECOND,
+				// Safety window of 60 seconds for tokens that are near-expired
+				expiresAt: Date.now() + (expiresIn - 60) * MS_PER_SECOND,
 			};
 			return accessToken;
 		});
@@ -63,6 +76,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 		reducer<SpotifyArtist[]>,
 		initialState<SpotifyArtist[]>(),
 	);
+	const token = useSpotifyToken();
 
 	useEffect(() => {
 		if (!query) {
@@ -74,26 +88,31 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 
 		const controller = new AbortController();
 
-		getCachedToken()
+		(token ? Promise.resolve(token) : getCachedToken())
 			.then((accessToken) => {
+				// Build the URI
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
 				url.searchParams.set('q', query);
 				url.searchParams.set('type', 'artist');
 				url.searchParams.set('limit', SPOTIFY_SEARCH_LIMIT);
 
+				// Call the Spotify API with the access token
 				return fetch(url, {
 					signal: controller.signal,
 					headers: { Authorization: `Bearer ${accessToken}` },
 				});
 			})
 			.then((res) => {
+				// Check for errors before returning a JSON promise of the data
 				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
 				return res.json() as Promise<{ artists: { items: SpotifyArtist[] } }>;
 			})
 			.then((data) => {
+				// Return the fetched artists
 				return dispatch({ type: 'success', data: data.artists.items });
 			})
 			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
 				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
@@ -102,7 +121,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 			});
 
 		return () => controller.abort();
-	}, [query]);
+	}, [query, token]);
 
 	return {
 		artists: state.data,
@@ -122,6 +141,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 		reducer<SpotifyTrack[]>,
 		initialState<SpotifyTrack[]>(),
 	);
+	const token = useSpotifyToken();
 
 	useEffect(() => {
 		if (!query) {
@@ -133,7 +153,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 
 		const controller = new AbortController();
 
-		getCachedToken()
+		(token ? Promise.resolve(token) : getCachedToken())
 			.then((accessToken) => {
 				// Build the URI
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
@@ -157,6 +177,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 				return dispatch({ type: 'success', data: data.tracks.items });
 			})
 			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
 				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',
@@ -165,10 +186,83 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 			});
 
 		return () => controller.abort();
-	}, [query]);
+	}, [query, token]);
 
 	return {
 		tracks: state.data,
+		loading: state.status === 'loading',
+		error: state.error,
+	};
+}
+
+/**
+ * Calls the Spotify API for the logged-in user's top artists by long-term listening history.
+ * Requires the user to be authenticated; returns null artists if not logged in.
+ *
+ * @param limit - Optional, default 10, number of top artists to return, clamped to [1–50]
+ * @param recent - Optional, default false, if true, returns recent top artists from the last 4 weeks
+ * @returns A {@link SpotifyArtistResult}
+ */
+export function useSpotifyTopArtists(
+	limit = 10,
+	recent = false,
+): SpotifyArtistResult {
+	const [state, dispatch] = useReducer(
+		reducer<SpotifyArtist[]>,
+		initialState<SpotifyArtist[]>(),
+	);
+	const token = useSpotifyToken();
+
+	useEffect(() => {
+		if (!token) {
+			dispatch({ type: 'clear' });
+			return;
+		}
+
+		dispatch({ type: 'fetch' });
+
+		const controller = new AbortController();
+
+		if (limit < 1) console.warn('A value of 0 or less is not valid for limit');
+		if (limit > SPOTIFY_TOP_ARTIST_LIMIT)
+			console.warn(`Spotify won't allow a limit > ${SPOTIFY_TOP_ARTIST_LIMIT}`);
+
+		const clampedLimit = String(clamp(limit, 1, SPOTIFY_TOP_ARTIST_LIMIT));
+		const timeRange = recent ? 'short_term' : 'long_term';
+
+		// Build the URI
+		const url = new URL(SPOTIFY_TOP_ARTISTS_ENDPOINT);
+		url.searchParams.set('limit', clampedLimit);
+		url.searchParams.set('time_range', timeRange);
+
+		// Call the Spotify API with the access token
+		fetch(url, {
+			signal: controller.signal,
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => {
+				// Check for errors before returning a JSON promise of the data
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				return res.json() as Promise<{ items: SpotifyArtist[] }>;
+			})
+			.then((data) => {
+				// Return the fetched top artists
+				dispatch({ type: 'success', data: data.items });
+			})
+			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
+				if ((err as Error).name === 'AbortError') return;
+				dispatch({
+					type: 'error',
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			});
+
+		return () => controller.abort();
+	}, [token, limit, recent]);
+
+	return {
+		artists: state.data,
 		loading: state.status === 'loading',
 		error: state.error,
 	};
@@ -241,6 +335,7 @@ export function useSpotifyTempoSearch({
 				return dispatch({ type: 'success', data: data.tracks });
 			})
 			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
 				if ((err as Error).name === 'AbortError') return;
 				dispatch({
 					type: 'error',

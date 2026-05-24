@@ -9,7 +9,7 @@ import {
 	normalizeSpotifyArtist,
 	normalizeSpotifyTrack,
 } from './normalize';
-import { GsbGreenDay, GsbDaftPunk, GsbBadBunny } from '@/mocks/GsbArtistMocks';
+import { GsbBadBunny, GsbDaftPunk, GsbGreenDay } from '@/mocks/GsbArtistMocks';
 import { GsbBasketCase, GsbFeelGoodInc } from '@/mocks/GsbTrackMocks';
 import { LfmGreenDay, LfmDaftPunk } from '@/mocks/LfmArtistMocks';
 import {
@@ -17,9 +17,13 @@ import {
 	LfmSearchFeelGoodInc,
 } from '@/mocks/LfmSearchTrackMocks';
 import { LfmBasketCase, LfmFeelGoodInc } from '@/mocks/LfmTopTrackMocks';
-import { MbGreenDay, MbDaftPunk } from '@/mocks/MbArtistMocks';
+import { MbDaftPunk, MbGreenDay } from '@/mocks/MbArtistMocks';
 import { MbBasketCase, MbFeelGoodInc } from '@/mocks/MbTrackMocks';
-import { SpGreenDay, SpDaftPunk } from '@/mocks/SpotifyArtistMocks';
+import {
+	SpDaftPunk,
+	SpGreenDay,
+	SpNullsleep,
+} from '@/mocks/SpotifyArtistMocks';
 import { SpBasketCase, SpFeelGoodInc } from '@/mocks/SpotifyTrackMocks';
 
 it('NormalizeGsbArtist normalizes Green Day correctly', () => {
@@ -222,6 +226,11 @@ it('NormalizeSpotifyArtist normalizes Daft Punk correctly', () => {
 		name: 'Daft Punk',
 		genres: [],
 	});
+});
+
+it('NormalizeSpotifyArtist normalizes an artist with undefined genres as an empty array', () => {
+	const result = normalizeSpotifyArtist(SpNullsleep);
+	expect(result.genres).toEqual([]);
 });
 
 it('NormalizeSpotifyTrack normalizes Basket Case correctly', () => {
