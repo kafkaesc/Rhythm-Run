@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import SpotifyIcon from '@/components/icons/SpotifyIcon';
@@ -8,9 +8,10 @@ import Button from '@/components/elements/Button';
 import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
 import P from '@/components/elements/P';
+import { useSessionStatus } from '@/hooks/useSessionStatus';
 
 export default function Profile() {
-	const { data: session, status } = useSession();
+	const { session, status } = useSessionStatus();
 	const router = useRouter();
 
 	useEffect(() => {

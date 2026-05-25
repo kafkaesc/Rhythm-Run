@@ -8,7 +8,7 @@ type SessionProviderProps = {
 
 /**
  * Wraps the app in NextAuth's SessionProvider so that any client component
- * can access the session via useSession. This wrapper is necessary because
+ * can access the session via useSessionStatus. This wrapper is necessary because
  * SessionProvider requires 'use client', which cannot be imported directly
  * from a server component like layout.tsx.
  */

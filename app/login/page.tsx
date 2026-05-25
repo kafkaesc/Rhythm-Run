@@ -1,14 +1,14 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import SpotifyLoginButton from '@/components/auth/SpotifyLoginButton';
 import H1 from '@/components/elements/H1';
 import P from '@/components/elements/P';
+import { useSessionStatus } from '@/hooks/useSessionStatus';
 
 export default function Login() {
-	const { data: session, status } = useSession();
+	const { session, status } = useSessionStatus();
 	const router = useRouter();
 
 	useEffect(() => {

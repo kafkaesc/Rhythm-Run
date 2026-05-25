@@ -1,12 +1,12 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import Image from 'next/image';
 import SpotifyLoginButton from '@/components/auth/SpotifyLoginButton';
 import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
 import SpotifyArtistSearch from '@/components/SpotifyArtistSearch';
+import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { useSpotifyTopArtists } from '@/hooks/api/useSpotifyApi';
 
 function SpotifyDebug({ session }: { session: Session | null }) {
@@ -52,7 +52,7 @@ function SpotifyDebug({ session }: { session: Session | null }) {
 }
 
 export default function DebugPage() {
-	const { data: session } = useSession();
+	const { session } = useSessionStatus();
 
 	return (
 		<>
