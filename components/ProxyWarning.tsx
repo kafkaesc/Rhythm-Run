@@ -1,8 +1,8 @@
 import P from '@/components/elements/P';
 import ClockAlertIcon from '@/components/icons/ClockAlertIcon';
+import { GSB_RATE_LIMIT_MS } from '@/lib/getsongbpm';
 import { LFM_TOP_TRACKS_LIMIT } from '@/lib/lastfm';
 import { MS_PER_SECOND, SECONDS_PER_MINUTE } from '@/lib/math';
-import { GSB_RATE_LIMIT_MS } from '@/lib/metamusic';
 
 /**
  * Create display text with the worst-case scenario loading time based on
