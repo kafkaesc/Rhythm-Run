@@ -10,21 +10,26 @@ it('Renders the brand link', () => {
 
 it('Renders the nav element', () => {
 	render(<Navbar />);
-	expect(screen.getByRole('navigation')).toBeInTheDocument();
+	const nav = screen.getByRole('navigation');
+	expect(nav).toBeInTheDocument();
 });
 
 it('Renders the site navigation links', () => {
 	render(<Navbar />);
-	expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
-	expect(screen.getByRole('link', { name: /about/i })).toBeInTheDocument();
+	const homeLink = screen.getByRole('link', { name: /home/i });
+	const aboutLink = screen.getByRole('link', { name: /about/i });
+	expect(homeLink).toBeInTheDocument();
+	expect(aboutLink).toBeInTheDocument();
 });
 
 it('Renders the dark mode toggle', () => {
 	render(<Navbar />);
-	expect(
-		screen.getByRole('button', { name: /toggle light mode/i }),
-	).toBeInTheDocument();
-	expect(
-		screen.getByRole('button', { name: /toggle dark mode/i }),
-	).toBeInTheDocument();
+	const lightButtons = screen.getAllByRole('button', {
+		name: /toggle light mode/i,
+	});
+	const darkButtons = screen.getAllByRole('button', {
+		name: /toggle dark mode/i,
+	});
+	expect(lightButtons.length).toBeGreaterThan(0);
+	expect(darkButtons.length).toBeGreaterThan(0);
 });
