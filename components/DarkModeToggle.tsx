@@ -44,7 +44,7 @@ export default function DarkModeToggle() {
 				<DarkModeIcon className="text-2xl" />
 			</button>
 			<span
-				className={`absolute bottom-0.5 h-0.5 w-[calc(50%-1rem)] bg-highlight ${hasToggled ? 'transition-[left] duration-300' : ''} ${isDark ? 'left-[calc(50%+0.4rem)]' : 'left-2'}`}
+				className={`absolute bottom-0.5 h-0.5 w-[calc(50%-1.6rem)] bg-highlight ${hasToggled ? 'transition-[left] duration-300' : ''} ${isDark ? 'left-[calc(50%+0.7rem)]' : 'left-3'}`}
 			/>
 		</div>
 	);
