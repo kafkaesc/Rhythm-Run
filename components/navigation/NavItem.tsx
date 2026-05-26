@@ -23,7 +23,7 @@ export default function NavItem({ children, href }: NavItemProps) {
 	const isActive = pathname === href;
 
 	const linkStyles = cn(
-		'block px-3 py-1 rounded-md transition-colors cursor-pointer no-underline text-inherit',
+		'block px-3 py-1 rounded-md transition-colors cursor-pointer no-underline text-inherit border border-transparent',
 		isActive ? 'bg-foreground text-background' : 'hover:bg-background-hover',
 	);
 
