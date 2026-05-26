@@ -16,10 +16,10 @@ it('Renders the nav element', () => {
 
 it('Renders the site navigation links', () => {
 	render(<Navbar />);
-	const homeLink = screen.getByRole('link', { name: /home/i });
-	const aboutLink = screen.getByRole('link', { name: /about/i });
-	expect(homeLink).toBeInTheDocument();
-	expect(aboutLink).toBeInTheDocument();
+	const homeLinks = screen.getAllByRole('link', { name: /home/i });
+	const aboutLinks = screen.getAllByRole('link', { name: /about/i });
+	expect(homeLinks.length).toBeGreaterThan(0);
+	expect(aboutLinks.length).toBeGreaterThan(0);
 });
 
 it('Renders the dark mode toggle', () => {
