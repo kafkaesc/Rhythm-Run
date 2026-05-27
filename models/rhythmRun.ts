@@ -15,12 +15,15 @@ export interface ReactNodeAndKey {
 }
 
 export interface Track {
+	albumArt?: string;
 	artists: string[];
 	bpm?: number; // the whole reason we're here
+	durationMs?: number;
 	gsbDanceability?: number;
 	getSongBpmId?: string;
 	id: string;
 	mbid?: string;
 	spotifyId?: string;
+	spotifyUrl?: string;
 	title: string;
 }
