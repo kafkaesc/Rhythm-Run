@@ -4,6 +4,10 @@ import FlatteningList from '@/components/FlatteningList';
 const powerSources = [
 	{ href: 'https://www.getsongbpm.com/api', name: 'GetSongBPM' },
 	{ href: 'https://www.last.fm/api', name: 'Last.fm' },
+	{
+		href: 'https://developer.spotify.com/documentation/web-api',
+		name: 'Spotify',
+	},
 ];
 
 export default function PoweredBy() {
