@@ -8,7 +8,6 @@ import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
 import P from '@/components/elements/P';
 import SpotifyIcon from '@/components/icons/SpotifyIcon';
-import SuggestedArtistsCloud from '@/components/SuggestedArtistsCloud';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 
 export default function Profile() {
@@ -34,8 +33,6 @@ export default function Profile() {
 							Logout
 						</Button>
 					</div>
-					<P>Suggested Artists</P>
-					<SuggestedArtistsCloud />
 				</div>
 			) : (
 				<P>No accounts connected.</P>
