@@ -10,6 +10,7 @@ import LfmArtistSearch from '@/components/LfmArtistSearch';
 import LoadingMessages from '@/components/LoadingMessages';
 import ProxyWarning from '@/components/ProxyWarning';
 import SearchStatus from '@/components/SearchStatus';
+import SuggestedArtistsCloud from '@/components/SuggestedArtistsCloud';
 import TrackTable from '@/components/TrackTable';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
@@ -26,6 +27,7 @@ export default function MetaMusicArtistTempo() {
 	const {
 		set: artists,
 		add,
+		isFull,
 		remove,
 	} = useSet<LfmArtist>({
 		key: (a) => a.mbid || a.name,
@@ -68,6 +70,7 @@ export default function MetaMusicArtistTempo() {
 							<EpsilonSelector initialVal={epsilon} onChange={setEpsilon} />
 						</div>
 					</div>
+					<SuggestedArtistsCloud isFull={isFull()} limit={5} onSelect={add} />
 					<LfmArtistSearch add={add} remove={remove} selected={artists} />
 				</>
 			)}
