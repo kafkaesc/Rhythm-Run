@@ -61,5 +61,5 @@ export function useSpotifyTopArtists() {
 		return artists.slice(0, clampedCount);
 	}
 
-	return { error, getRandomSpotifyTopArtists, getSpotifyTopArtists, loading };
+	return { artists, error, getRandomSpotifyTopArtists, getSpotifyTopArtists, loading };
 }
