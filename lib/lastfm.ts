@@ -1,8 +1,32 @@
-import { LfmTopTrack } from '@/models/lastFm';
+import { LfmArtist, LfmTopTrack } from '@/models/lastFm';
 
 // https://www.last.fm/api
 export const LAST_FM_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/';
 export const LFM_TOP_TRACKS_LIMIT = 100;
+
+/**
+ * Search Last.fm for an artist by name and return the best match.
+ * Prefers an exact (case-insensitive) name match; falls back to first result.
+ *
+ * @param name - Artist name to search for
+ */
+export async function fetchArtistByName(name: string): Promise<LfmArtist | null> {
+	const url = new URL('/api/lastfm/artist-search', window.location.origin);
+	url.searchParams.set('artist', name);
+
+	const res = await fetch(url, {
+		headers: { 'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '' },
+	});
+	if (!res.ok) throw new Error(`Last.fm search failed: ${res.status}`);
+
+	const artists: LfmArtist[] = await res.json();
+	if (!artists.length) return null;
+
+	const exact = artists.find(
+		(a) => a.name.toLowerCase() === name.toLowerCase(),
+	);
+	return exact ?? artists[0];
+}
 
 /**
  * Fetch the top tracks for an artist from Last.fm by MBID.
