@@ -50,6 +50,17 @@ it('Clicking the close button inside the panel closes the drawer', async () => {
 	expect(menuBtn).toHaveAttribute('aria-expanded', 'false');
 });
 
+it('Clicking the backdrop overlay closes the drawer', async () => {
+	const { container } = render(<Drawer />);
+	const menuBtn = screen.getByRole('button', { name: /open menu/i });
+	await userEvent.click(menuBtn);
+	// querySelector is used for testing because aria-hidden="true"
+	// excludes the backdrop from the accessibility tree
+	const backdrop = container.querySelector('[aria-hidden="true"].fixed');
+	await userEvent.click(backdrop!);
+	expect(menuBtn).toHaveAttribute('aria-expanded', 'false');
+});
+
 it('Renders children inside the drawer', () => {
 	render(<Drawer>drawer content</Drawer>);
 	const content = screen.getByText(/drawer content/i);
