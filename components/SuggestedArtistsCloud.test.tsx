@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { SpBadBunny, SpDaftPunk } from '@/mocks/SpotifyArtistMocks';
+import userEvent from '@testing-library/user-event';
+import { LfmBadBunny } from '@/mocks/LfmArtistMocks';
+import { SpBadBunny, SpDaftPunk, SpGreenDay } from '@/mocks/SpotifyArtistMocks';
 import SuggestedArtistsCloud from './SuggestedArtistsCloud';
 
 const mockArtists = [SpBadBunny, SpDaftPunk];
@@ -9,7 +11,7 @@ mockGetRandomSpotifyTopArtists.mockReturnValue(mockArtists);
 
 const mockUseSpotifyTopArtists = jest.fn();
 mockUseSpotifyTopArtists.mockReturnValue({
-	artists: mockArtists,
+	artists: [SpBadBunny, SpDaftPunk, SpGreenDay],
 	error: null,
 	getRandomSpotifyTopArtists: mockGetRandomSpotifyTopArtists,
 	getSpotifyTopArtists: jest.fn(),
@@ -19,6 +21,13 @@ mockUseSpotifyTopArtists.mockReturnValue({
 jest.mock('../hooks/useSpotifyTopArtists', () => ({
 	useSpotifyTopArtists: (...args: unknown[]) =>
 		mockUseSpotifyTopArtists(...args),
+}));
+
+const mockFetchArtistByName = jest.fn();
+mockFetchArtistByName.mockResolvedValue(LfmBadBunny);
+
+jest.mock('../lib/lastfm', () => ({
+	fetchArtistByName: (...args: unknown[]) => mockFetchArtistByName(...args),
 }));
 
 it('Returns null when loading', () => {
@@ -104,4 +113,30 @@ it('Sets aria-label to max message when isFull and limit are provided', () => {
 			/the maximum of 5 artists has already been selected/i,
 		),
 	);
+});
+
+it('Calls onSelect with the enriched artist when a button is clicked', async () => {
+	const onSelect = jest.fn();
+	render(<SuggestedArtistsCloud onSelect={onSelect} />);
+	const btn = screen.getByRole('button', { name: /add bad bunny/i });
+	await userEvent.click(btn);
+	expect(onSelect).toHaveBeenCalledWith(LfmBadBunny);
+});
+
+it('Shows a lookup error when the artist cannot be found', async () => {
+	mockFetchArtistByName.mockResolvedValueOnce(null);
+	render(<SuggestedArtistsCloud onSelect={jest.fn()} />);
+	const btn = screen.getByRole('button', { name: /add bad bunny/i });
+	await userEvent.click(btn);
+	const errorMsg = screen.getByText(/artist details could not be found/i);
+	expect(errorMsg).toBeInTheDocument();
+});
+
+it('Shows a lookup error when the artist fetch throws', async () => {
+	mockFetchArtistByName.mockRejectedValueOnce(new Error('Network error'));
+	render(<SuggestedArtistsCloud onSelect={jest.fn()} />);
+	const btn = screen.getByRole('button', { name: /add bad bunny/i });
+	await userEvent.click(btn);
+	const errorMsg = screen.getByText(/search failed, please try again/i);
+	expect(errorMsg).toBeInTheDocument();
 });
