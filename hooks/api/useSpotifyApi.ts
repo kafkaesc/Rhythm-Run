@@ -1,8 +1,8 @@
 'use client';
 
 import { useReducer, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { clamp, MS_PER_SECOND } from '@/lib/math';
 import {
 	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
@@ -26,7 +26,7 @@ const LOCAL_TOKEN_ENDPOINT = '/api/spotify/token';
  * Used to prioritize user tokens requests over the Rhythm Run token.
  */
 function useSpotifyToken(): string | null {
-	const { data: session } = useSession();
+	const { session } = useSessionStatus();
 	return session?.spotifyAccessToken ?? null;
 }
 

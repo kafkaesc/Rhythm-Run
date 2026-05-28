@@ -15,8 +15,18 @@ it('Renders the Last.fm link with the correct href', () => {
 	expect(link).toHaveAttribute('href', 'https://www.last.fm/api');
 });
 
+it('Renders the Spotify link with the correct href', () => {
+	render(<PoweredBy />);
+	const link = screen.getByRole('link', { name: /spotify/i });
+	expect(link).toBeInTheDocument();
+	expect(link).toHaveAttribute(
+		'href',
+		'https://developer.spotify.com/documentation/web-api',
+	);
+});
+
 it('Renders all power source links', () => {
 	render(<PoweredBy />);
 	const links = screen.getAllByRole('link');
-	expect(links).toHaveLength(2);
+	expect(links).toHaveLength(3);
 });

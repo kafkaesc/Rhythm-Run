@@ -1,7 +1,7 @@
 import { cn } from '@/lib/css-utils';
 
 type ButtonProps = React.ComponentPropsWithoutRef<'button'> & {
-	buttonStyle?: 'black-white' | 'danger' | 'primary' | 'warning';
+	buttonStyle?: 'black-white' | 'danger' | 'primary' | 'text' | 'warning';
 	mini?: boolean;
 };
 
@@ -17,6 +17,7 @@ const styleClasses: Record<string, string> = {
 	primary: 'bg-highlight text-dark hover:border-foreground',
 	'black-white': 'bg-foreground text-background hover:border-highlight',
 	danger: 'bg-danger text-light hover:border-foreground',
+	text: 'cursor-pointer text-foreground underline decoration-highlight decoration-[0.1em] transition-colors duration-300 hover:bg-background-hover focus-visible:bg-background-hover disabled:opacity-40 disabled:cursor-not-allowed',
 	warning: 'bg-warning text-dark hover:border-foreground',
 };
 
@@ -27,6 +28,14 @@ export default function Button({
 	mini,
 	...props
 }: ButtonProps) {
+	if (buttonStyle === 'text') {
+		return (
+			<button className={cn(styleClasses.text, className)} {...props}>
+				{children}
+			</button>
+		);
+	}
+
 	const secondaryStyle = styleClasses[buttonStyle ?? 'primary'];
 	return (
 		<button

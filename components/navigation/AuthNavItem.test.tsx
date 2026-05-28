@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
-import NavList from './NavList';
+import AuthNavItem from './AuthNavItem';
 
 // Mock the useSession hook to test the Login/Profile NavItem components
 jest.mock('next-auth/react', () => ({ useSession: jest.fn() }));
@@ -17,20 +17,17 @@ beforeEach(() => {
 	mockUsePathname.mockReturnValue('/');
 });
 
-it('Renders a list of nav items', () => {
-	render(<NavList />);
-	const list = screen.getByRole('list');
-	expect(list).toBeInTheDocument();
+it('Renders a Login link when logged out', () => {
+	render(<AuthNavItem />);
+	const loginLink = screen.getByRole('link', { name: /login/i });
+	expect(loginLink).toBeInTheDocument();
+	expect(loginLink).toHaveAttribute('href', '/login');
 });
 
-it('Renders a Home link', () => {
-	render(<NavList />);
-	const homeLink = screen.getByRole('link', { name: /home/i });
-	expect(homeLink).toHaveAttribute('href', '/');
-});
-
-it('Renders an About link', () => {
-	render(<NavList />);
-	const aboutLink = screen.getByRole('link', { name: /about/i });
-	expect(aboutLink).toHaveAttribute('href', '/about');
+it('Renders a Profile link when logged in', () => {
+	mockUseSession.mockReturnValue({ data: { user: { name: 'Gregor Samsa' } } });
+	render(<AuthNavItem />);
+	const profileLink = screen.getByRole('link', { name: /profile/i });
+	expect(profileLink).toBeInTheDocument();
+	expect(profileLink).toHaveAttribute('href', '/profile');
 });

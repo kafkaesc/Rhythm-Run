@@ -1,3 +1,4 @@
+import AuthNavItem from '@/components/navigation/AuthNavItem';
 import NavItem from '@/components/navigation/NavItem';
 import { cn } from '@/lib/css-utils';
 import { SITE_MAP } from '@/lib/constants';
@@ -18,6 +19,7 @@ export default function NavList({ className, stacked = false }: NavListProps) {
 						{name}
 					</NavItem>
 				))}
+			<AuthNavItem />
 		</ul>
 	);
 }
