@@ -11,6 +11,12 @@ const apiList: Array<ReactNodeAndKey> = [
 		node: <A href="https://www.getsongbpm.com/api">GetSongBPM</A>,
 	},
 	{ key: 'api_01', node: <A href="https://www.last.fm/api">Last.fm</A> },
+	{
+		key: 'api_02',
+		node: (
+			<A href="https://developer.spotify.com/documentation/web-api">Spotify</A>
+		),
+	},
 ];
 
 const libList: Array<ReactNodeAndKey> = [

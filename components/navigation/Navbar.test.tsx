@@ -1,5 +1,21 @@
 import { render, screen } from '@testing-library/react';
+import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
+
+// Mock the useSession hook to test the Login/Profile NavItem components
+jest.mock('next-auth/react', () => ({ useSession: jest.fn() }));
+const mockUseSession = useSession as jest.Mock;
+
+// Mock the usePathname hook to test the active link state
+jest.mock('next/navigation', () => ({ usePathname: jest.fn() }));
+const mockUsePathname = usePathname as jest.Mock;
+
+// Default to a logged out state before each test
+beforeEach(() => {
+	mockUseSession.mockReturnValue({ data: null });
+	mockUsePathname.mockReturnValue('/');
+});
 
 it('Renders the brand link', () => {
 	render(<Navbar />);
