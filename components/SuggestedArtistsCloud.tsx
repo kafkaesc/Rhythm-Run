@@ -35,7 +35,8 @@ function ErrorDisplay({ spotifyError, lookupError }: ErrorDisplayProps) {
 
 type CallbackCloudItemProps = {
 	artist: SpotifyArtist;
-	disabled?: boolean;
+	isDisabled?: boolean;
+	isLoading?: boolean;
 	label: string;
 	onClick: () => void;
 };
@@ -45,12 +46,14 @@ type CallbackCloudItemProps = {
  *
  * @param artist - The Spotify artist to display
  * @param disabled - Optional, true if the button is disabled
+ * @param isLoading - Optional, true if the artist is mid-fetch; shows a wait cursor
  * @param label - The aria-label for the button
  * @param onClick - Callback invoked when the button is clicked
  */
 function CallbackCloudItem({
 	artist,
-	disabled,
+	isDisabled,
+	isLoading,
 	label,
 	onClick,
 }: CallbackCloudItemProps) {
@@ -59,7 +62,8 @@ function CallbackCloudItem({
 			<Button
 				aria-label={label}
 				buttonStyle="text"
-				disabled={disabled}
+				className={isLoading ? 'disabled:cursor-wait' : undefined}
+				disabled={isDisabled}
 				onClick={onClick}
 				type="button"
 			>
@@ -117,7 +121,7 @@ export default function SuggestedArtistsCloud({
 
 	/** Returns the aria-label for an artist button based on the current state */
 	function buildCloudArtistLabel(artist: SpotifyArtist): string {
-		if (isFull && limit)
+		if (isFull && limit !== undefined)
 			return `The maximum of ${limit} artists has already been selected`;
 
 		if (isFull)
@@ -183,7 +187,8 @@ export default function SuggestedArtistsCloud({
 						onSelect ? (
 							<CallbackCloudItem
 								artist={artist}
-								disabled={isFull || loadingIds.includes(artist.id)}
+								isDisabled={isFull || loadingIds.includes(artist.id)}
+								isLoading={loadingIds.includes(artist.id)}
 								key={artist.id}
 								label={buildCloudArtistLabel(artist)}
 								onClick={() => handleSelect(artist)}

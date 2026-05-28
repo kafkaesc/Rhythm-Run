@@ -18,6 +18,8 @@ import { DEFAULT_BPM, DEFAULT_EPSILON } from '@/lib/constants';
 import { LfmArtist } from '@/models/lastFm';
 import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
 
+const MAX_SEARCH_ARTISTS = 5;
+
 export default function MetaMusicArtistTempo() {
 	const [mmQuery, setMmQuery] = useState<MetaMusicArtistTempoQuery | null>(
 		null,
@@ -31,7 +33,7 @@ export default function MetaMusicArtistTempo() {
 		remove,
 	} = useSet<LfmArtist>({
 		key: (a) => a.mbid || a.name,
-		limit: 5,
+		limit: MAX_SEARCH_ARTISTS,
 	});
 	const { tracks, loading, streaming, error } = useMetaMusicArtistTempo(
 		mmQuery?.mbids ?? [],
@@ -70,7 +72,11 @@ export default function MetaMusicArtistTempo() {
 							<EpsilonSelector initialVal={epsilon} onChange={setEpsilon} />
 						</div>
 					</div>
-					<SuggestedArtistsCloud isFull={isFull()} limit={5} onSelect={add} />
+					<SuggestedArtistsCloud
+						isFull={isFull()}
+						limit={MAX_SEARCH_ARTISTS}
+						onSelect={add}
+					/>
 					<LfmArtistSearch add={add} remove={remove} selected={artists} />
 				</>
 			)}
