@@ -22,6 +22,7 @@ export function useSessionStatus() {
 
 	/** Always false. Strava integration is not yet implemented */
 	function hasStrava() {
+		// TODO: Update this when Connect with Strava is implemented
 		return false;
 	}
 
