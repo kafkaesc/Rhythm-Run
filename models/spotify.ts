@@ -32,3 +32,19 @@ export type SpotifyTrackResult = {
 	loading: boolean;
 	error: string | null;
 };
+
+// https://developer.spotify.com/documentation/web-api/reference/get-a-list-of-current-users-playlists
+export interface SpotifyPlaylist {
+	external_urls: { spotify: string };
+	id: string;
+	images: { url: string; height: number | null; width: number | null }[];
+	name: string;
+	owner: { display_name: string | null; id: string };
+	tracks: { total: number };
+}
+
+export type SpotifyPlaylistResult = {
+	playlists: SpotifyPlaylist[] | null;
+	loading: boolean;
+	error: string | null;
+};
