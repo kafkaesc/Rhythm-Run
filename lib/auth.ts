@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
 			clientSecret: process.env.SPOTIFY_CLIENT_SECRET ?? '',
 			authorization: {
 				params: {
-					scope: 'user-read-private user-top-read',
+					scope: 'playlist-read-private user-read-private user-top-read',
 				},
 			},
 			// The Spotify token exchange often exceeds the 3500 ms default
