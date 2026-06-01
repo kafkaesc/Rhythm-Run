@@ -13,6 +13,13 @@ export type SpotifyArtistResult = {
 	error: string | null;
 };
 
+// https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist
+export type SpotifyPlaylistAddTracksResult = {
+	addTracks: (playlistId: string, trackUris: string[]) => Promise<void>;
+	loading: boolean;
+	error: string | null;
+};
+
 // https://developer.spotify.com/documentation/web-api/reference/get-track
 export interface SpotifyTrack {
 	album: {

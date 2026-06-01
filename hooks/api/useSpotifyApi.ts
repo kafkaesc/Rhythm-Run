@@ -1,10 +1,11 @@
 'use client';
 
-import { useReducer, useEffect } from 'react';
+import { useReducer, useEffect, useState } from 'react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { clamp, MS_PER_SECOND } from '@/lib/math';
 import {
+	SPOTIFY_BASE_URL,
 	SPOTIFY_PLAYLISTS_ENDPOINT,
 	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
 	SPOTIFY_RECOMMENDATIONS_LIMIT,
@@ -17,6 +18,7 @@ import {
 	SpotifyArtist,
 	SpotifyArtistResult,
 	SpotifyPlaylist,
+	SpotifyPlaylistAddTracksResult,
 	SpotifyPlaylistResult,
 	SpotifyTrack,
 	SpotifyTrackResult,
@@ -131,6 +133,54 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 		loading: state.status === 'loading',
 		error: state.error,
 	};
+}
+
+/**
+ * Returns a function to add tracks to a Spotify playlist.
+ * Requires the user to be authenticated.
+ *
+ * @returns A {@link SpotifyPlaylistAddTracksResult}
+ */
+export function useSpotifyPlaylistAddTracks(): SpotifyPlaylistAddTracksResult {
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const token = useSpotifyToken();
+
+	async function addTracks(
+		playlistId: string,
+		trackUris: string[],
+	): Promise<void> {
+		if (!token) {
+			setError('Not authenticated');
+			return;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			// Call the Spotify API with the access token
+			const res = await fetch(
+				`${SPOTIFY_BASE_URL}/playlists/${playlistId}/tracks`,
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ uris: trackUris }),
+				},
+			);
+			// Check for errors
+			if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+		} catch (err: unknown) {
+			setError(err instanceof Error ? err.message : 'Unknown error');
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	return { addTracks, loading, error };
 }
 
 /**
