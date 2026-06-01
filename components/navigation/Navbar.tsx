@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Drawer from '@/components/layout/Drawer';
+import AuthNavItem from '@/components/navigation/AuthNavItem';
 import NavList from '@/components/navigation/NavList';
 import DarkModeToggle from '@/components/DarkModeToggle';
 
@@ -10,7 +11,7 @@ export default function Navbar() {
 			<div className="flex-1 flex items-center sm:hidden">
 				<Drawer title="Rhythm Run" headerRight={<DarkModeToggle />}>
 					<div className="mx-1">
-						<NavList stacked />
+						<NavList inDrawer stacked />
 					</div>
 				</Drawer>
 			</div>
@@ -19,6 +20,9 @@ export default function Navbar() {
 			</Link>
 			<div className="flex-1 flex items-center justify-end gap-4">
 				<NavList className="hidden sm:flex" />
+				<ul className="sm:hidden">
+					<AuthNavItem />
+				</ul>
 				<div className="hidden sm:block">
 					<DarkModeToggle />
 				</div>
