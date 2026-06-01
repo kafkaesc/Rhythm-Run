@@ -1,11 +1,11 @@
 'use client';
 
-import { useSpotifyTopArtists } from '@/hooks/api/useSpotifyApi';
+import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
 import { clamp } from '@/lib/math';
 import { SpotifyArtist } from '@/models/spotify';
 
 export function useSpotifyRecentFavorites() {
-	const { artists, loading, error } = useSpotifyTopArtists(50, true);
+	const { artists, loading, error } = useSpotifyTopArtistsApi(50, true);
 
 	/**
 	 * Get a random set of n artists from the user's Spotify recent top 50
