@@ -5,7 +5,8 @@ import Image from 'next/image';
 import SpotifyLoginButton from '@/components/auth/SpotifyLoginButton';
 import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
-import SpotifyArtistSearch from '@/components/SpotifyArtistSearch';
+import Scrollable from '@/components/layout/Scrollable';
+import SpotifyPlaylists from '@/components/SpotifyPlaylists';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { useSpotifyTopArtists } from '@/hooks/api/useSpotifyApi';
 
@@ -46,7 +47,10 @@ function SpotifyDebug({ session }: { session: Session | null }) {
 					)}
 				</div>
 			</div>
-			<SpotifyArtistSearch />
+			<H2>Playlists</H2>
+			<Scrollable className="mx-auto max-w-[512px]" maxHeight={512}>
+				<SpotifyPlaylists />
+			</Scrollable>
 		</>
 	);
 }
