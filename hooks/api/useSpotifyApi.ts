@@ -5,6 +5,7 @@ import { initialState, reducer } from '@/hooks/api/asyncReducer';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { clamp, MS_PER_SECOND } from '@/lib/math';
 import {
+	SPOTIFY_PLAYLISTS_ENDPOINT,
 	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
 	SPOTIFY_RECOMMENDATIONS_LIMIT,
 	SPOTIFY_SEARCH_ENDPOINT,
@@ -15,6 +16,8 @@ import {
 import {
 	SpotifyArtist,
 	SpotifyArtistResult,
+	SpotifyPlaylist,
+	SpotifyPlaylistResult,
 	SpotifyTrack,
 	SpotifyTrackResult,
 } from '@/models/spotify';
@@ -348,6 +351,69 @@ export function useSpotifyTempoSearch({
 
 	return {
 		tracks: state.data,
+		loading: state.status === 'loading',
+		error: state.error,
+	};
+}
+
+/**
+ * Calls the Spotify API for the logged-in Spotify user's playlists.
+ * Returns "playlists: null" if not logged in.
+ *
+ * @param limit - Optional, default 50, number of playlists to return, clamped to [1–50]
+ * @returns A {@link SpotifyPlaylistResult}
+ */
+export function useSpotifyPlaylists(limit = 50): SpotifyPlaylistResult {
+	const [state, dispatch] = useReducer(
+		reducer<SpotifyPlaylist[]>,
+		initialState<SpotifyPlaylist[]>(),
+	);
+	const token = useSpotifyToken();
+
+	useEffect(() => {
+		if (!token) {
+			dispatch({ type: 'clear' });
+			return;
+		}
+
+		dispatch({ type: 'fetch' });
+
+		const controller = new AbortController();
+
+		const clampedLimit = String(clamp(limit, 1, 50));
+
+		// Build the URI
+		const url = new URL(SPOTIFY_PLAYLISTS_ENDPOINT);
+		url.searchParams.set('limit', clampedLimit);
+
+		// Call the Spotify API with the access token
+		fetch(url, {
+			signal: controller.signal,
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => {
+				// Check for errors before returning a JSON promise of the data
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				return res.json() as Promise<{ items: SpotifyPlaylist[] }>;
+			})
+			.then((data) => {
+				// Return the fetched playlists
+				dispatch({ type: 'success', data: data.items });
+			})
+			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
+				if ((err as Error).name === 'AbortError') return;
+				dispatch({
+					type: 'error',
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			});
+
+		return () => controller.abort();
+	}, [token, limit]);
+
+	return {
+		playlists: state.data,
 		loading: state.status === 'loading',
 		error: state.error,
 	};
