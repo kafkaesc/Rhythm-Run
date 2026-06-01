@@ -11,7 +11,7 @@ export default function Navbar() {
 			<div className="flex-1 flex items-center sm:hidden">
 				<Drawer title="Rhythm Run" headerRight={<DarkModeToggle />}>
 					<div className="mx-1">
-						<NavList stacked />
+						<NavList inDrawer stacked />
 					</div>
 				</Drawer>
 			</div>
