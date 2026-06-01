@@ -5,8 +5,6 @@ import { initialState, reducer } from '@/hooks/api/asyncReducer';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { clamp, MS_PER_SECOND } from '@/lib/math';
 import {
-	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
-	SPOTIFY_RECOMMENDATIONS_LIMIT,
 	SPOTIFY_SEARCH_ENDPOINT,
 	SPOTIFY_SEARCH_LIMIT,
 	SPOTIFY_TOP_ARTISTS_ENDPOINT,
