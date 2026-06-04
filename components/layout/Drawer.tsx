@@ -16,6 +16,12 @@ type DrawerProps = {
 /**
  * Slide-out panel anchored to the left or right edge of the screen.
  * Initially displays a menu button that opens the drawer on click.
+ *
+ * @param children - Optional, content rendered inside the drawer panel
+ * @param className - Optional, additional classes applied to the menu trigger button
+ * @param headerRight - Optional, content rendered in the top-right corner of the drawer header
+ * @param side - Optional, default 'left', which edge of the screen the drawer slides out from
+ * @param title - Optional, heading text displayed in the drawer header
  */
 export default function Drawer({
 	children,
@@ -34,6 +40,18 @@ export default function Drawer({
 	useEffect(() => {
 		if (open) closeRef.current?.focus();
 		else triggerRef.current?.focus();
+	}, [open]);
+
+	// Listen for the esc button to close the drawer
+	useEffect(() => {
+		if (!open) return;
+
+		function handleKeyDown(e: KeyboardEvent) {
+			if (e.key === 'Escape') setOpen(false);
+		}
+
+		document.addEventListener('keydown', handleKeyDown);
+		return () => document.removeEventListener('keydown', handleKeyDown);
 	}, [open]);
 
 	return (

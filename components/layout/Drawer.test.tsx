@@ -78,3 +78,11 @@ it('Renders the headerRight prop', () => {
 	const headerSideContent = screen.getByText(/side display/i);
 	expect(headerSideContent).toBeInTheDocument();
 });
+
+it('Pressing esc closes the drawer', async () => {
+	render(<Drawer />);
+	const menuBtn = screen.getByRole('button', { name: /open menu/i });
+	await userEvent.click(menuBtn);
+	await userEvent.keyboard('{Escape}');
+	expect(menuBtn).toHaveAttribute('aria-expanded', 'false');
+});
