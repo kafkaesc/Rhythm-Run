@@ -34,6 +34,7 @@ export default function Drawer({
 	const isLeft = side !== 'right';
 	const triggerRef = useRef<HTMLButtonElement>(null);
 	const closeRef = useRef<HTMLButtonElement>(null);
+	const panelRef = useRef<HTMLDivElement>(null);
 
 	// We need to switch the focus onto the drawer when it opens
 	// and then back to the menu button when it closes
@@ -54,6 +55,35 @@ export default function Drawer({
 		return () => document.removeEventListener('keydown', handleKeyDown);
 	}, [open]);
 
+	// Mark all DOM siblings of the panel's ancestors as inert so keyboard
+	// tab focus cannot use content behind the drawer while it is open.
+	// This effect must stay after the focus effect so its cleanup runs first,
+	// ensuring inert is removed before focus returns to the trigger button.
+	useEffect(() => {
+		if (!open || !panelRef.current) return;
+
+		const affected: HTMLElement[] = [];
+		let el: HTMLElement | null = panelRef.current;
+
+		// Go up from the panel to document.body, mark every sibling at
+		// each level as inert. This blocks keyboard focus on all page
+		// content outside the drawer.
+		while (el && el !== document.body) {
+			const parent: HTMLElement | null = el.parentElement;
+			if (parent) {
+				Array.from(parent.children).forEach((child) => {
+					if (child !== el && !child.hasAttribute('inert')) {
+						(child as HTMLElement).setAttribute('inert', '');
+						affected.push(child as HTMLElement);
+					}
+				});
+			}
+			el = parent;
+		}
+
+		return () => affected.forEach((el) => el.removeAttribute('inert'));
+	}, [open]);
+
 	return (
 		<>
 			{open && (
@@ -64,20 +94,19 @@ export default function Drawer({
 				/>
 			)}
 			<button
-				ref={triggerRef}
 				aria-expanded={open}
 				aria-label={open ? 'Close menu' : 'Open menu'}
-				onClick={() => setOpen(!open)}
-				type="button"
 				className={cn(
 					'flex items-center justify-center p-2 rounded-md transition-colors cursor-pointer hover:bg-background-hover border border-transparent',
 					className,
 				)}
+				onClick={() => setOpen(!open)}
+				ref={triggerRef}
+				type="button"
 			>
 				<MenuIcon fontSize="1.25rem" />
 			</button>
 			<div
-				inert={!open || undefined}
 				className={[
 					'fixed top-0 h-full w-[80dvw] max-w-[360px] z-50',
 					isLeft ? 'left-0' : 'right-0',
@@ -88,15 +117,17 @@ export default function Drawer({
 							? '-translate-x-full'
 							: 'translate-x-full',
 				].join(' ')}
+				inert={!open || undefined}
+				ref={panelRef}
 			>
 				<div className="dark flex flex-col h-full bg-black text-light">
 					<div className="flex items-center py-2 px-2 md:px-4">
 						<button
-							ref={closeRef}
 							aria-label="Close menu"
-							onClick={() => setOpen(false)}
-							type="button"
 							className="flex items-center justify-center p-2 rounded-md transition-colors cursor-pointer hover:bg-dark-hover border border-transparent"
+							onClick={() => setOpen(false)}
+							ref={closeRef}
+							type="button"
 						>
 							<CloseIcon fontSize="1.25rem" />
 						</button>
