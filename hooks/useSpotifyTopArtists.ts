@@ -1,7 +1,6 @@
 'use client';
 
-// Aliased to avoid collision with this hook's own exported name
-import { useSpotifyTopArtists as useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
+import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
 import { clamp } from '@/lib/math';
 import { SpotifyArtist } from '@/models/spotify';
 
