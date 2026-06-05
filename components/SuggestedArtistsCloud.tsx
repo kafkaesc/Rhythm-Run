@@ -6,6 +6,7 @@ import Button from '@/components/elements/Button';
 import Label from './elements/Label';
 import { fetchArtistByName } from '@/lib/lastfm';
 import { useSpotifyTopArtists } from '@/hooks/useSpotifyTopArtists';
+import { useSuggestedArtistCloudFocus } from '@/hooks/useSuggestedArtistCloudFocus';
 import { LfmArtist } from '@/models/lastFm';
 import { SpotifyArtist } from '@/models/spotify';
 
@@ -104,6 +105,8 @@ export default function SuggestedArtistsCloud({
 	const [loadingIds, setLoadingIds] = useState<string[]>([]);
 	const [lookupError, setLookupError] = useState<string | null>(null);
 	const initialized = useRef(false);
+	const { listRef, pendingFocusIndexRef } =
+		useSuggestedArtistCloudFocus(suggested);
 
 	useEffect(() => {
 		// Initialize once when artists are available, otherwise skip out
@@ -144,6 +147,10 @@ export default function SuggestedArtistsCloud({
 		// or the caller component is full
 		if (!onSelect || isFull || loadingIds.includes(artist.id)) return;
 
+		// Get future focus target before any state changes or async operations
+		const selectedIndex = suggested.findIndex((ar) => ar.id === artist.id);
+		pendingFocusIndexRef.current = Math.max(0, selectedIndex - 1);
+
 		// Reset any errors from a previous call and mark the artist as loading
 		setLookupError(null);
 		setLoadingIds((prev) => [...prev, artist.id]);
@@ -167,9 +174,11 @@ export default function SuggestedArtistsCloud({
 					return [...remaining, replacement];
 				});
 			} else {
+				pendingFocusIndexRef.current = null;
 				setLookupError('Artist details could not be found');
 			}
 		} catch {
+			pendingFocusIndexRef.current = null;
 			setLookupError('Search failed, please try again');
 		} finally {
 			// Success or error: remove the artist from the loading list
@@ -182,7 +191,7 @@ export default function SuggestedArtistsCloud({
 			<Label className="mb-0">Suggested artists</Label>
 			<ErrorDisplay lookupError={lookupError} spotifyError={spotifyError} />
 			{suggested.length > 0 && (
-				<ul className="flex flex-wrap gap-x-3 gap-y-2">
+				<ul className="flex flex-wrap gap-x-3 gap-y-2" ref={listRef}>
 					{suggested.map((artist) =>
 						onSelect ? (
 							<CallbackCloudItem

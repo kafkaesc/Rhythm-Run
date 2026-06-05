@@ -201,7 +201,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
  * @param recent - Optional, default false, if true, returns recent top artists from the last 4 weeks
  * @returns A {@link SpotifyArtistResult}
  */
-export function useSpotifyTopArtists(
+export function useSpotifyTopArtistsApi(
 	limit = 10,
 	recent = false,
 ): SpotifyArtistResult {

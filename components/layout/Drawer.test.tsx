@@ -78,3 +78,42 @@ it('Renders the headerRight prop', () => {
 	const headerSideContent = screen.getByText(/side display/i);
 	expect(headerSideContent).toBeInTheDocument();
 });
+
+it('Pressing esc closes the drawer', async () => {
+	render(<Drawer />);
+	const menuBtn = screen.getByRole('button', { name: /open menu/i });
+	await userEvent.click(menuBtn);
+	await userEvent.keyboard('{Escape}');
+	expect(menuBtn).toHaveAttribute('aria-expanded', 'false');
+});
+
+it('Marks sibling content as inert when the drawer is open', async () => {
+	render(
+		<div>
+			<nav>
+				<Drawer />
+			</nav>
+			<main>Flibbertigibbet</main>
+		</div>,
+	);
+	const menuBtn = screen.getByRole('button', { name: /open menu/i });
+	await userEvent.click(menuBtn);
+	const main = screen.getByRole('main');
+	expect(main).toHaveAttribute('inert');
+});
+
+it('Removes inert from sibling content when the drawer is closed', async () => {
+	render(
+		<div>
+			<nav>
+				<Drawer />
+			</nav>
+			<main>Flibbertigibbet</main>
+		</div>,
+	);
+	const menuBtn = screen.getByRole('button', { name: /open menu/i });
+	await userEvent.click(menuBtn);
+	await userEvent.keyboard('{Escape}');
+	const main = screen.getByRole('main');
+	expect(main).not.toHaveAttribute('inert');
+});

@@ -7,11 +7,11 @@ import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
 import SpotifyArtistSearch from '@/components/SpotifyArtistSearch';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
-import { useSpotifyTopArtists } from '@/hooks/api/useSpotifyApi';
+import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
 
 function SpotifyDebug({ session }: { session: Session | null }) {
-	const { artists: allTimeFavorites } = useSpotifyTopArtists(20);
-	const { artists: recentFavorites } = useSpotifyTopArtists(10, true);
+	const { artists: allTimeFavorites } = useSpotifyTopArtistsApi(20);
+	const { artists: recentFavorites } = useSpotifyTopArtistsApi(10, true);
 
 	if (!session || !session.spotifyAccessToken) return null;
 
