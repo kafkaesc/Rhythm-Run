@@ -57,3 +57,29 @@ it('Clamps value to 20 when input is above 20', () => {
 	expect(onChange).toHaveBeenCalledWith(20);
 	expect(spinner).toHaveValue(20);
 });
+
+it('Does not call onChange when field is cleared', () => {
+	const onChange = jest.fn();
+	render(<EpsilonSelector onChange={onChange} />);
+	const spinner = screen.getByRole('spinbutton');
+	fireEvent.change(spinner, { target: { value: '' } });
+	expect(onChange).not.toHaveBeenCalled();
+});
+
+it('Does not show a leading zero when field is cleared and a new value is typed', () => {
+	render(<EpsilonSelector />);
+	const spinner = screen.getByRole('spinbutton');
+	fireEvent.change(spinner, { target: { value: '' } });
+	fireEvent.change(spinner, { target: { value: '1' } });
+	expect(spinner).toHaveDisplayValue('1');
+});
+
+it('Restores the initial value and calls onChange on blur when field is empty', () => {
+	const onChange = jest.fn();
+	render(<EpsilonSelector onChange={onChange} />);
+	const spinner = screen.getByRole('spinbutton');
+	fireEvent.change(spinner, { target: { value: '' } });
+	fireEvent.blur(spinner);
+	expect(spinner).toHaveValue(4);
+	expect(onChange).toHaveBeenCalledWith(4);
+});

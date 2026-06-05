@@ -26,9 +26,12 @@ After first downloading this project, run `pnpm install` from the root folder to
 In order to call APIs you will need to create a `.env.local` file.
 
 ```
-NEXT_PUBLIC_INTERNAL_API_KEY<YOUR_KEY_HERE>
+NEXT_PUBLIC_INTERNAL_API_KEY=<YOUR_KEY_HERE>
+CACHE_ENABLED=false
 GET_SONG_BPM_KEY=<YOUR_KEY_HERE>
 LAST_FM_KEY=<YOUR_KEY_HERE>
+NEXTAUTH_SECRET=<YOUR_KEY_HERE>
+NEXTAUTH_URL=<YOUR_URL_HERE>
 SPOTIFY_CLIENT_ID=<YOUR_KEY_HERE>
 SPOTIFY_CLIENT_SECRET=<YOUR_KEY_HERE>
 UPSTASH_REDIS_REST_URL=<YOUR_URL_HERE>
@@ -64,6 +67,7 @@ Once the project is installed and set up, running it just takes two steps:
 - [Last.fm](https://www.last.fm/api)
 - [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API)
 - [Spotify](https://developer.spotify.com/documentation/web-api)
+- [Strava](https://developers.strava.com)
 
 ## 🎯 Testing
 

@@ -1,6 +1,5 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import Image from 'next/image';
 import SpotifyLoginButton from '@/components/auth/SpotifyLoginButton';
@@ -9,11 +8,12 @@ import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
 import P from '@/components/elements/P';
 import SpotifyArtistSearch from '@/components/SpotifyArtistSearch';
-import { useSpotifyTopArtists } from '@/hooks/api/useSpotifyApi';
+import { useSessionStatus } from '@/hooks/useSessionStatus';
+import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
 
 function SpotifyDebug({ session }: { session: Session | null }) {
-	const { artists: allTimeFavorites } = useSpotifyTopArtists(20);
-	const { artists: recentFavorites } = useSpotifyTopArtists(10, true);
+	const { artists: allTimeFavorites } = useSpotifyTopArtistsApi(20);
+	const { artists: recentFavorites } = useSpotifyTopArtistsApi(10, true);
 
 	if (!session || !session.spotifyAccessToken) return null;
 
@@ -55,11 +55,11 @@ function SpotifyDebug({ session }: { session: Session | null }) {
 
 // Placeholder table for now
 const ZONE_BPM: { zone: string; label: string; bpm: string }[] = [
-	{ zone: 'Zone 1', label: 'Recovery', bpm: '120\u2013140' },
-	{ zone: 'Zone 2', label: 'Aerobic', bpm: '140\u2013155' },
-	{ zone: 'Zone 3', label: 'Tempo', bpm: '155\u2013165' },
-	{ zone: 'Zone 4', label: 'Threshold', bpm: '165\u2013175' },
-	{ zone: 'Zone 5', label: 'Max Effort', bpm: '175\u2013185' },
+	{ zone: 'Zone 1', label: 'Recovery', bpm: '120–140' },
+	{ zone: 'Zone 2', label: 'Aerobic', bpm: '140–155' },
+	{ zone: 'Zone 3', label: 'Tempo', bpm: '155–165' },
+	{ zone: 'Zone 4', label: 'Threshold', bpm: '165–175' },
+	{ zone: 'Zone 5', label: 'Max Effort', bpm: '175–185' },
 ];
 
 function StravaDebug({ session }: { session: Session | null }) {
@@ -91,7 +91,7 @@ function StravaDebug({ session }: { session: Session | null }) {
 }
 
 export default function DebugPage() {
-	const { data: session } = useSession();
+	const { session } = useSessionStatus();
 
 	return (
 		<>

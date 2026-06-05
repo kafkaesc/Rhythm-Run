@@ -1,15 +1,16 @@
 'use client';
 
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 import Button from '@/components/elements/Button';
 import SpotifyIcon from '@/components/icons/SpotifyIcon';
+import { useSessionStatus } from '@/hooks/useSessionStatus';
 
 /**
  * Renders a Spotify login button when the user is unauthenticated, or their
  * display name and a logout button when they are logged in.
  */
 export default function SpotifyLoginButton() {
-	const { data: session, status } = useSession();
+	const { session, status } = useSessionStatus();
 
 	// Loading the session, render nothing
 	if (status === 'loading') return null;

@@ -56,6 +56,16 @@ it('Renders the warning button with the buttonStyle prop', () => {
 	expect(btn).toHaveClass('hover:border-foreground');
 });
 
+it('Renders the text button with the buttonStyle prop', () => {
+	render(<Button buttonStyle="text">Click me</Button>);
+	const btn = screen.getByRole('button');
+	expect(btn).toHaveClass('text-foreground');
+	expect(btn).toHaveClass('underline');
+	expect(btn).toHaveClass('decoration-highlight');
+	expect(btn).not.toHaveClass('px-3');
+	expect(btn).not.toHaveClass('rounded-md');
+});
+
 it('Renders a mini button with the mini prop', () => {
 	render(<Button mini>Click me</Button>);
 	const btn = screen.getByRole('button');

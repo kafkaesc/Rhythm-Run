@@ -7,6 +7,7 @@ import { cn } from '@/lib/css-utils';
 type NavItemProps = {
 	children: React.ReactNode;
 	href: string;
+	inDrawer?: boolean;
 };
 
 /**
@@ -17,13 +18,14 @@ type NavItemProps = {
  * @param href - The URL to navigate to
  * @param children - The link text or element
  */
-export default function NavItem({ children, href }: NavItemProps) {
+export default function NavItem({ children, href, inDrawer = false }: NavItemProps) {
 	// Determine if the current path matches the href to apply active CSS
 	const pathname = usePathname();
 	const isActive = pathname === href;
 
 	const linkStyles = cn(
-		'block px-3 py-1 rounded-md transition-colors cursor-pointer no-underline text-inherit',
+		'block px-3 py-1 rounded-md transition-colors cursor-pointer no-underline text-inherit border border-transparent',
+		inDrawer && 'py-3 text-lg',
 		isActive ? 'bg-foreground text-background' : 'hover:bg-background-hover',
 	);
 

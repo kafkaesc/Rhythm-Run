@@ -10,12 +10,15 @@ import LfmArtistSearch from '@/components/LfmArtistSearch';
 import LoadingMessages from '@/components/LoadingMessages';
 import ProxyWarning from '@/components/ProxyWarning';
 import SearchStatus from '@/components/SearchStatus';
+import SuggestedArtistsCloud from '@/components/SuggestedArtistsCloud';
 import TrackTable from '@/components/TrackTable';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
 import { DEFAULT_BPM, DEFAULT_EPSILON } from '@/lib/constants';
 import { LfmArtist } from '@/models/lastFm';
 import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
+
+const MAX_SEARCH_ARTISTS = 5;
 
 export default function MetaMusicArtistTempo() {
 	const [mmQuery, setMmQuery] = useState<MetaMusicArtistTempoQuery | null>(
@@ -26,10 +29,11 @@ export default function MetaMusicArtistTempo() {
 	const {
 		set: artists,
 		add,
+		isFull,
 		remove,
 	} = useSet<LfmArtist>({
 		key: (a) => a.mbid || a.name,
-		limit: 5,
+		limit: MAX_SEARCH_ARTISTS,
 	});
 	const { tracks, loading, streaming, error } = useMetaMusicArtistTempo(
 		mmQuery?.mbids ?? [],
@@ -68,6 +72,11 @@ export default function MetaMusicArtistTempo() {
 							<EpsilonSelector initialVal={epsilon} onChange={setEpsilon} />
 						</div>
 					</div>
+					<SuggestedArtistsCloud
+						isFull={isFull()}
+						limit={MAX_SEARCH_ARTISTS}
+						onSelect={add}
+					/>
 					<LfmArtistSearch add={add} remove={remove} selected={artists} />
 				</>
 			)}

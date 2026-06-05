@@ -19,12 +19,28 @@ export default function EpsilonSelector({
 	onChange,
 	title,
 }: EpsilonSelectorProps) {
-	const [epsilon, setEpsilon] = useState(initialVal);
+	const [inputValue, setInputValue] = useState(String(initialVal));
 
-	function handleChange(value: number) {
-		const clampValue = clamp(value, MIN_EPSILON, MAX_EPSILON);
-		setEpsilon(clampValue);
-		onChange?.(clampValue);
+	// String state lets the field go empty while typing and
+	// avoids leading zeros from an empty string becoming 0
+	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const raw = e.target.value;
+		setInputValue(raw);
+
+		if (raw === '') return;
+
+		const clamped = clamp(Number(raw), MIN_EPSILON, MAX_EPSILON);
+		if (clamped !== Number(raw)) setInputValue(String(clamped));
+		if (onChange) onChange(clamped);
+	}
+
+	// Commit a non-empty value when the user leaves an empty field
+	function handleBlur() {
+		if (inputValue === '') {
+			const fallback = clamp(initialVal, MIN_EPSILON, MAX_EPSILON);
+			setInputValue(String(fallback));
+			if (onChange) onChange(fallback);
+		}
 	}
 
 	return (
@@ -47,9 +63,10 @@ export default function EpsilonSelector({
 					id="epsilon-input"
 					max={MAX_EPSILON}
 					min={MIN_EPSILON}
-					onChange={(e) => handleChange(Number(e.target.value))}
+					onBlur={handleBlur}
+					onChange={handleChange}
 					type="number"
-					value={epsilon}
+					value={inputValue}
 				/>
 			</div>
 		</fieldset>
