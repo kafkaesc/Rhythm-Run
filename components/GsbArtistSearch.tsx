@@ -44,9 +44,7 @@ export default function GsbArtistSearch({ add, title }: GsbArtistSearchProps) {
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
-				<Label htmlFor="gsb-artist-search">
-					{title || 'Artist name'}
-				</Label>
+				<Label htmlFor="gsb-artist-search">{title || 'Artist name'}</Label>
 				<div className="flex items-center gap-2">
 					<Input
 						className="flex-1 min-w-0"
@@ -59,21 +57,19 @@ export default function GsbArtistSearch({ add, title }: GsbArtistSearchProps) {
 						value={input}
 					/>
 					<Button
-						className="flex items-center gap-1"
 						disabled={input.length === 0}
+						icon={<SearchIcon aria-hidden="true" />}
 						type="submit"
 					>
-						<SearchIcon aria-hidden="true" />
 						<span className="hidden md:inline">Search</span>
 					</Button>
 					<Button
 						aria-label="Clear search"
 						buttonStyle="black-white"
-						className="flex items-center gap-1"
-						type="button"
+						icon={<ClearIcon aria-hidden="true" />}
 						onClick={clear}
+						type="button"
 					>
-						<ClearIcon aria-hidden="true" />
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>
