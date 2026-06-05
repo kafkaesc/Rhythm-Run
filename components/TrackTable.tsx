@@ -78,6 +78,7 @@ type TrackTableProps = {
  * @param tracks - an array of {@link Track} objects to display
  */
 export default function TrackTable({ tracks }: TrackTableProps) {
+	// React Compiler breaks TanStack Table's internal state tracking
 	'use no memo';
 
 	const [sorting, setSorting] = useState<SortingState>([]);
