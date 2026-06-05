@@ -81,6 +81,20 @@ Tests are written with [Jest](https://jestjs.io/) and [React Testing Library](ht
 
 [![Coverage Graph](https://codecov.io/gh/kafkaesc/Rhythm-Run/graphs/sunburst.svg?token=I4SQ74QIAQ)](https://codecov.io/gh/kafkaesc/rhythm-run)
 
-## ⚖️ License
+## 🧩 Project Details
 
-This project is licensed under the [MIT License](LICENSE.md).
+### MetaMusic API
+
+MetaMusic is the internal API layer responsible for coordinating data across various music APIs.
+
+`artist-tracks` fetches the top tracks for a given artist from Last.fm and then enriches each track with tempo data from GetSongBPM.
+
+### Tempo Cache
+
+This project uses a Redis cache to store enriched track data per artist.
+
+The cache policy is:
+
+1. A row is evicted at a week old to avoid cached data from becoming stale.
+1. When an entry is written or read, it is marked with a last-access timestamp.
+1. When the cache is full (512 entries), the least-recently used (LRU) row is evicted.
