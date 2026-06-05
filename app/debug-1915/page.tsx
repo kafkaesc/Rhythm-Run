@@ -9,15 +9,15 @@ import H2 from '@/components/elements/H2';
 import Scrollable from '@/components/layout/Scrollable';
 import SpotifyPlaylists from '@/components/SpotifyPlaylists';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
-import { useSpotifyTopArtists } from '@/hooks/api/useSpotifyApi';
+import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
 import { SpotifyPlaylist } from '@/models/spotify';
 import PlaylistButton from '@/components/PlaylistButton';
 
 function SpotifyDebug({ session }: { session: Session | null }) {
 	const [selectedSpotifyPlaylist, setSelectedSpotifyPlaylist] =
 		useState<SpotifyPlaylist | null>(null);
-	const { artists: allTimeFavorites } = useSpotifyTopArtists(20);
-	const { artists: recentFavorites } = useSpotifyTopArtists(10, true);
+	const { artists: allTimeFavorites } = useSpotifyTopArtistsApi(20);
+	const { artists: recentFavorites } = useSpotifyTopArtistsApi(10, true);
 
 	if (!session || !session.spotifyAccessToken) return null;
 

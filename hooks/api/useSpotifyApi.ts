@@ -7,8 +7,6 @@ import { clamp, MS_PER_SECOND } from '@/lib/math';
 import {
 	SPOTIFY_BASE_URL,
 	SPOTIFY_PLAYLISTS_ENDPOINT,
-	SPOTIFY_RECOMMENDATIONS_ENDPOINT,
-	SPOTIFY_RECOMMENDATIONS_LIMIT,
 	SPOTIFY_SEARCH_ENDPOINT,
 	SPOTIFY_SEARCH_LIMIT,
 	SPOTIFY_TOP_ARTISTS_ENDPOINT,
@@ -256,7 +254,7 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
  * @param recent - Optional, default false, if true, returns recent top artists from the last 4 weeks
  * @returns A {@link SpotifyArtistResult}
  */
-export function useSpotifyTopArtists(
+export function useSpotifyTopArtistsApi(
 	limit = 10,
 	recent = false,
 ): SpotifyArtistResult {
@@ -316,91 +314,6 @@ export function useSpotifyTopArtists(
 
 	return {
 		artists: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
-}
-
-type TempoSearchParams = {
-	bpm?: number;
-	seedTrack?: string;
-	seedArtist?: string;
-	seedGenre?: string;
-};
-
-/**
- * DEPRECATED BY SPOTIFY, WILL ONLY RETURN A 400 ERROR.
- * Calls the Spotify API for track recommendations matching a target BPM + seed data.
- * At least one seed (track ID, artist ID, or genre name) must be provided alongside a BPM.
- * Track IDs and artist IDs will need to be obtained by first searching
- * with {@link useSpotifyTrackSearch} or a similar method.
- *
- * @param bpm - Target tempo in beats per minute (BPM)
- * @param seedArtist - A Spotify artist ID
- * @param seedGenre - A genre name
- * @param seedTrack - A Spotify track ID
- * @returns A {@link SpotifyTrackResult}
- */
-export function useSpotifyTempoSearch({
-	bpm,
-	seedArtist,
-	seedGenre,
-	seedTrack,
-}: TempoSearchParams): SpotifyTrackResult {
-	const [state, dispatch] = useReducer(
-		reducer<SpotifyTrack[]>,
-		initialState<SpotifyTrack[]>(),
-	);
-
-	useEffect(() => {
-		const hasSeed = seedTrack || seedArtist || seedGenre;
-
-		if (!bpm || !hasSeed) return;
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-
-		getCachedToken()
-			.then((accessToken) => {
-				// Build the URI
-				const url = new URL(SPOTIFY_RECOMMENDATIONS_ENDPOINT);
-				url.searchParams.set('target_tempo', String(bpm));
-				url.searchParams.set('limit', SPOTIFY_RECOMMENDATIONS_LIMIT);
-				if (seedTrack) url.searchParams.set('seed_tracks', seedTrack);
-				if (seedArtist) url.searchParams.set('seed_artists', seedArtist);
-				if (seedGenre) url.searchParams.set('seed_genres', seedGenre);
-
-				// Call the Spotify API with the access token
-				return fetch(url, {
-					signal: controller.signal,
-					headers: { Authorization: `Bearer ${accessToken}` },
-				});
-			})
-			.then((res) => {
-				// Check for errors before returning a JSON promise of the data
-				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
-
-				return res.json() as Promise<{ tracks: SpotifyTrack[] }>;
-			})
-			.then((data) => {
-				// Return the fetched tracks
-				return dispatch({ type: 'success', data: data.tracks });
-			})
-			.catch((err: unknown) => {
-				// AbortError is intentional so return silently
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [bpm, seedTrack, seedArtist, seedGenre]);
-
-	return {
-		tracks: state.data,
 		loading: state.status === 'loading',
 		error: state.error,
 	};

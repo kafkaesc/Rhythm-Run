@@ -140,3 +140,20 @@ it('Shows a lookup error when the artist fetch throws', async () => {
 	const errorMsg = screen.getByText(/search failed, please try again/i);
 	expect(errorMsg).toBeInTheDocument();
 });
+
+it('Moves focus to the previous artist button after a non-first artist is selected', async () => {
+	render(<SuggestedArtistsCloud onSelect={jest.fn()} />);
+	const badBunnyBtn = screen.getByRole('button', { name: /add bad bunny/i });
+	const daftPunkBtn = screen.getByRole('button', { name: /add daft punk/i });
+	await userEvent.click(daftPunkBtn);
+	expect(badBunnyBtn).toHaveFocus();
+});
+
+it('Does not move focus to the previous artist when selection fails', async () => {
+	mockFetchArtistByName.mockResolvedValueOnce(null);
+	render(<SuggestedArtistsCloud onSelect={jest.fn()} />);
+	const badBunnyBtn = screen.getByRole('button', { name: /add bad bunny/i });
+	const daftPunkBtn = screen.getByRole('button', { name: /add daft punk/i });
+	await userEvent.click(daftPunkBtn);
+	expect(badBunnyBtn).not.toHaveFocus();
+});
