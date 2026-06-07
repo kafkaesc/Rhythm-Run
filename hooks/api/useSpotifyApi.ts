@@ -12,6 +12,7 @@ import {
 	SPOTIFY_TOP_ARTISTS_ENDPOINT,
 	SPOTIFY_TOP_ARTIST_LIMIT,
 } from '@/lib/spotify';
+import { Track } from '@/models/rhythmRun';
 import {
 	SpotifyArtist,
 	SpotifyArtistResult,
@@ -147,10 +148,10 @@ export function useSpotifyPlaylistAddTracks(): SpotifyPlaylistAddTracksResult {
 	async function addTracks(
 		playlistId: string,
 		trackUris: string[],
-	): Promise<void> {
+	): Promise<boolean> {
 		if (!token) {
 			setError('Not authenticated');
-			return;
+			return false;
 		}
 
 		setLoading(true);
@@ -159,7 +160,7 @@ export function useSpotifyPlaylistAddTracks(): SpotifyPlaylistAddTracksResult {
 		try {
 			// Call the Spotify API with the access token
 			const res = await fetch(
-				`${SPOTIFY_BASE_URL}/playlists/${playlistId}/tracks`,
+				`${SPOTIFY_BASE_URL}/playlists/${playlistId}/items`,
 				{
 					method: 'POST',
 					headers: {
@@ -171,8 +172,10 @@ export function useSpotifyPlaylistAddTracks(): SpotifyPlaylistAddTracksResult {
 			);
 			// Check for errors
 			if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+			return true;
 		} catch (err: unknown) {
 			setError(err instanceof Error ? err.message : 'Unknown error');
+			return false;
 		} finally {
 			setLoading(false);
 		}
@@ -380,4 +383,56 @@ export function useSpotifyPlaylists(limit = 50): SpotifyPlaylistResult {
 		loading: state.status === 'loading',
 		error: state.error,
 	};
+}
+
+/**
+ * Returns a function that looks up Spotify track URIs from Track objects
+ * by searching Spotify for each track by title and artist. Tracks that
+ * can't be matched are silently skipped.
+ *
+ * @returns An object with a resolveUris function
+ */
+export function useSpotifyTrackLookup() {
+	const token = useSpotifyToken();
+
+	async function resolveUris(
+		tracks: Track[],
+	): Promise<{ uris: string[]; matched: number }> {
+		const accessToken = token ?? (await getCachedToken());
+		const uris: string[] = [];
+
+		for (const track of tracks) {
+			if (!track.artists[0]) continue;
+
+			// Build the URI
+			const query = `track:${track.title} artist:${track.artists[0]}`;
+			const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
+			url.searchParams.set('q', query);
+			url.searchParams.set('type', 'track');
+			url.searchParams.set('limit', '1');
+
+			try {
+				// Call the Spotify API with the access token
+				const res = await fetch(url, {
+					headers: { Authorization: `Bearer ${accessToken}` },
+				});
+
+				// Check for errors
+				if (!res.ok) continue;
+
+				// Take the first result from the Spotify response and add it to the URI array
+				const data = (await res.json()) as {
+					tracks: { items: SpotifyTrack[] };
+				};
+				const first = data.tracks.items[0];
+				if (first) uris.push(`spotify:track:${first.id}`);
+			} catch {
+				// Skip tracks that fail to resolve
+			}
+		}
+
+		return { uris, matched: uris.length };
+	}
+
+	return { resolveUris };
 }
