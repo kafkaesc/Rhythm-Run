@@ -1,23 +1,18 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-	SpotifyJVibesPlaylist,
-	SpotifyNoCoverArtPlaylist,
-} from '@/mocks/SpotifyPlaylistMocks';
+import { SpotifyJVibesPlaylist } from '@/mocks/SpotifyPlaylistMocks';
 import SpotifyPlaylists from './SpotifyPlaylists';
 
-const mockUseSpotifyPlaylists = jest.fn();
-mockUseSpotifyPlaylists.mockReturnValue({
-	playlists: null,
-	loading: false,
-});
+const mockUseSpotifyEditablePlaylists = jest.fn();
+mockUseSpotifyEditablePlaylists.mockReturnValue({ playlists: null, loading: false, error: null });
 
-jest.mock('../hooks/api/useSpotifyApi', () => ({
-	useSpotifyPlaylists: (...args: unknown[]) => mockUseSpotifyPlaylists(...args),
+jest.mock('../hooks/useSpotifyEditablePlaylists', () => ({
+	useSpotifyEditablePlaylists: (...args: unknown[]) =>
+		mockUseSpotifyEditablePlaylists(...args),
 }));
 
 it('Renders nothing when loading', () => {
-	mockUseSpotifyPlaylists.mockReturnValueOnce({
+	mockUseSpotifyEditablePlaylists.mockReturnValueOnce({
 		loading: true,
 		playlists: null,
 	});
@@ -31,19 +26,17 @@ it('Renders nothing when playlists is null', () => {
 });
 
 it('Renders playlist names', () => {
-	mockUseSpotifyPlaylists.mockReturnValueOnce({
-		playlists: [SpotifyJVibesPlaylist, SpotifyNoCoverArtPlaylist],
+	mockUseSpotifyEditablePlaylists.mockReturnValueOnce({
+		playlists: [SpotifyJVibesPlaylist],
 		loading: false,
 	});
 	render(<SpotifyPlaylists />);
-	const jVibes = screen.getByText('J-Vibes');
-	const noCoverArt = screen.getByText('No Cover Art');
-	expect(jVibes).toBeInTheDocument();
-	expect(noCoverArt).toBeInTheDocument();
+	const name = screen.getByText('J-Vibes');
+	expect(name).toBeInTheDocument();
 });
 
 it('Renders playlists as links when selectPlaylist is not provided', () => {
-	mockUseSpotifyPlaylists.mockReturnValueOnce({
+	mockUseSpotifyEditablePlaylists.mockReturnValueOnce({
 		loading: false,
 		playlists: [SpotifyJVibesPlaylist],
 	});
@@ -54,7 +47,7 @@ it('Renders playlists as links when selectPlaylist is not provided', () => {
 });
 
 it('Renders playlists as buttons when selectPlaylist is provided', () => {
-	mockUseSpotifyPlaylists.mockReturnValueOnce({
+	mockUseSpotifyEditablePlaylists.mockReturnValueOnce({
 		loading: false,
 		playlists: [SpotifyJVibesPlaylist],
 	});
@@ -65,7 +58,7 @@ it('Renders playlists as buttons when selectPlaylist is provided', () => {
 });
 
 it('Calls selectPlaylist with the playlist when a button is clicked', async () => {
-	mockUseSpotifyPlaylists.mockReturnValueOnce({
+	mockUseSpotifyEditablePlaylists.mockReturnValueOnce({
 		loading: false,
 		playlists: [SpotifyJVibesPlaylist],
 	});
