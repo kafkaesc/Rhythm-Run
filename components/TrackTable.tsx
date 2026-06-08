@@ -7,6 +7,7 @@ import {
 	getCoreRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
+	Header,
 	PaginationState,
 	RowData,
 	SortingState,
@@ -14,6 +15,7 @@ import {
 } from '@tanstack/react-table';
 import Button from '@/components/elements/Button';
 import SortIcon from '@/components/icons/SortIcon';
+import SpotifySelectButton from '@/components/SpotifySelectButton';
 import { cn } from '@/lib/css-utils';
 import { Track } from '@/models/rhythmRun';
 
@@ -24,12 +26,37 @@ declare module '@tanstack/react-table' {
 	interface ColumnMeta<TData extends RowData, TValue> {
 		className?: string;
 	}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	interface TableMeta<TData extends RowData> {
+		markedTrackIds?: Set<string>;
+		onToggleMark?: (id: string) => void;
+	}
 }
+
 /** Binds the TanStack Table ColumnHelper to the Track type */
 const columnHelper = createColumnHelper<Track>();
 
+/** Mark column — leftmost, only rendered when onToggleMark is passed via table meta */
+const markColumn = columnHelper.display({
+	id: 'mark',
+	header: () => <span className="sr-only">Spotify</span>,
+	cell: (info) => {
+		const { markedTrackIds, onToggleMark } = info.table.options.meta ?? {};
+		const { id, title } = info.row.original;
+		const marked = markedTrackIds?.has(id) ?? false;
+		return (
+			<SpotifySelectButton
+				marked={marked}
+				onClick={() => onToggleMark?.(id)}
+				title={title}
+			/>
+		);
+	},
+	meta: { className: 'w-px px-3' },
+});
+
 /** Column definitions: Track title, artist, and BPM */
-const columns = [
+const dataColumns = [
 	columnHelper.accessor('title', {
 		cell: (info) => info.getValue(),
 		header: 'Title',
@@ -51,6 +78,23 @@ const columns = [
 
 const PAGE_SIZE = 5;
 
+function renderHeaderCell(header: Header<Track, unknown>) {
+	if (header.isPlaceholder) return null;
+	if (header.column.getCanSort()) {
+		return (
+			<button
+				className="flex items-center gap-1 cursor-pointer select-none"
+				onClick={header.column.getToggleSortingHandler()}
+				type="button"
+			>
+				{flexRender(header.column.columnDef.header, header.getContext())}
+				<SortIcon isSorted={header.column.getIsSorted()} />
+			</button>
+		);
+	}
+	return flexRender(header.column.columnDef.header, header.getContext());
+}
+
 /**
  * Maps TanStack sort state to the HTML aria-sort attribute value for a column header
  *
@@ -68,16 +112,25 @@ function getAriaSortValue(
 }
 
 type TrackTableProps = {
+	markedTrackIds?: Set<string>;
+	onToggleMark?: (id: string) => void;
 	tracks: Track[];
 };
 
 /**
  * Displays a paginated, sortable table of tracks
  * with Title, Artists, and BPM columns.
+ * When onToggleMark is provided, a leftmost Spotify mark column is shown.
  *
+ * @param markedTrackIds - set of track IDs currently marked for Spotify export
+ * @param onToggleMark - callback to mark/unmark a track by ID; also enables the mark column
  * @param tracks - an array of {@link Track} objects to display
  */
-export default function TrackTable({ tracks }: TrackTableProps) {
+export default function TrackTable({
+	markedTrackIds,
+	onToggleMark,
+	tracks,
+}: TrackTableProps) {
 	// React Compiler breaks TanStack Table's internal state tracking
 	'use no memo';
 
@@ -87,14 +140,19 @@ export default function TrackTable({ tracks }: TrackTableProps) {
 		pageSize: PAGE_SIZE,
 	});
 
+	const tableColumns = onToggleMark
+		? [markColumn, ...dataColumns]
+		: dataColumns;
+
 	// eslint-disable-next-line react-hooks/incompatible-library
 	const table = useReactTable({
 		autoResetPageIndex: false,
-		columns,
+		columns: tableColumns,
 		data: tracks,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
+		meta: { markedTrackIds, onToggleMark },
 		onPaginationChange: setPagination,
 		onSortingChange: (updater) => {
 			setSorting(updater);
@@ -128,23 +186,7 @@ export default function TrackTable({ tracks }: TrackTableProps) {
 										)}
 										scope="col"
 									>
-										{header.isPlaceholder ? null : (
-											<button
-												className={cn(
-													'flex items-center gap-1',
-													header.column.getCanSort() &&
-														'cursor-pointer select-none',
-												)}
-												onClick={header.column.getToggleSortingHandler()}
-												type="button"
-											>
-												{flexRender(
-													header.column.columnDef.header,
-													header.getContext(),
-												)}
-												<SortIcon isSorted={header.column.getIsSorted()} />
-											</button>
-										)}
+										{renderHeaderCell(header)}
 									</th>
 								))}
 							</tr>
@@ -168,7 +210,10 @@ export default function TrackTable({ tracks }: TrackTableProps) {
 						))}
 						{table.getRowModel().rows.length === 0 && (
 							<tr>
-								<td className="py-1.5 text-center" colSpan={columns.length}>
+								<td
+									className="py-1.5 text-center"
+									colSpan={tableColumns.length}
+								>
 									No matching tracks
 								</td>
 							</tr>
@@ -178,9 +223,7 @@ export default function TrackTable({ tracks }: TrackTableProps) {
 				{table.getPageCount() > 1 && (
 					<div className="flex items-center justify-between pt-2">
 						<span className="text-sm">
-							{firstRow}
-							{'\u2013'}
-							{lastRow} of {totalRows}
+							{firstRow}–{lastRow} of {totalRows}
 						</span>
 						<div className="flex gap-2">
 							<Button
