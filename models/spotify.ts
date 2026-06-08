@@ -42,6 +42,7 @@ export type SpotifyTrackResult = {
 
 // https://developer.spotify.com/documentation/web-api/reference/get-a-list-of-current-users-playlists
 export interface SpotifyPlaylist {
+	collaborative: boolean;
 	external_urls: { spotify: string };
 	id: string;
 	images: { url: string; height: number | null; width: number | null }[];
@@ -52,6 +53,18 @@ export interface SpotifyPlaylist {
 
 export type SpotifyPlaylistResult = {
 	playlists: SpotifyPlaylist[] | null;
+	loading: boolean;
+	error: string | null;
+};
+
+// https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
+export interface SpotifyUser {
+	display_name: string | null;
+	id: string;
+}
+
+export type SpotifyUserResult = {
+	user: SpotifyUser | null;
 	loading: boolean;
 	error: string | null;
 };

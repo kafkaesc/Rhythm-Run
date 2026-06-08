@@ -6,6 +6,7 @@ export const SPOTIFY_ACCOUNTS_ENDPOINT =
 
 // https://developer.spotify.com/documentation/web-api
 export const SPOTIFY_BASE_URL = 'https://api.spotify.com/v1';
+export const SPOTIFY_CURRENT_USER_ENDPOINT = `${SPOTIFY_BASE_URL}/me`;
 export const SPOTIFY_PLAYLISTS_ENDPOINT = `${SPOTIFY_BASE_URL}/me/playlists`;
 export const SPOTIFY_SEARCH_ENDPOINT = `${SPOTIFY_BASE_URL}/search`;
 export const SPOTIFY_TOP_ARTISTS_ENDPOINT = `${SPOTIFY_BASE_URL}/me/top/artists`;

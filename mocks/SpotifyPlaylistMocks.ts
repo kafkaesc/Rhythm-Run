@@ -3,6 +3,7 @@
 import { SpotifyPlaylist } from '@/models/spotify';
 
 export const SpotifyJVibesPlaylist: SpotifyPlaylist = {
+	collaborative: false,
 	external_urls: {
 		spotify: 'https://open.spotify.com/playlist/6Fyac1DGI2Q6OnmfIu06yL',
 	},
@@ -30,6 +31,7 @@ export const SpotifyJVibesPlaylist: SpotifyPlaylist = {
 };
 
 export const SpotifyNoCoverArtPlaylist: SpotifyPlaylist = {
+	collaborative: false,
 	id: '37i9dQZF1DWX9yJXCdgpke',
 	name: 'No Cover Art',
 	images: [],
