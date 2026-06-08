@@ -6,6 +6,7 @@ import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { clamp, MS_PER_SECOND } from '@/lib/math';
 import {
 	SPOTIFY_BASE_URL,
+	SPOTIFY_CURRENT_USER_ENDPOINT,
 	SPOTIFY_PLAYLISTS_ENDPOINT,
 	SPOTIFY_SEARCH_ENDPOINT,
 	SPOTIFY_SEARCH_LIMIT,
@@ -21,13 +22,15 @@ import {
 	SpotifyPlaylistResult,
 	SpotifyTrack,
 	SpotifyTrackResult,
+	SpotifyUser,
+	SpotifyUserResult,
 } from '@/models/spotify';
 
 const LOCAL_TOKEN_ENDPOINT = '/api/spotify/token';
 
 /**
  * Returns the user's Spotify access token, or null if there's no login.
- * Used to prioritize user tokens requests over the Rhythm Run token.
+ * Used to prioritize user token requests over the Rhythm Run token.
  */
 function useSpotifyToken(): string | null {
 	const { session } = useSessionStatus();
@@ -94,7 +97,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 
 		(token ? Promise.resolve(token) : getCachedToken())
 			.then((accessToken) => {
-				// Build the URI
+				// Build the URL
 				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
 				url.searchParams.set('q', query);
 				url.searchParams.set('type', 'artist');
@@ -113,7 +116,7 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 			})
 			.then((data) => {
 				// Return the fetched artists
-				return dispatch({ type: 'success', data: data.artists.items });
+				dispatch({ type: 'success', data: data.artists.items });
 			})
 			.catch((err: unknown) => {
 				// AbortError is intentional so return silently
@@ -129,6 +132,62 @@ export function useSpotifyArtistSearch(query: string): SpotifyArtistResult {
 
 	return {
 		artists: state.data,
+		loading: state.status === 'loading',
+		error: state.error,
+	};
+}
+
+/**
+ * Calls the Spotify API for the logged-in user's profile.
+ * Returns "user: null" if not logged in.
+ *
+ * @returns A {@link SpotifyUserResult}
+ */
+export function useSpotifyCurrentUser(): SpotifyUserResult {
+	const [state, dispatch] = useReducer(
+		reducer<SpotifyUser>,
+		initialState<SpotifyUser>(),
+	);
+	const token = useSpotifyToken();
+
+	useEffect(() => {
+		if (!token) {
+			dispatch({ type: 'clear' });
+			return;
+		}
+
+		dispatch({ type: 'fetch' });
+
+		const controller = new AbortController();
+
+		// Call the Spotify API with the access token
+		fetch(SPOTIFY_CURRENT_USER_ENDPOINT, {
+			signal: controller.signal,
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => {
+				// Check for errors before returning a JSON promise of the data
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				return res.json() as Promise<SpotifyUser>;
+			})
+			.then((data) => {
+				// Return the fetched user
+				dispatch({ type: 'success', data });
+			})
+			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
+				if ((err as Error).name === 'AbortError') return;
+				dispatch({
+					type: 'error',
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			});
+
+		return () => controller.abort();
+	}, [token]);
+
+	return {
+		user: state.data,
 		loading: state.status === 'loading',
 		error: state.error,
 	};
@@ -185,20 +244,21 @@ export function useSpotifyPlaylistAddTracks(): SpotifyPlaylistAddTracksResult {
 }
 
 /**
- * Calls the Spotify API to search for tracks matching the query.
+ * Calls the Spotify API for the logged-in Spotify user's playlists.
+ * Returns "playlists: null" if not logged in.
  *
- * @param query - The search string to look up on Spotify.
- * @returns A {@link SpotifyTrackResult}
+ * @param limit - Optional, default 50, number of playlists to return, clamped to [1–50]
+ * @returns A {@link SpotifyPlaylistResult}
  */
-export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
+export function useSpotifyPlaylists(limit = 50): SpotifyPlaylistResult {
 	const [state, dispatch] = useReducer(
-		reducer<SpotifyTrack[]>,
-		initialState<SpotifyTrack[]>(),
+		reducer<SpotifyPlaylist[]>,
+		initialState<SpotifyPlaylist[]>(),
 	);
 	const token = useSpotifyToken();
 
 	useEffect(() => {
-		if (!query) {
+		if (!token) {
 			dispatch({ type: 'clear' });
 			return;
 		}
@@ -207,28 +267,25 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 
 		const controller = new AbortController();
 
-		(token ? Promise.resolve(token) : getCachedToken())
-			.then((accessToken) => {
-				// Build the URI
-				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
-				url.searchParams.set('q', query);
-				url.searchParams.set('type', 'track');
-				url.searchParams.set('limit', SPOTIFY_SEARCH_LIMIT);
+		const clampedLimit = String(clamp(limit, 1, 50));
 
-				// Call the Spotify API with the access token
-				return fetch(url, {
-					signal: controller.signal,
-					headers: { Authorization: `Bearer ${accessToken}` },
-				});
-			})
+		// Build the URI
+		const url = new URL(SPOTIFY_PLAYLISTS_ENDPOINT);
+		url.searchParams.set('limit', clampedLimit);
+
+		// Call the Spotify API with the access token
+		fetch(url, {
+			signal: controller.signal,
+			headers: { Authorization: `Bearer ${token}` },
+		})
 			.then((res) => {
 				// Check for errors before returning a JSON promise of the data
 				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
-				return res.json() as Promise<{ tracks: { items: SpotifyTrack[] } }>;
+				return res.json() as Promise<{ items: SpotifyPlaylist[] }>;
 			})
 			.then((data) => {
-				// Return the fetched tracks
-				return dispatch({ type: 'success', data: data.tracks.items });
+				// Return the fetched playlists
+				dispatch({ type: 'success', data: data.items });
 			})
 			.catch((err: unknown) => {
 				// AbortError is intentional so return silently
@@ -240,10 +297,10 @@ export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
 			});
 
 		return () => controller.abort();
-	}, [query, token]);
+	}, [token, limit]);
 
 	return {
-		tracks: state.data,
+		playlists: state.data,
 		loading: state.status === 'loading',
 		error: state.error,
 	};
@@ -323,69 +380,6 @@ export function useSpotifyTopArtistsApi(
 }
 
 /**
- * Calls the Spotify API for the logged-in Spotify user's playlists.
- * Returns "playlists: null" if not logged in.
- *
- * @param limit - Optional, default 50, number of playlists to return, clamped to [1–50]
- * @returns A {@link SpotifyPlaylistResult}
- */
-export function useSpotifyPlaylists(limit = 50): SpotifyPlaylistResult {
-	const [state, dispatch] = useReducer(
-		reducer<SpotifyPlaylist[]>,
-		initialState<SpotifyPlaylist[]>(),
-	);
-	const token = useSpotifyToken();
-
-	useEffect(() => {
-		if (!token) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-
-		const clampedLimit = String(clamp(limit, 1, 50));
-
-		// Build the URI
-		const url = new URL(SPOTIFY_PLAYLISTS_ENDPOINT);
-		url.searchParams.set('limit', clampedLimit);
-
-		// Call the Spotify API with the access token
-		fetch(url, {
-			signal: controller.signal,
-			headers: { Authorization: `Bearer ${token}` },
-		})
-			.then((res) => {
-				// Check for errors before returning a JSON promise of the data
-				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
-				return res.json() as Promise<{ items: SpotifyPlaylist[] }>;
-			})
-			.then((data) => {
-				// Return the fetched playlists
-				dispatch({ type: 'success', data: data.items });
-			})
-			.catch((err: unknown) => {
-				// AbortError is intentional so return silently
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [token, limit]);
-
-	return {
-		playlists: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
-}
-
-/**
  * Returns a function that looks up Spotify track URIs from Track objects
  * by searching Spotify for each track by title and artist. Tracks that
  * can't be matched are silently skipped.
@@ -404,7 +398,7 @@ export function useSpotifyTrackLookup() {
 		for (const track of tracks) {
 			if (!track.artists[0]) continue;
 
-			// Build the URI
+			// Build the URL
 			const query = `track:${track.title} artist:${track.artists[0]}`;
 			const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
 			url.searchParams.set('q', query);
@@ -435,4 +429,69 @@ export function useSpotifyTrackLookup() {
 	}
 
 	return { resolveUris };
+}
+
+/**
+ * Calls the Spotify API to search for tracks matching the query.
+ *
+ * @param query - The search string to look up on Spotify.
+ * @returns A {@link SpotifyTrackResult}
+ */
+export function useSpotifyTrackSearch(query: string): SpotifyTrackResult {
+	const [state, dispatch] = useReducer(
+		reducer<SpotifyTrack[]>,
+		initialState<SpotifyTrack[]>(),
+	);
+	const token = useSpotifyToken();
+
+	useEffect(() => {
+		if (!query) {
+			dispatch({ type: 'clear' });
+			return;
+		}
+
+		dispatch({ type: 'fetch' });
+
+		const controller = new AbortController();
+
+		(token ? Promise.resolve(token) : getCachedToken())
+			.then((accessToken) => {
+				// Build the URL
+				const url = new URL(SPOTIFY_SEARCH_ENDPOINT);
+				url.searchParams.set('q', query);
+				url.searchParams.set('type', 'track');
+				url.searchParams.set('limit', SPOTIFY_SEARCH_LIMIT);
+
+				// Call the Spotify API with the access token
+				return fetch(url, {
+					signal: controller.signal,
+					headers: { Authorization: `Bearer ${accessToken}` },
+				});
+			})
+			.then((res) => {
+				// Check for errors before returning a JSON promise of the data
+				if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
+				return res.json() as Promise<{ tracks: { items: SpotifyTrack[] } }>;
+			})
+			.then((data) => {
+				// Return the fetched tracks
+				dispatch({ type: 'success', data: data.tracks.items });
+			})
+			.catch((err: unknown) => {
+				// AbortError is intentional so return silently
+				if ((err as Error).name === 'AbortError') return;
+				dispatch({
+					type: 'error',
+					error: err instanceof Error ? err.message : 'Unknown error',
+				});
+			});
+
+		return () => controller.abort();
+	}, [query, token]);
+
+	return {
+		tracks: state.data,
+		loading: state.status === 'loading',
+		error: state.error,
+	};
 }
