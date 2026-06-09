@@ -2,14 +2,21 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useSession } from 'next-auth/react';
 import { SpotifyJVibesPlaylist } from '@/mocks/SpotifyPlaylistMocks';
+import { Track } from '@/models/rhythmRun';
 import SpotifyExportPanel from './SpotifyExportPanel';
 
 jest.mock('next-auth/react', () => ({ useSession: jest.fn() }));
 const mockUseSession = useSession as jest.Mock;
-mockUseSession.mockReturnValue({ data: { spotifyAccessToken: 'mock-token' }, status: 'authenticated' });
+mockUseSession.mockReturnValue({
+	data: { spotifyAccessToken: 'mock-token' },
+	status: 'authenticated',
+});
 
 const mockUseSpotifyEditablePlaylists = jest.fn();
-mockUseSpotifyEditablePlaylists.mockReturnValue({ playlists: null, loading: false });
+mockUseSpotifyEditablePlaylists.mockReturnValue({
+	playlists: null,
+	loading: false,
+});
 
 jest.mock('../hooks/useSpotifyEditablePlaylists', () => ({
 	useSpotifyEditablePlaylists: (...args: unknown[]) =>
@@ -20,11 +27,9 @@ const mockSetSelectedPlaylist = jest.fn();
 const mockHandleSave = jest.fn();
 
 const defaultExportState = {
-	addError: null,
-	addLoading: false,
+	error: null,
 	handleSave: mockHandleSave,
-	resolveError: null,
-	resolving: false,
+	loading: false,
 	saveSuccess: null,
 	selectedPlaylist: null,
 	setSelectedPlaylist: mockSetSelectedPlaylist,
@@ -34,13 +39,29 @@ const mockUseSpotifyExportState = jest.fn();
 mockUseSpotifyExportState.mockReturnValue(defaultExportState);
 
 jest.mock('../hooks/useSpotifyExportState', () => ({
-	useSpotifyExportState: (...args: unknown[]) => mockUseSpotifyExportState(...args),
+	useSpotifyExportState: (...args: unknown[]) =>
+		mockUseSpotifyExportState(...args),
 }));
 
+const mockTrack1: Track = {
+	id: 'track_01',
+	title: 'Basket Case',
+	artists: ['Green Day'],
+};
+const mockTrack2: Track = {
+	id: 'track_02',
+	title: 'Feel Good Inc.',
+	artists: ['Gorillaz'],
+};
+const mockTrack3: Track = {
+	id: 'track_03',
+	title: 'Portions for Foxes',
+	artists: ['Rilo Kiley'],
+};
+
 const defaultProps = {
-	clearMarks: jest.fn(),
-	markedTrackIds: new Set<string>(),
 	onBack: jest.fn(),
+	onSuccess: jest.fn(),
 	tracks: [],
 };
 
@@ -85,22 +106,27 @@ it('Shows the selected playlist name when a playlist is selected', () => {
 	expect(name).toBeInTheDocument();
 });
 
-it('Save button is disabled when markedTrackIds is empty', () => {
+it('Save button is disabled when tracks is empty', () => {
 	mockUseSpotifyExportState.mockReturnValueOnce({
 		...defaultExportState,
 		selectedPlaylist: SpotifyJVibesPlaylist,
 	});
-	render(<SpotifyExportPanel {...defaultProps} markedTrackIds={new Set()} />);
+	render(<SpotifyExportPanel {...defaultProps} tracks={[]} />);
 	const saveBtn = screen.getByRole('button', { name: /save/i });
 	expect(saveBtn).toBeDisabled();
 });
 
-it('Save button is enabled when markedTrackIds has items', () => {
+it('Save button is enabled when tracks has items', () => {
 	mockUseSpotifyExportState.mockReturnValueOnce({
 		...defaultExportState,
 		selectedPlaylist: SpotifyJVibesPlaylist,
 	});
-	render(<SpotifyExportPanel {...defaultProps} markedTrackIds={new Set(['t1', 't2', 't3'])} />);
+	render(
+		<SpotifyExportPanel
+			{...defaultProps}
+			tracks={[mockTrack1, mockTrack2, mockTrack3]}
+		/>,
+	);
 	const saveBtn = screen.getByRole('button', { name: /save/i });
 	expect(saveBtn).toBeEnabled();
 });
@@ -110,7 +136,9 @@ it('Calls handleSave when the Save button is clicked', async () => {
 		...defaultExportState,
 		selectedPlaylist: SpotifyJVibesPlaylist,
 	});
-	render(<SpotifyExportPanel {...defaultProps} markedTrackIds={new Set(['t1', 't2'])} />);
+	render(
+		<SpotifyExportPanel {...defaultProps} tracks={[mockTrack1, mockTrack2]} />,
+	);
 	const saveBtn = screen.getByRole('button', { name: /save/i });
 	await userEvent.click(saveBtn);
 	expect(mockHandleSave).toHaveBeenCalled();
@@ -119,7 +147,7 @@ it('Calls handleSave when the Save button is clicked', async () => {
 it('Shows the save error message when saveError is provided', () => {
 	mockUseSpotifyExportState.mockReturnValueOnce({
 		...defaultExportState,
-		resolveError: 'Spotify API error: 403',
+		error: 'Spotify API error: 403',
 		selectedPlaylist: SpotifyJVibesPlaylist,
 	});
 	render(<SpotifyExportPanel {...defaultProps} />);
@@ -143,7 +171,9 @@ it('Calls setSelectedPlaylist(null) when Change is clicked', async () => {
 		...defaultExportState,
 		selectedPlaylist: SpotifyJVibesPlaylist,
 	});
-	render(<SpotifyExportPanel {...defaultProps} markedTrackIds={new Set(['t1', 't2'])} />);
+	render(
+		<SpotifyExportPanel {...defaultProps} tracks={[mockTrack1, mockTrack2]} />,
+	);
 	const changeBtn = screen.getByRole('button', { name: /change/i });
 	await userEvent.click(changeBtn);
 	expect(mockSetSelectedPlaylist).toHaveBeenCalledWith(null);

@@ -1,17 +1,27 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import ArtistSearch from '@/components/metamusic-artist-tempo/ArtistSearch';
+import { useState } from 'react';
+import ArtistTempoQueryDisplay from '@/components/metamusic-artist-tempo/ArtistTempoQueryDisplay';
 import SearchControls from '@/components/metamusic-artist-tempo/SearchControls';
-import ResultsStep from '@/components/metamusic-artist-tempo/ResultsStep';
+import TrackSelectionStep from '@/components/metamusic-artist-tempo/TrackSelectionStep';
+import BpmSelector from '@/components/BpmSelector';
+import EpsilonSelector from '@/components/EpsilonSelector';
+import LfmArtistSearch from '@/components/LfmArtistSearch';
 import SpotifyExportPanel from '@/components/SpotifyExportPanel';
+import SuggestedArtistsCloud from '@/components/SuggestedArtistsCloud';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
-import { DEFAULT_BPM, DEFAULT_EPSILON, MAX_SEARCH_ARTISTS } from '@/lib/constants';
+import { useTrackSelection } from '@/hooks/useTrackSelection';
+import {
+	DEFAULT_BPM,
+	DEFAULT_EPSILON,
+	MAX_SEARCH_ARTISTS,
+} from '@/lib/constants';
 import { LfmArtist } from '@/models/lastFm';
 import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
 
 type UiStep = 'search' | 'results' | 'export';
+
 
 export default function MetaMusicArtistTempo() {
 	// UI state
@@ -40,22 +50,14 @@ export default function MetaMusicArtistTempo() {
 		mmQuery?.epsilon ?? null,
 	);
 
-	// Mark state
-	const [markedTrackIds, setMarkedTrackIds] = useState<Set<string>>(new Set());
-	const clearMarks = useCallback(() => setMarkedTrackIds(new Set()), []);
-	const toggleMark = useCallback((id: string) => {
-		setMarkedTrackIds((prev) => {
-			const next = new Set(prev);
-			if (next.has(id)) next.delete(id);
-			else next.add(id);
-			return next;
-		});
-	}, []);
+	// Track selection
+	const { selectedIds, selectedTracks, toggle, clear: clearSelection } =
+		useTrackSelection(tracks);
 
 	const clearResults = () => {
 		setStep('search');
 		setMmQuery(null);
-		clearMarks();
+		clearSelection();
 	};
 
 	const loadMbids = () => {
@@ -67,44 +69,50 @@ export default function MetaMusicArtistTempo() {
 	return (
 		<div className="flex flex-col gap-4">
 			{step === 'search' && (
-				<ArtistSearch
-					add={add}
-					artists={artists}
-					epsilon={epsilon}
-					isFull={isFull()}
-			remove={remove}
-					setEpsilon={setEpsilon}
-					setTempo={setTempo}
-					tempo={tempo}
-				/>
+				<>
+					<div className="flex flex-col sm:flex-row gap-3">
+						<div className="flex-1">
+							<BpmSelector initialVal={tempo} onChange={setTempo} />
+						</div>
+						<div className="shrink-0">
+							<EpsilonSelector initialVal={epsilon} onChange={setEpsilon} />
+						</div>
+					</div>
+					<SuggestedArtistsCloud isFull={isFull()} onSelect={add} />
+					<LfmArtistSearch add={add} remove={remove} selected={artists} />
+				</>
 			)}
-			{step !== 'export' && (
-				<SearchControls
-					artistCount={mmQuery?.mbids.length ?? 0}
-					artists={artists}
-					epsilon={epsilon}
-					error={error}
-					loading={loading}
-					onClear={clearResults}
-					onFind={loadMbids}
-					streaming={streaming}
-					tempo={tempo}
-				/>
+			{(step === 'search' || step === 'results') && (
+				<>
+					<ArtistTempoQueryDisplay
+						artists={artists}
+						epsilon={epsilon}
+						tempo={tempo}
+					/>
+					<SearchControls
+						artistCount={mmQuery?.mbids.length ?? 0}
+						disabled={artists.length === 0}
+						error={error}
+						loading={loading}
+						onClear={clearResults}
+						onFind={loadMbids}
+						streaming={streaming}
+					/>
+				</>
 			)}
 			{step === 'results' && tracks && (
-				<ResultsStep
-					markedTrackIds={markedTrackIds}
+				<TrackSelectionStep
+					selectedIds={selectedIds}
 					onNext={() => setStep('export')}
-					toggleMark={toggleMark}
+					onToggleSelect={toggle}
 					tracks={tracks}
 				/>
 			)}
 			{step === 'export' && (
 				<SpotifyExportPanel
-					clearMarks={clearMarks}
-					markedTrackIds={markedTrackIds}
 					onBack={() => setStep('results')}
-					tracks={tracks!}
+					onSuccess={clearSelection}
+					tracks={selectedTracks}
 				/>
 			)}
 		</div>

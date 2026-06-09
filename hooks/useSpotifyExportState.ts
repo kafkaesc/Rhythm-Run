@@ -1,6 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
+import {
+	initialMutationState,
+	mutationReducer,
+} from '@/hooks/api/mutationReducer';
 import {
 	useSpotifyPlaylistAddTracks,
 	useSpotifyTrackLookup,
@@ -8,60 +12,63 @@ import {
 import { Track } from '@/models/rhythmRun';
 import { SpotifyPlaylist } from '@/models/spotify';
 
-export function useSpotifyExportState(
-	tracks: Track[] | null,
-	markedTrackIds: Set<string>,
-	clearMarks: () => void,
-) {
-	const { addTracks, loading: addLoading, error: addError } =
-		useSpotifyPlaylistAddTracks();
+/**
+ * Manages the full Spotify export state and flow: resolves track URIs, adds
+ * them to the selected playlist, and returns the loading, error, and
+ * success state.
+ *
+ * @param tracks - The tracks to export
+ * @param onSuccess - Optional callback invoked after tracks are successfully added to the playlist
+ */
+export function useSpotifyExportState(tracks: Track[], onSuccess?: () => void) {
+	const { addTracks } = useSpotifyPlaylistAddTracks();
 	const { resolveUris } = useSpotifyTrackLookup();
 
 	const [selectedPlaylist, setSelectedPlaylist] =
 		useState<SpotifyPlaylist | null>(null);
-	const [resolving, setResolving] = useState(false);
-	const [resolveError, setResolveError] = useState<string | null>(null);
-	const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+	const [state, dispatch] = useReducer(
+		mutationReducer<string>,
+		initialMutationState<string>(),
+	);
 
 	async function handleSave() {
-		if (!selectedPlaylist || markedTrackIds.size === 0 || !tracks) return;
-		const tracksToSave = tracks.filter((t) => markedTrackIds.has(t.id));
+		if (!selectedPlaylist || tracks.length === 0) return;
 
-		setResolveError(null);
-		setSaveSuccess(null);
-		setResolving(true);
+		dispatch({ type: 'submit' });
 
 		try {
-			const { uris, matched } = await resolveUris(tracksToSave);
+			const { uris, matched } = await resolveUris(tracks);
 
 			if (uris.length === 0) {
-				setResolveError('No tracks could be matched on Spotify');
+				dispatch({
+					type: 'error',
+					error: 'No tracks could be matched on Spotify',
+				});
 				return;
 			}
 
-			const success = await addTracks(selectedPlaylist.id, uris);
+			await addTracks(selectedPlaylist.id, uris);
 
-			if (success) {
-				const skipped = tracksToSave.length - matched;
-				const msg =
-					skipped > 0
-						? `Saved ${matched} track${matched !== 1 ? 's' : ''} (${skipped} couldn't be found on Spotify)`
-						: `Saved ${matched} track${matched !== 1 ? 's' : ''} to ${selectedPlaylist.name}`;
-				setSaveSuccess(msg);
-				clearMarks();
-			}
-		} finally {
-			setResolving(false);
+			const skipped = tracks.length - matched;
+			const msg =
+				skipped > 0
+					? `Saved ${matched} track${matched !== 1 ? 's' : ''} (${skipped} couldn't be found on Spotify)`
+					: `Saved ${matched} track${matched !== 1 ? 's' : ''} to ${selectedPlaylist.name}`;
+			dispatch({ type: 'success', data: msg });
+			if (onSuccess) onSuccess();
+		} catch (err: unknown) {
+			dispatch({
+				type: 'error',
+				error: err instanceof Error ? err.message : 'Unknown error',
+			});
 		}
 	}
 
 	return {
-		addError,
-		addLoading,
+		error: state.error,
 		handleSave,
-		resolveError,
-		resolving,
-		saveSuccess,
+		loading: state.status === 'submitting',
+		saveSuccess: state.status === 'success' ? state.data : null,
 		selectedPlaylist,
 		setSelectedPlaylist,
 	};

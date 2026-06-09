@@ -9,39 +9,46 @@ import { useSpotifyExportState } from '@/hooks/useSpotifyExportState';
 import { Track } from '@/models/rhythmRun';
 
 type SpotifyExportPanelProps = {
-	clearMarks: () => void;
-	markedTrackIds: Set<string>;
 	onBack: () => void;
+	onSuccess?: () => void;
 	tracks: Track[];
 };
 
+/**
+ * Spotify export panel: add marked tracks to a Spotify playlist.
+ * Returns null if the user does not have a Spotify session.
+ *
+ * @param onSuccess - Optional callback invoked after tracks are successfully exported
+ * @param onBack - Callback to return to the results view
+ * @param tracks - Pre-filtered list of tracks selected for export
+ */
 export default function SpotifyExportPanel(props: SpotifyExportPanelProps) {
 	const { hasSpotify } = useSessionStatus();
+
 	if (!hasSpotify()) return null;
+
 	return <SpotifyExportPanelInner {...props} />;
 }
 
 function SpotifyExportPanelInner({
-	clearMarks,
-	markedTrackIds,
 	onBack,
+	onSuccess,
 	tracks,
 }: SpotifyExportPanelProps) {
 	const {
-		addError,
-		addLoading,
+		error,
 		handleSave,
-		resolveError,
-		resolving,
+		loading,
 		saveSuccess,
 		selectedPlaylist,
 		setSelectedPlaylist,
-	} = useSpotifyExportState(tracks, markedTrackIds, clearMarks);
+	} = useSpotifyExportState(tracks, onSuccess);
 
-	const saveError = resolveError ?? addError;
-	const saveLoading = resolving || addLoading;
-	const markedCount = markedTrackIds.size;
+	const markedCount = tracks.length;
 	const trackWord = markedCount === 1 ? 'track' : 'tracks';
+	const saveBtnCta = loading
+		? 'Saving...'
+		: `Save ${markedCount} ${trackWord} to playlist`;
 
 	return (
 		<div className="flex flex-col gap-3">
@@ -74,19 +81,15 @@ function SpotifyExportPanelInner({
 					<div className="flex justify-center">
 						<Button
 							buttonStyle="primary"
-							disabled={markedCount === 0 || saveLoading}
+							disabled={markedCount === 0 || loading}
 							onClick={handleSave}
 							type="button"
 						>
-							{saveLoading
-								? 'Saving...'
-								: `Save ${markedCount} ${trackWord} to playlist`}
+							{saveBtnCta}
 						</Button>
 					</div>
-					{saveError && <p className="text-danger text-sm">{saveError}</p>}
-					{!saveError && saveSuccess && (
-						<p className="text-sm">{saveSuccess}</p>
-					)}
+					{error && <p className="text-danger text-sm">{error}</p>}
+					{!error && saveSuccess && <p className="text-sm">{saveSuccess}</p>}
 				</div>
 			)}
 		</div>

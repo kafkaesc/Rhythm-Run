@@ -2,34 +2,28 @@
 
 import { useState, useEffect } from 'react';
 import Button from '@/components/elements/Button';
-import ArtistTempoQueryDisplay from '@/components/metamusic-artist-tempo/ArtistTempoQueryDisplay';
 import LoadingMessages from '@/components/metamusic-artist-tempo/LoadingMessages';
 import ProxyWarning from '@/components/metamusic-artist-tempo/ProxyWarning';
 import SearchStatus from '@/components/SearchStatus';
-import { LfmArtist } from '@/models/lastFm';
 
 type SearchControlsProps = {
 	artistCount: number;
-	artists: LfmArtist[];
-	epsilon: number;
+	disabled: boolean;
 	error: string | null;
 	loading: boolean;
 	onClear: () => void;
 	onFind: () => void;
 	streaming: boolean;
-	tempo: number;
 };
 
 export default function SearchControls({
 	artistCount,
-	artists,
-	epsilon,
+	disabled,
 	error,
 	loading,
 	onClear,
 	onFind,
 	streaming,
-	tempo,
 }: SearchControlsProps) {
 	const [slowLoad, setSlowLoad] = useState(false);
 
@@ -42,17 +36,9 @@ export default function SearchControls({
 		};
 	}, [loading]);
 
-	const disabled = artists.length === 0;
 	const showProxyWarning = slowLoad && loading;
 	return (
 		<div className="flex flex-col items-center gap-2">
-			<div>
-				<ArtistTempoQueryDisplay
-					artists={artists}
-					epsilon={epsilon}
-					tempo={tempo}
-				/>
-			</div>
 			<div className="flex gap-3">
 				<Button
 					buttonStyle="primary"

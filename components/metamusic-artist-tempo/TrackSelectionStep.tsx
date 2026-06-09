@@ -7,19 +7,19 @@ import TrackTable from '@/components/TrackTable';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { Track } from '@/models/rhythmRun';
 
-type ResultsStepProps = {
-	markedTrackIds: Set<string>;
+type TrackSelectionStepProps = {
 	onNext: () => void;
-	toggleMark: (id: string) => void;
+	onToggleSelect: (id: string) => void;
+	selectedIds: Set<string>;
 	tracks: Track[];
 };
 
-export default function ResultsStep({
-	markedTrackIds,
+export default function TrackSelectionStep({
 	onNext,
-	toggleMark,
+	onToggleSelect,
+	selectedIds,
 	tracks,
-}: ResultsStepProps) {
+}: TrackSelectionStepProps) {
 	const { hasSpotify } = useSessionStatus();
 	const spotifyConnected = hasSpotify();
 
@@ -27,15 +27,15 @@ export default function ResultsStep({
 		<>
 			<H2>Matching Tracks</H2>
 			<TrackTable
-				markedTrackIds={spotifyConnected ? markedTrackIds : undefined}
-				onToggleMark={spotifyConnected ? toggleMark : undefined}
+				selectedIds={spotifyConnected ? selectedIds : undefined}
+				onToggleSelect={spotifyConnected ? onToggleSelect : undefined}
 				tracks={tracks}
 			/>
 			{spotifyConnected && (
 				<Button
 					buttonStyle="black-white"
 					className="self-center mb-4"
-					disabled={markedTrackIds.size === 0}
+					disabled={selectedIds.size === 0}
 					icon={<SpotifyIcon aria-hidden="true" />}
 					onClick={onNext}
 					type="button"

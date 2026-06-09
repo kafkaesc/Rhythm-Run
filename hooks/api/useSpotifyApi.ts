@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducer, useEffect, useState } from 'react';
+import { useReducer, useEffect } from 'react';
 import { initialState, reducer } from '@/hooks/api/asyncReducer';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { clamp, MS_PER_SECOND } from '@/lib/math';
@@ -200,47 +200,31 @@ export function useSpotifyCurrentUser(): SpotifyUserResult {
  * @returns A {@link SpotifyPlaylistAddTracksResult}
  */
 export function useSpotifyPlaylistAddTracks(): SpotifyPlaylistAddTracksResult {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
 	const token = useSpotifyToken();
 
 	async function addTracks(
 		playlistId: string,
 		trackUris: string[],
-	): Promise<boolean> {
-		if (!token) {
-			setError('Not authenticated');
-			return false;
-		}
+	): Promise<void> {
+		if (!token) throw new Error('Not authenticated');
 
-		setLoading(true);
-		setError(null);
-
-		try {
-			// Call the Spotify API with the access token
-			const res = await fetch(
-				`${SPOTIFY_BASE_URL}/playlists/${playlistId}/items`,
-				{
-					method: 'POST',
-					headers: {
-						Authorization: `Bearer ${token}`,
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ uris: trackUris }),
+		// Call the Spotify API with the access token
+		const res = await fetch(
+			`${SPOTIFY_BASE_URL}/playlists/${playlistId}/items`,
+			{
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json',
 				},
-			);
-			// Check for errors
-			if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
-			return true;
-		} catch (err: unknown) {
-			setError(err instanceof Error ? err.message : 'Unknown error');
-			return false;
-		} finally {
-			setLoading(false);
-		}
+				body: JSON.stringify({ uris: trackUris }),
+			},
+		);
+		// Check for errors
+		if (!res.ok) throw new Error(`Spotify API error: ${res.status}`);
 	}
 
-	return { addTracks, loading, error };
+	return { addTracks };
 }
 
 /**

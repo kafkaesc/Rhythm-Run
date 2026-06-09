@@ -28,26 +28,26 @@ declare module '@tanstack/react-table' {
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	interface TableMeta<TData extends RowData> {
-		markedTrackIds?: Set<string>;
-		onToggleMark?: (id: string) => void;
+		selectedIds?: Set<string>;
+		onToggleSelect?: (id: string) => void;
 	}
 }
 
 /** Binds the TanStack Table ColumnHelper to the Track type */
 const columnHelper = createColumnHelper<Track>();
 
-/** Mark column — leftmost, only rendered when onToggleMark is passed via table meta */
+/** Mark column — leftmost, only rendered when onToggleSelect is passed via table meta */
 const markColumn = columnHelper.display({
 	id: 'mark',
 	header: () => <span className="sr-only">Spotify</span>,
 	cell: (info) => {
-		const { markedTrackIds, onToggleMark } = info.table.options.meta ?? {};
+		const { selectedIds, onToggleSelect } = info.table.options.meta ?? {};
 		const { id, title } = info.row.original;
-		const marked = markedTrackIds?.has(id) ?? false;
+		const marked = selectedIds?.has(id) ?? false;
 		return (
 			<SpotifySelectButton
 				marked={marked}
-				onClick={() => onToggleMark?.(id)}
+				onClick={() => onToggleSelect?.(id)}
 				title={title}
 			/>
 		);
@@ -78,6 +78,12 @@ const dataColumns = [
 
 const PAGE_SIZE = 5;
 
+/**
+ * Renders a table header cell. Sortable columns get a button with
+ * a sort icon. Non-sortable columns render plain.
+ *
+ * @param header - TanStack Table header object for the column
+ */
 function renderHeaderCell(header: Header<Track, unknown>) {
 	if (header.isPlaceholder) return null;
 	if (header.column.getCanSort()) {
@@ -112,23 +118,23 @@ function getAriaSortValue(
 }
 
 type TrackTableProps = {
-	markedTrackIds?: Set<string>;
-	onToggleMark?: (id: string) => void;
+	onToggleSelect?: (id: string) => void;
+	selectedIds?: Set<string>;
 	tracks: Track[];
 };
 
 /**
  * Displays a paginated, sortable table of tracks
  * with Title, Artists, and BPM columns.
- * When onToggleMark is provided, a leftmost Spotify mark column is shown.
+ * When onToggleSelect is provided, a leftmost Spotify mark column is shown.
  *
- * @param markedTrackIds - set of track IDs currently marked for Spotify export
- * @param onToggleMark - callback to mark/unmark a track by ID; also enables the mark column
+ * @param onToggleSelect - callback to select/deselect a track by ID; also enables the mark column
+ * @param selectedIds - set of track IDs currently selected for Spotify export
  * @param tracks - an array of {@link Track} objects to display
  */
 export default function TrackTable({
-	markedTrackIds,
-	onToggleMark,
+	onToggleSelect,
+	selectedIds,
 	tracks,
 }: TrackTableProps) {
 	// React Compiler breaks TanStack Table's internal state tracking
@@ -140,7 +146,7 @@ export default function TrackTable({
 		pageSize: PAGE_SIZE,
 	});
 
-	const tableColumns = onToggleMark
+	const tableColumns = onToggleSelect
 		? [markColumn, ...dataColumns]
 		: dataColumns;
 
@@ -152,7 +158,7 @@ export default function TrackTable({
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
-		meta: { markedTrackIds, onToggleMark },
+		meta: { selectedIds, onToggleSelect },
 		onPaginationChange: setPagination,
 		onSortingChange: (updater) => {
 			setSorting(updater);

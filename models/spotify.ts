@@ -15,9 +15,7 @@ export type SpotifyArtistResult = {
 
 // https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist
 export type SpotifyPlaylistAddTracksResult = {
-	addTracks: (playlistId: string, trackUris: string[]) => Promise<boolean>;
-	loading: boolean;
-	error: string | null;
+	addTracks: (playlistId: string, trackUris: string[]) => Promise<void>;
 };
 
 // https://developer.spotify.com/documentation/web-api/reference/get-track

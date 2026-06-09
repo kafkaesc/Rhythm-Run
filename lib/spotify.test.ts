@@ -27,19 +27,28 @@ it('Returns the first n artists in order', () => {
 });
 
 it('Returns all artists when count exceeds available', () => {
+	const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 	const result = getSpotifyTopArtists(TEN_ARTISTS, 20);
 	expect(result).toEqual(TEN_ARTISTS);
+	expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('exceeds available artists'));
+	warnSpy.mockRestore();
 });
 
 it('Clamps count below 1 to 1', () => {
+	const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 	const result = getSpotifyTopArtists(TEN_ARTISTS, 0);
 	expect(result).toHaveLength(1);
+	expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('count should be 1 or greater'));
+	warnSpy.mockRestore();
 });
 
 it('Clamps count above 50 to 50', () => {
+	const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 	const artists = Array.from({ length: 50 }, (_, i) => makeArtist(`artist-${i}`));
 	const result = getSpotifyTopArtists(artists, 100);
 	expect(result).toHaveLength(50);
+	expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('count should be 50 or less'));
+	warnSpy.mockRestore();
 });
 
 it('Returns 1 artist by default', () => {
@@ -71,13 +80,19 @@ it('Returns no duplicates', () => {
 });
 
 it('Returns all artists when count exceeds available (random)', () => {
+	const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 	const result = getRandomSpotifyTopArtists(TEN_ARTISTS, 20);
 	expect(result).toHaveLength(TEN_ARTISTS.length);
+	expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('exceeds available artists'));
+	warnSpy.mockRestore();
 });
 
 it('Clamps count below 1 to 1 (random)', () => {
+	const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 	const result = getRandomSpotifyTopArtists(TEN_ARTISTS, 0);
 	expect(result).toHaveLength(1);
+	expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('count should be 1 or greater'));
+	warnSpy.mockRestore();
 });
 
 it('Returns 1 artist by default (random)', () => {
