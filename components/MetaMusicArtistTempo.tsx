@@ -27,8 +27,8 @@ type UiStep = 'search' | 'results' | 'export';
  *
  * Manages a three-step flow:
  * 1. Artist + tempo search
- * 2. Track selection,
- * 3. Spotify playlist export.
+ * 2. Track selection
+ * 3. Spotify playlist export
  */
 export default function MetaMusicArtistTempo() {
 	// UI state

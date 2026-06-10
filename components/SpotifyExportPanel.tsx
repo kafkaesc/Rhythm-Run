@@ -15,7 +15,7 @@ type SpotifyExportPanelProps = {
 };
 
 /**
- * Spotify export panel: add marked tracks to a Spotify playlist.
+ * Spotify export panel: add selected tracks to a Spotify playlist.
  * Returns null if the user does not have a Spotify session.
  *
  * @param onSuccess - Optional callback invoked after tracks are successfully exported

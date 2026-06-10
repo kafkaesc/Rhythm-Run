@@ -36,7 +36,10 @@ declare module '@tanstack/react-table' {
 /** Binds the TanStack Table ColumnHelper to the Track type */
 const columnHelper = createColumnHelper<Track>();
 
-/** Mark column — leftmost, only rendered when onToggleSelect is passed via table meta */
+/**
+ * Selection column — leftmost, only rendered when onToggleSelect
+ * is passed via the TanStack table meta
+ */
 const markColumn = columnHelper.display({
 	id: 'mark',
 	header: () => <span className="sr-only">Spotify</span>,
@@ -126,9 +129,9 @@ type TrackTableProps = {
 /**
  * Displays a paginated, sortable table of tracks
  * with Title, Artists, and BPM columns.
- * When onToggleSelect is provided, a leftmost Spotify mark column is shown.
+ * When onToggleSelect is provided, a leftmost selection column is shown.
  *
- * @param onToggleSelect - callback to select/deselect a track by ID; also enables the mark column
+ * @param onToggleSelect - callback to select/deselect a track by ID; also enables the selection column
  * @param selectedIds - set of track IDs currently selected for Spotify export
  * @param tracks - an array of {@link Track} objects to display
  */
