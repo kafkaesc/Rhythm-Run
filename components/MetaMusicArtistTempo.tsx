@@ -22,7 +22,14 @@ import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
 
 type UiStep = 'search' | 'results' | 'export';
 
-
+/**
+ * Top-level feature component for the MetaMusic artist tempo search.
+ *
+ * Manages a three-step flow:
+ * 1. Artist + tempo search
+ * 2. Track selection,
+ * 3. Spotify playlist export.
+ */
 export default function MetaMusicArtistTempo() {
 	// UI state
 	const [step, setStep] = useState<UiStep>('search');
@@ -51,8 +58,12 @@ export default function MetaMusicArtistTempo() {
 	);
 
 	// Track selection
-	const { selectedIds, selectedTracks, toggle, clear: clearSelection } =
-		useTrackSelection(tracks);
+	const {
+		selectedIds,
+		selectedTracks,
+		toggle,
+		clear: clearSelection,
+	} = useTrackSelection(tracks);
 
 	const clearResults = () => {
 		setStep('search');
@@ -102,9 +113,10 @@ export default function MetaMusicArtistTempo() {
 			)}
 			{step === 'results' && tracks && (
 				<TrackSelectionStep
-					selectedIds={selectedIds}
 					onNext={() => setStep('export')}
 					onToggleSelect={toggle}
+					selectedIds={selectedIds}
+					title="Matching Tracks"
 					tracks={tracks}
 				/>
 			)}

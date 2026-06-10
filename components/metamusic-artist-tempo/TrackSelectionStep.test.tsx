@@ -22,6 +22,7 @@ const defaultProps = {
 	onNext: jest.fn(),
 	onToggleSelect: jest.fn(),
 	selectedIds: new Set<string>(),
+	title: 'Matching Tracks',
 	tracks: [mockTrack],
 };
 
