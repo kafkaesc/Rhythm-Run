@@ -95,6 +95,15 @@ it('Clamps count below 1 to 1 (random)', () => {
 	warnSpy.mockRestore();
 });
 
+it('Clamps count above 50 to 50 (random)', () => {
+	const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+	const artists = Array.from({ length: 50 }, (_, i) => makeArtist(`artist-${i}`));
+	const result = getRandomSpotifyTopArtists(artists, 100);
+	expect(result).toHaveLength(50);
+	expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('count should be 50 or less'));
+	warnSpy.mockRestore();
+});
+
 it('Returns 1 artist by default (random)', () => {
 	const result = getRandomSpotifyTopArtists(TEN_ARTISTS);
 	expect(result).toHaveLength(1);
