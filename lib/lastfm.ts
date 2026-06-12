@@ -48,7 +48,10 @@ export async function fetchArtistTopTracks(
 
 	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);
-	if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
+	if (!res.ok) {
+		const body = await res.text();
+		throw new Error(`Last.fm API error: ${res.status} ${body}`);
+	}
 
 	// If there are no tracks return an empty array. Last.fm can return a
 	// single object instead of an array if there is only one result, so

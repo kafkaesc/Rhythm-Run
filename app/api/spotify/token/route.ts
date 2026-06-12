@@ -12,11 +12,13 @@ export async function GET(request: NextRequest) {
 	const clientId = process.env.SPOTIFY_CLIENT_ID;
 	const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-	if (!clientId || !clientSecret)
+	if (!clientId || !clientSecret) {
+		console.error('Spotify credentials are not configured');
 		return NextResponse.json(
 			{ error: 'Spotify credentials not configured' },
 			{ status: 500 },
 		);
+	}
 
 	const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString(
 		'base64',
@@ -31,11 +33,14 @@ export async function GET(request: NextRequest) {
 		body: 'grant_type=client_credentials',
 	});
 
-	if (!res.ok)
+	if (!res.ok) {
+		const body = await res.text();
+		console.error('Spotify token fetch failed:', res.status, body);
 		return NextResponse.json(
 			{ error: 'Failed to fetch Spotify token' },
 			{ status: res.status },
 		);
+	}
 
 	const data = (await res.json()) as {
 		access_token: string;
