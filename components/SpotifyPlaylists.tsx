@@ -25,26 +25,29 @@ export default function SpotifyPlaylists({
 
 	if (!playlists) return null;
 
+	function renderItem(playlist: SpotifyPlaylist) {
+		if (selectPlaylist)
+			return (
+				<li key={playlist.id}>
+					<PlaylistButton
+						onClick={() => selectPlaylist(playlist)}
+						playlist={playlist}
+						type="button"
+					/>
+				</li>
+			);
+
+		return (
+			<li key={playlist.id}>
+				<PlaylistButton
+					href={playlist.external_urls.spotify}
+					playlist={playlist}
+				/>
+			</li>
+		);
+	}
+
 	return (
-		<ul className="flex flex-col gap-1">
-			{playlists.map((playlist) =>
-				selectPlaylist ? (
-					<li key={playlist.id}>
-						<PlaylistButton
-							onClick={() => selectPlaylist(playlist)}
-							playlist={playlist}
-							type="button"
-						/>
-					</li>
-				) : (
-					<li key={playlist.id}>
-						<PlaylistButton
-							href={playlist.external_urls.spotify}
-							playlist={playlist}
-						/>
-					</li>
-				),
-			)}
-		</ul>
+		<ul className="flex flex-col gap-1">{playlists.map(renderItem)}</ul>
 	);
 }

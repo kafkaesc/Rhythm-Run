@@ -50,10 +50,10 @@ export function useSpotifyExportState(tracks: Track[], onSuccess?: () => void) {
 			await addTracks(selectedPlaylist.id, uris);
 
 			const skipped = tracks.length - matched;
-			const msg =
-				skipped > 0
-					? `Saved ${matched} track${matched !== 1 ? 's' : ''} (${skipped} couldn't be found on Spotify)`
-					: `Saved ${matched} track${matched !== 1 ? 's' : ''} to ${selectedPlaylist.name}`;
+			const track_s = matched === 1 ? 'track' : 'tracks';
+			const skippedNote =
+				skipped > 0 ? ` (${skipped} couldn't be found on Spotify)` : '';
+			const msg = `Saved ${matched} ${track_s}${skippedNote} to ${selectedPlaylist.name}`;
 			dispatch({ type: 'success', data: msg });
 			if (onSuccess) onSuccess();
 		} catch (err: unknown) {

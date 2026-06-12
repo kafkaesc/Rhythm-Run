@@ -12,7 +12,7 @@ type SpotifySelectButtonProps = {
 /**
  * Toggle button used to mark a track for Spotify export.
  * Unselected: green border, green icon.
- * Selected: green border, green fill rising from the bottom over 3 seconds, white icon.
+ * Selected: green border, green fill rising from the bottom over 1.2 seconds, white icon.
  *
  * @param marked - whether the track is currently marked
  * @param onClick - callback to toggle the marked state

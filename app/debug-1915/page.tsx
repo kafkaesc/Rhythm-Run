@@ -7,11 +7,11 @@ import SpotifyLoginButton from '@/components/auth/SpotifyLoginButton';
 import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
 import Scrollable from '@/components/layout/Scrollable';
-import SpotifyPlaylists from '@/components/SpotifyPlaylists';
-import { useSessionStatus } from '@/hooks/useSessionStatus';
-import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
-import { SpotifyPlaylist } from '@/models/spotify';
 import PlaylistButton from '@/components/PlaylistButton';
+import SpotifyPlaylists from '@/components/SpotifyPlaylists';
+import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
+import { useSessionStatus } from '@/hooks/useSessionStatus';
+import { SpotifyPlaylist } from '@/models/spotify';
 
 function SpotifyDebug({ session }: { session: Session | null }) {
 	const [selectedSpotifyPlaylist, setSelectedSpotifyPlaylist] =

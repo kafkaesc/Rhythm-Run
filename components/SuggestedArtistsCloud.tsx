@@ -122,7 +122,7 @@ export default function SuggestedArtistsCloud({
 
 	/**
 	 * Returns the aria-label for an artist button based on the current state
-	 * 
+	 *
 	 * @param artist - The {@link SpotifyArtist} to build a label for
 	 */
 	function buildCloudArtistLabel(artist: SpotifyArtist): string {
