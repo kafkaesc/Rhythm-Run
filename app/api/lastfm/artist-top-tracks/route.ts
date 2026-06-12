@@ -11,11 +11,13 @@ export async function GET(request: NextRequest) {
 
 	// Verify the Last.fm API key
 	const apiKey = process.env.LAST_FM_KEY;
-	if (!apiKey)
+	if (!apiKey) {
+		console.error('Last.fm API key is not configured');
 		return NextResponse.json(
 			{ error: 'Error with Last.fm API key' },
 			{ status: 500 },
 		);
+	}
 
 	// Verify that an mbid or artist parameter was passed
 	const mbid = request.nextUrl.searchParams.get('mbid');
@@ -30,7 +32,8 @@ export async function GET(request: NextRequest) {
 	if (mbid) {
 		try {
 			return NextResponse.json(await fetchArtistTopTracks(mbid, apiKey));
-		} catch {
+		} catch (err) {
+			console.error('Last.fm top tracks fetch failed for mbid', mbid, err);
 			return NextResponse.json({ error: 'Last.fm API error' }, { status: 502 });
 		}
 	}
@@ -44,11 +47,14 @@ export async function GET(request: NextRequest) {
 
 	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);
-	if (!res.ok)
+	if (!res.ok) {
+		const body = await res.text();
+		console.error('Last.fm top tracks fetch failed for artist', artist, res.status, body);
 		return NextResponse.json(
 			{ error: 'Last.fm API error' },
 			{ status: res.status },
 		);
+	}
 
 	const data = await res.json();
 	const tracks = data.toptracks?.track ?? [];
