@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import A from '@/components/elements/A';
 import Button from '@/components/elements/Button';
-import Label from './elements/Label';
-import { fetchArtistByName } from '@/lib/lastfm';
+import Label from '@/components/elements/Label';
 import { useSpotifyTopArtists } from '@/hooks/useSpotifyTopArtists';
 import { useSuggestedArtistCloudFocus } from '@/hooks/useSuggestedArtistCloudFocus';
+import { MAX_SEARCH_ARTISTS } from '@/lib/constants';
+import { fetchArtistByName } from '@/lib/lastfm';
 import { LfmArtist } from '@/models/lastFm';
 import { SpotifyArtist } from '@/models/spotify';
 
@@ -46,7 +47,7 @@ type CallbackCloudItemProps = {
  * Renders a suggested artist as a clickable button
  *
  * @param artist - The Spotify artist to display
- * @param disabled - Optional, true if the button is disabled
+ * @param isDisabled - Optional, true if the button is disabled
  * @param isLoading - Optional, true if the artist is mid-fetch; shows a wait cursor
  * @param label - The aria-label for the button
  * @param onClick - Callback invoked when the button is clicked
@@ -76,7 +77,6 @@ function CallbackCloudItem({
 
 type SuggestedArtistsCloudProps = {
 	isFull?: boolean;
-	limit?: number;
 	onSelect?: (artist: LfmArtist) => void;
 };
 
@@ -87,12 +87,10 @@ type SuggestedArtistsCloudProps = {
  * the remaining top 50.
  *
  * @param isFull - True if the max number of artists has been selected
- * @param limit - The max number of artists that can be selected
  * @param onSelect - Callback invoked on the selected and enriched artist
  */
 export default function SuggestedArtistsCloud({
 	isFull,
-	limit,
 	onSelect,
 }: SuggestedArtistsCloudProps) {
 	const {
@@ -122,13 +120,14 @@ export default function SuggestedArtistsCloud({
 	// Hide the section entirely when the user has no Spotify connection
 	if (!spotifyError && suggested.length === 0) return null;
 
-	/** Returns the aria-label for an artist button based on the current state */
+	/**
+	 * Returns the aria-label for an artist button based on the current state
+	 *
+	 * @param artist - The {@link SpotifyArtist} to build a label for
+	 */
 	function buildCloudArtistLabel(artist: SpotifyArtist): string {
-		if (isFull && limit !== undefined)
-			return `The maximum of ${limit} artists has already been selected`;
-
 		if (isFull)
-			return 'The maximum number of artists has already been selected';
+			return `The maximum of ${MAX_SEARCH_ARTISTS} artists has already been selected`;
 
 		if (loadingIds.includes(artist.id)) return `Loading ${artist.name}`;
 

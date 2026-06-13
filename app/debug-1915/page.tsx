@@ -1,15 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import type { Session } from 'next-auth';
 import Image from 'next/image';
 import SpotifyLoginButton from '@/components/auth/SpotifyLoginButton';
 import H1 from '@/components/elements/H1';
 import H2 from '@/components/elements/H2';
-import SpotifyArtistSearch from '@/components/SpotifyArtistSearch';
-import { useSessionStatus } from '@/hooks/useSessionStatus';
+import Scrollable from '@/components/layout/Scrollable';
+import PlaylistButton from '@/components/PlaylistButton';
+import SpotifyPlaylists from '@/components/SpotifyPlaylists';
 import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
+import { useSessionStatus } from '@/hooks/useSessionStatus';
+import { SpotifyPlaylist } from '@/models/spotify';
 
 function SpotifyDebug({ session }: { session: Session | null }) {
+	const [selectedSpotifyPlaylist, setSelectedSpotifyPlaylist] =
+		useState<SpotifyPlaylist | null>(null);
 	const { artists: allTimeFavorites } = useSpotifyTopArtistsApi(20);
 	const { artists: recentFavorites } = useSpotifyTopArtistsApi(10, true);
 
@@ -46,7 +52,19 @@ function SpotifyDebug({ session }: { session: Session | null }) {
 					)}
 				</div>
 			</div>
-			<SpotifyArtistSearch />
+			{selectedSpotifyPlaylist && (
+				<>
+					<H2>Selected Playlist</H2>
+					<PlaylistButton
+						href={selectedSpotifyPlaylist.external_urls.spotify}
+						playlist={selectedSpotifyPlaylist}
+					/>
+				</>
+			)}
+			<H2>Playlists</H2>
+			<Scrollable className="mx-auto max-w-[512px]" maxHeight={512}>
+				<SpotifyPlaylists selectPlaylist={setSelectedSpotifyPlaylist} />
+			</Scrollable>
 		</>
 	);
 }

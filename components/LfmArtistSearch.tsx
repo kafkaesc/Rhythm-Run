@@ -27,7 +27,12 @@ type LfmArtistSearchProps = {
  * @param selected - Artists already selected; shown at top of list and excluded from results
  * @param title - Overrides the default label
  */
-export default function LfmArtistSearch({ add, remove, selected, title }: LfmArtistSearchProps) {
+export default function LfmArtistSearch({
+	add,
+	remove,
+	selected,
+	title,
+}: LfmArtistSearchProps) {
 	const [input, setInput] = useState(''); // Updated per keystroke for local behavior
 	const [query, setQuery] = useState(''); // Updated on form submit to trigger search
 	const { artists, loading, error } = useLastFmArtistSearch(query);
@@ -62,21 +67,19 @@ export default function LfmArtistSearch({ add, remove, selected, title }: LfmArt
 						value={input}
 					/>
 					<Button
-						className="flex items-center gap-1"
 						disabled={input.length === 0}
+						icon={<SearchIcon aria-hidden="true" />}
 						type="submit"
 					>
-						<SearchIcon aria-hidden="true" />
 						<span className="hidden md:inline">Search</span>
 					</Button>
 					<Button
 						aria-label="Clear search"
 						buttonStyle="black-white"
-						className="flex items-center gap-1"
-						type="button"
+						icon={<ClearIcon aria-hidden="true" />}
 						onClick={clear}
+						type="button"
 					>
-						<ClearIcon aria-hidden="true" />
 						<span className="hidden md:inline">Clear</span>
 					</Button>
 				</div>

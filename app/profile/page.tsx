@@ -30,7 +30,7 @@ export default function Profile() {
 						<SpotifyIcon />
 						<P>Spotify — {session.user?.name}</P>
 						<Button buttonStyle="black-white" onClick={() => signOut()}>
-							Logout
+							Logout from Spotify
 						</Button>
 					</div>
 				</div>

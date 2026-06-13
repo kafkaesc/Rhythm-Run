@@ -46,6 +46,7 @@ async function runEvictionPolicy(): Promise<void> {
 	const mbid = lruCandidates[0] as string;
 	await redis.zrem(LRU_SET_KEY, mbid);
 	await redis.del(trackKey(mbid));
+	console.info('runEvictionPolicy: evicted', mbid);
 }
 
 /**

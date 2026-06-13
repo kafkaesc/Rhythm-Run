@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import Button from '@/components/elements/Button';
+import Scrollable from '@/components/layout/Scrollable';
 import { Track } from '@/models/rhythmRun';
 
 const AddIcon = () => <Icon icon="lucide:plus" height={16} width={16} />;
@@ -29,7 +30,7 @@ export default function TrackList<T>({
 	if (!tracks || tracks.length === 0) return <></>;
 
 	return (
-		<div className="max-h-[11em] overflow-y-auto">
+		<Scrollable maxHeight="11em">
 			<hr aria-hidden="true" />
 			{tracks.map((tr) => {
 				const item = toTrack(tr);
@@ -68,6 +69,6 @@ export default function TrackList<T>({
 					</div>
 				);
 			})}
-		</div>
+		</Scrollable>
 	);
 }

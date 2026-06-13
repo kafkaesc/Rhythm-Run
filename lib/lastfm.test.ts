@@ -49,6 +49,7 @@ it('Has fetchArtistTopTracks throw when the response is not ok', async () => {
 	mockFetch.mockResolvedValue({
 		ok: false,
 		status: 404,
+		text: () => Promise.resolve('Not Found'),
 	} as unknown as Response);
 	await expect(fetchArtistTopTracks('test-mbid', 'test-key')).rejects.toThrow(
 		'Last.fm API error: 404',

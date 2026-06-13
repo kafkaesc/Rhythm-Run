@@ -1,6 +1,7 @@
 import Button from '@/components/elements/Button';
 import AddIcon from '@/components/icons/AddIcon';
 import RemoveIcon from '@/components/icons/RemoveIcon';
+import Scrollable from '@/components/layout/Scrollable';
 import { normalizeLfmArtist } from '@/lib/normalize';
 import { LfmArtist } from '@/models/lastFm';
 
@@ -84,7 +85,7 @@ export default function ArtistSearchList({
 	if (selected.length === 0 && filteredResults.length === 0) return <></>;
 
 	return (
-		<div className="max-h-[11em] overflow-y-auto">
+		<Scrollable maxHeight="11em">
 			<hr aria-hidden="true" />
 			{selected.map((ar) => (
 				<ArtistRow
@@ -100,6 +101,6 @@ export default function ArtistSearchList({
 					onAdd={add ? () => add(ar) : undefined}
 				/>
 			))}
-		</div>
+		</Scrollable>
 	);
 }

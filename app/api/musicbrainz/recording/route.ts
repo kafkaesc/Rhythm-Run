@@ -22,11 +22,14 @@ export async function GET(request: NextRequest) {
 		headers: { 'User-Agent': 'rhythm-run/0.1.0' },
 	});
 
-	if (!res.ok)
+	if (!res.ok) {
+		const body = await res.text();
+		console.error('MusicBrainz recording search failed:', res.status, body);
 		return NextResponse.json(
 			{ error: 'MusicBrainz API error' },
 			{ status: res.status },
 		);
+	}
 
 	const data = await res.json();
 	return NextResponse.json(data.recordings ?? []);
