@@ -11,3 +11,15 @@ export type AsyncAction<T> =
 	| { type: 'success'; data: T }
 	| { type: 'error'; error: string }
 	| { type: 'clear' };
+
+export type MutationState<T> =
+	| { status: 'idle'; data: null; error: null }
+	| { status: 'submitting'; data: null; error: null }
+	| { status: 'success'; data: T; error: null }
+	| { status: 'error'; data: null; error: string };
+
+export type MutationAction<T> =
+	| { type: 'submit' }
+	| { type: 'success'; data: T }
+	| { type: 'error'; error: string }
+	| { type: 'reset' };

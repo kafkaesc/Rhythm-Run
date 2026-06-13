@@ -1,6 +1,7 @@
 import Button from '@/components/elements/Button';
 import AddIcon from '@/components/icons/AddIcon';
 import RemoveIcon from '@/components/icons/RemoveIcon';
+import Scrollable from '@/components/layout/Scrollable';
 import { Artist } from '@/models/rhythmRun';
 
 type ArtistListProps<T> = {
@@ -19,7 +20,7 @@ export default function ArtistList<T>({
 	if (!artists || artists.length === 0) return <></>;
 
 	return (
-		<div className="max-h-[11em] overflow-y-auto">
+		<Scrollable maxHeight="11em">
 			<hr aria-hidden="true" />
 			{artists.map((ar) => {
 				const item = toArtist(ar);
@@ -56,6 +57,6 @@ export default function ArtistList<T>({
 					</div>
 				);
 			})}
-		</div>
+		</Scrollable>
 	);
 }

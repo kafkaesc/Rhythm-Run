@@ -2,6 +2,7 @@ import { cn } from '@/lib/css-utils';
 
 type ButtonProps = React.ComponentPropsWithoutRef<'button'> & {
 	buttonStyle?: 'black-white' | 'danger' | 'primary' | 'text' | 'warning';
+	icon?: React.ReactNode;
 	mini?: boolean;
 };
 
@@ -25,12 +26,16 @@ export default function Button({
 	buttonStyle,
 	children,
 	className,
+	icon,
 	mini,
 	...props
 }: ButtonProps) {
+	const iconClass = icon ? 'flex items-center gap-1' : undefined;
+
 	if (buttonStyle === 'text') {
 		return (
-			<button className={cn(styleClasses.text, className)} {...props}>
+			<button className={cn(styleClasses.text, iconClass, className)} {...props}>
+				{icon}
 				{children}
 			</button>
 		);
@@ -39,9 +44,10 @@ export default function Button({
 	const secondaryStyle = styleClasses[buttonStyle ?? 'primary'];
 	return (
 		<button
-			className={cn(baseStyle, mini && miniStyle, secondaryStyle, className)}
+			className={cn(baseStyle, mini && miniStyle, secondaryStyle, iconClass, className)}
 			{...props}
 		>
+			{icon}
 			{children}
 		</button>
 	);

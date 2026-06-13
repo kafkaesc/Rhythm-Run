@@ -1,26 +1,40 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Button from '@/components/elements/Button';
-import H2 from '@/components/elements/H2';
-import ArtistTempoQueryDisplay from '@/components/ArtistTempoQueryDisplay';
+import { useState } from 'react';
+import ArtistTempoQueryDisplay from '@/components/metamusic-artist-tempo/ArtistTempoQueryDisplay';
+import SearchControls from '@/components/metamusic-artist-tempo/SearchControls';
+import TrackSelectionStep from '@/components/metamusic-artist-tempo/TrackSelectionStep';
 import BpmSelector from '@/components/BpmSelector';
 import EpsilonSelector from '@/components/EpsilonSelector';
 import LfmArtistSearch from '@/components/LfmArtistSearch';
-import LoadingMessages from '@/components/LoadingMessages';
-import ProxyWarning from '@/components/ProxyWarning';
-import SearchStatus from '@/components/SearchStatus';
+import SpotifyExportPanel from '@/components/SpotifyExportPanel';
 import SuggestedArtistsCloud from '@/components/SuggestedArtistsCloud';
-import TrackTable from '@/components/TrackTable';
 import { useMetaMusicArtistTempo } from '@/hooks/api/useMetaMusic';
 import { useSet } from '@/hooks/useSet';
-import { DEFAULT_BPM, DEFAULT_EPSILON } from '@/lib/constants';
+import { useTrackSelection } from '@/hooks/useTrackSelection';
+import {
+	DEFAULT_BPM,
+	DEFAULT_EPSILON,
+	MAX_SEARCH_ARTISTS,
+} from '@/lib/constants';
 import { LfmArtist } from '@/models/lastFm';
 import { MetaMusicArtistTempoQuery } from '@/models/metaMusic';
 
-const MAX_SEARCH_ARTISTS = 5;
+type UiStep = 'search' | 'results' | 'export';
 
+/**
+ * Top-level feature component for the MetaMusic artist tempo search.
+ *
+ * Manages a three-step flow:
+ * 1. Artist + tempo search
+ * 2. Track selection
+ * 3. Spotify playlist export
+ */
 export default function MetaMusicArtistTempo() {
+	// UI state
+	const [step, setStep] = useState<UiStep>('search');
+
+	// Search state
 	const [mmQuery, setMmQuery] = useState<MetaMusicArtistTempoQuery | null>(
 		null,
 	);
@@ -35,34 +49,37 @@ export default function MetaMusicArtistTempo() {
 		key: (a) => a.mbid || a.name,
 		limit: MAX_SEARCH_ARTISTS,
 	});
+
+	// Search results
 	const { tracks, loading, streaming, error } = useMetaMusicArtistTempo(
 		mmQuery?.mbids ?? [],
 		mmQuery?.tempo ?? null,
 		mmQuery?.epsilon ?? null,
 	);
-	const [slowLoad, setSlowLoad] = useState(false);
 
-	useEffect(() => {
-		if (!loading) return;
-		const timer = setTimeout(() => setSlowLoad(true), 20_000);
-		return () => {
-			clearTimeout(timer);
-			setSlowLoad(false);
-		};
-	}, [loading]);
+	// Track selection
+	const {
+		selectedIds,
+		selectedTracks,
+		toggle,
+		clear: clearSelection,
+	} = useTrackSelection(tracks);
 
 	const clearResults = () => {
+		setStep('search');
 		setMmQuery(null);
+		clearSelection();
 	};
 
 	const loadMbids = () => {
 		const mbids = artists.map((a) => a.mbid).filter(Boolean);
 		setMmQuery({ mbids, tempo, epsilon });
+		setStep('results');
 	};
 
 	return (
 		<div className="flex flex-col gap-4">
-			{!mmQuery && (
+			{step === 'search' && (
 				<>
 					<div className="flex flex-col sm:flex-row gap-3">
 						<div className="flex-1">
@@ -72,55 +89,43 @@ export default function MetaMusicArtistTempo() {
 							<EpsilonSelector initialVal={epsilon} onChange={setEpsilon} />
 						</div>
 					</div>
-					<SuggestedArtistsCloud
-						isFull={isFull()}
-						limit={MAX_SEARCH_ARTISTS}
-						onSelect={add}
-					/>
+					<SuggestedArtistsCloud isFull={isFull()} onSelect={add} />
 					<LfmArtistSearch add={add} remove={remove} selected={artists} />
 				</>
 			)}
-			<div className="flex flex-col items-center gap-2">
-				<div>
+			{(step === 'search' || step === 'results') && (
+				<>
 					<ArtistTempoQueryDisplay
 						artists={artists}
-						tempo={tempo}
 						epsilon={epsilon}
+						tempo={tempo}
 					/>
-				</div>
-				<div className="flex gap-3">
-					<Button
-						buttonStyle="primary"
+					<SearchControls
+						artistCount={mmQuery?.mbids.length ?? 0}
 						disabled={artists.length === 0}
-						onClick={loadMbids}
-						type="button"
-					>
-						Find Tracks
-					</Button>
-					<Button
-						buttonStyle="black-white"
-						onClick={clearResults}
-						type="button"
-					>
-						Clear Results
-					</Button>
-				</div>
-				<SearchStatus
-					err={error}
-					errMessage="Error with the MetaMusic response"
-					loading={loading}
-					streaming={streaming}
-					streamingMessage={<LoadingMessages />}
-				/>
-				{slowLoad && loading && (
-					<ProxyWarning artistCount={mmQuery?.mbids.length ?? 0} />
-				)}
-			</div>
-			{tracks && (
-				<>
-					<H2>Matching Tracks</H2>
-					<TrackTable tracks={tracks} />
+						error={error}
+						loading={loading}
+						onClear={clearResults}
+						onFind={loadMbids}
+						streaming={streaming}
+					/>
 				</>
+			)}
+			{step === 'results' && tracks && (
+				<TrackSelectionStep
+					onNext={() => setStep('export')}
+					onToggleSelect={toggle}
+					selectedIds={selectedIds}
+					title="Matching Tracks"
+					tracks={tracks}
+				/>
+			)}
+			{step === 'export' && (
+				<SpotifyExportPanel
+					onBack={() => setStep('results')}
+					onSuccess={clearSelection}
+					tracks={selectedTracks}
+				/>
 			)}
 		</div>
 	);
