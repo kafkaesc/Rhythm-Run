@@ -9,16 +9,20 @@ import { NextRequest, NextResponse } from 'next/server';
 export function requireApiKey(request: NextRequest): NextResponse | null {
 	// A missing env var is a server misconfiguration, return 500
 	const expectedKey = process.env.NEXT_PUBLIC_INTERNAL_API_KEY;
-	if (!expectedKey)
+	if (!expectedKey) {
+		console.error('Internal API key is not configured');
 		return NextResponse.json(
 			{ error: 'API key not configured' },
 			{ status: 500 },
 		);
+	}
 
 	// Check the request for the key in the x-api-key header
 	const providedKey = request.headers.get('x-api-key');
-	if (providedKey !== expectedKey)
+	if (providedKey !== expectedKey) {
+		console.warn('Invalid API key on', request.nextUrl.pathname);
 		return NextResponse.json({ error: 'Invalid API key' }, { status: 401 });
+	}
 
 	return null;
 }

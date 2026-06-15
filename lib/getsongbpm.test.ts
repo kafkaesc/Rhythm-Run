@@ -9,17 +9,27 @@ afterEach(() => {
 	mockFetch.mockReset();
 });
 
-function mockResponse(ok: boolean, data?: unknown): Response {
+function mockResponse(ok: boolean, data?: unknown, body = '', status = 200): Response {
 	return {
 		ok,
+		status,
 		json: () => Promise.resolve(data),
+		text: () => Promise.resolve(body),
 	} as unknown as Response;
 }
 
 it('Has fetchGsbTempo return null when the response is not ok', async () => {
-	mockFetch.mockResolvedValue(mockResponse(false));
+	const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+	mockFetch.mockResolvedValue(mockResponse(false, undefined, 'Service Unavailable', 503));
 	const result = await fetchGsbTempo('Basket Case', 'Green Day', 'test-key');
 	expect(result).toBeNull();
+	expect(warnSpy).toHaveBeenCalledWith(
+		'fetchGsbTempo failed:',
+		503,
+		'Service Unavailable',
+		{ title: 'Basket Case', artist: 'Green Day' },
+	);
+	warnSpy.mockRestore();
 });
 
 it('Has fetchGsbTempo return null when the response JSON is malformed', async () => {

@@ -11,11 +11,13 @@ export async function GET(request: NextRequest) {
 
 	// Retrieve credentials for Get Song BPM API access
 	const apiKey = process.env.GET_SONG_BPM_KEY;
-	if (!apiKey)
+	if (!apiKey) {
+		console.error('GetSongBPM API key is not configured');
 		return NextResponse.json(
 			{ error: 'Error with GetSongBPM API key' },
 			{ status: 500 },
 		);
+	}
 
 	// Extract the requested artist name
 	const artist = request.nextUrl.searchParams.get('artist');
@@ -31,11 +33,14 @@ export async function GET(request: NextRequest) {
 	// Await the response, then branch depending on error or success
 	const res = await fetch(uri);
 
-	if (!res.ok)
+	if (!res.ok) {
+		const body = await res.text();
+		console.error('GetSongBPM search failed:', res.status, body);
 		return NextResponse.json(
 			{ error: 'GetSongBPM API error' },
 			{ status: res.status },
 		);
+	}
 
 	const data = await res.json();
 	const results = data.search;

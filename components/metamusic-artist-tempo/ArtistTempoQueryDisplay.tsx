@@ -8,6 +8,13 @@ type ArtistTempoQueryDisplayProps = {
 	tempo?: number | string;
 };
 
+/**
+ * Displays a natural-language summary of the current search query
+ *
+ * @param artists - Optional, list of selected artists
+ * @param epsilon - Optional, BPM tolerance range, i.e., search for a tempo ±epsilon
+ * @param tempo - Optional, target BPM
+ */
 export default function ArtistTempoQueryDisplay({
 	tempo,
 	artists,

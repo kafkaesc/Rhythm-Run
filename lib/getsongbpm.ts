@@ -24,7 +24,11 @@ export async function fetchGsbTempo(
 
 	// Return null rather than throwing so one failed lookup doesn't abort the stream
 	const res = await fetch(url);
-	if (!res.ok) return null;
+	if (!res.ok) {
+		const body = await res.text();
+		console.warn('fetchGsbTempo failed:', res.status, body, { title, artist });
+		return null;
+	}
 
 	// Parse the response as JSON and log if it is malformed
 	let data;

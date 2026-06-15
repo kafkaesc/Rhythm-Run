@@ -15,19 +15,23 @@ export async function GET(request: NextRequest) {
 
 	// Verify the GetSongBPM API key
 	const gsbApiKey = process.env.GET_SONG_BPM_KEY;
-	if (!gsbApiKey)
+	if (!gsbApiKey) {
+		console.error('GetSongBPM API key is not configured');
 		return NextResponse.json(
 			{ error: 'Missing GetSongBPM API key' },
 			{ status: 500 },
 		);
+	}
 
 	// Verify the Last.fm API key
 	const lastFmApiKey = process.env.LAST_FM_KEY;
-	if (!lastFmApiKey)
+	if (!lastFmApiKey) {
+		console.error('Last.fm API key is not configured');
 		return NextResponse.json(
 			{ error: 'Missing Last.fm API key' },
 			{ status: 500 },
 		);
+	}
 
 	// Verify that artist mbid(s) have been passed
 	const artistMbids = request.nextUrl.searchParams.getAll('artistMbid');
@@ -85,7 +89,8 @@ export async function GET(request: NextRequest) {
 						.then((tracks) => ({ mbid, tracks })),
 				),
 			);
-		} catch {
+		} catch (err) {
+			console.error('Last.fm top tracks fetch failed for mbids', uncachedMbids, err);
 			return NextResponse.json(
 				{ error: 'Failed to fetch top tracks from Last.fm' },
 				{ status: 502 },
@@ -123,6 +128,8 @@ export async function GET(request: NextRequest) {
 						enriched.filter((t) => t.bpm !== undefined),
 					);
 				}
+			} catch (err) {
+				console.error('MetaMusic stream failed:', err);
 			} finally {
 				controller.close();
 			}

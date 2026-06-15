@@ -11,11 +11,13 @@ export async function GET(request: NextRequest) {
 
 	// Verify the Last.fm API key
 	const apiKey = process.env.LAST_FM_KEY;
-	if (!apiKey)
+	if (!apiKey) {
+		console.error('Last.fm API key is not configured');
 		return NextResponse.json(
 			{ error: 'Error with Last.fm API key' },
 			{ status: 500 },
 		);
+	}
 
 	// Verify the artist parameter was passed
 	const artist = request.nextUrl.searchParams.get('artist');
@@ -31,11 +33,14 @@ export async function GET(request: NextRequest) {
 
 	// Await the response and return an error for any non-Ok responses
 	const res = await fetch(url);
-	if (!res.ok)
+	if (!res.ok) {
+		const body = await res.text();
+		console.error('Last.fm artist search failed:', res.status, body);
 		return NextResponse.json(
 			{ error: 'Last.fm API error' },
 			{ status: res.status },
 		);
+	}
 
 	const data = await res.json();
 	const artists = data.results?.artistmatches?.artist ?? [];
