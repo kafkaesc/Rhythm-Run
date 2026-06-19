@@ -12,10 +12,10 @@ import { useGsbArtistSearch } from '@/hooks/api/useGetSongBpmApi';
 import { normalizeGsbArtist } from '@/lib/normalize';
 import { GsbArtist } from '@/models/getSongBpm';
 
-type GsbArtistSearchProps = {
+type GsbArtistSearchProps = Readonly<{
 	add?: (artist: GsbArtist) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Search form for querying the GetSongBPM API by artist name.

@@ -1,7 +1,7 @@
 import P from '@/components/elements/P';
 import { ReactNode } from 'react';
 
-type SearchStatusProps = {
+type SearchStatusProps = Readonly<{
 	err: string | boolean | null;
 	errMessage?: ReactNode;
 	id?: string;
@@ -9,7 +9,7 @@ type SearchStatusProps = {
 	loadingMessage?: ReactNode;
 	streaming?: boolean;
 	streamingMessage?: ReactNode;
-};
+}>;
 
 /**
  * Displays loading, streaming, or error status for a search component, holds space if none are present

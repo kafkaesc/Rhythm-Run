@@ -8,11 +8,11 @@ import { clamp } from '@/lib/math';
 const MAX_BPM = 220;
 const MIN_BPM = 60;
 
-type BpmSelectorProps = {
+type BpmSelectorProps = Readonly<{
 	initialVal?: number;
 	onChange?: (bpm: number) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Slider and number input for selecting a target BPM within a fixed range.
@@ -35,6 +35,12 @@ export default function BpmSelector({
 	// we pass the fillPercent as a CSS variable and use it in a gradient
 	// on the track.
 	const fillPercent = ((bpm - MIN_BPM) / (MAX_BPM - MIN_BPM)) * 100;
+
+	// React.CSSProperties (this @types/react) doesn't include custom (--*)
+	// properties, so intersect the type to make --range-fill a known key
+	const rangeStyle: React.CSSProperties & { '--range-fill': string } = {
+		'--range-fill': `${fillPercent}%`,
+	};
 
 	// Clamps value to the valid BPM range, then syncs
 	// the slider, number input, and onChange callback
@@ -98,11 +104,7 @@ export default function BpmSelector({
 					min={MIN_BPM}
 					onChange={(e) => commitValue(Number(e.target.value))}
 					// Is this worth it for the slider to match the rest of the UI? Maybe
-					style={
-						{
-							['--range-fill' as string]: `${fillPercent}%`,
-						} as React.CSSProperties
-					}
+					style={rangeStyle}
 					type="range"
 					value={bpm}
 				/>

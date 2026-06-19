@@ -120,11 +120,11 @@ function getAriaSortValue(
 	return undefined;
 }
 
-type TrackTableProps = {
+type TrackTableProps = Readonly<{
 	onToggleSelect?: (id: string) => void;
 	selectedIds?: Set<string>;
 	tracks: Track[];
-};
+}>;
 
 /**
  * Displays a paginated, sortable table of tracks

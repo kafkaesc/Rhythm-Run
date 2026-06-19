@@ -12,10 +12,10 @@ import { useMusicBrainzTrackSearch } from '@/hooks/api/useMusicBrainzApi';
 import { normalizeMbTrack } from '@/lib/normalize';
 import { MbTrack } from '@/models/musicBrainz';
 
-type MbTrackSearchProps = {
+type MbTrackSearchProps = Readonly<{
 	add?: (track: MbTrack) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Search form for querying the MusicBrainz API by track name.

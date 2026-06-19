@@ -5,13 +5,13 @@ import CloseIcon from '@/components/icons/CloseIcon';
 import MenuIcon from '@/components/icons/MenuIcon';
 import { cn } from '@/lib/css-utils';
 
-type DrawerProps = {
+type DrawerProps = Readonly<{
 	children?: ReactNode;
 	className?: string;
 	headerRight?: ReactNode;
 	side?: 'left' | 'right';
 	title?: ReactNode;
-};
+}>;
 
 /**
  * Slide-out panel anchored to the left or right edge of the screen.
