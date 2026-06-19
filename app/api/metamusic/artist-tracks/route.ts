@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
 		);
 
 	// Validate the epsilon or set to zero
-	const epsilonNum = epsilon !== null ? Number.parseInt(epsilon, 10) : 0;
+	const epsilonNum = epsilon === null ? 0 : Number.parseInt(epsilon, 10);
 	if (Number.isNaN(epsilonNum))
 		return NextResponse.json(
 			{ error: 'epsilon must be a number' },
@@ -70,8 +70,8 @@ export async function GET(request: NextRequest) {
 	const uncachedMbids: string[] = [];
 	for (const mbid of artistMbids) {
 		const cached = await getCachedTracks(mbid);
-		if (cached !== null) cachedTracks.push(cached);
-		else uncachedMbids.push(mbid);
+		if (cached === null) uncachedMbids.push(mbid);
+		else cachedTracks.push(cached);
 	}
 
 	// For uncached artists, fetch top tracks from Last.fm, staggered by 1 second
@@ -90,7 +90,11 @@ export async function GET(request: NextRequest) {
 				),
 			);
 		} catch (err) {
-			console.error('Last.fm top tracks fetch failed for mbids', uncachedMbids, err);
+			console.error(
+				'Last.fm top tracks fetch failed for mbids',
+				uncachedMbids,
+				err,
+			);
 			return NextResponse.json(
 				{ error: 'Failed to fetch top tracks from Last.fm' },
 				{ status: 502 },
