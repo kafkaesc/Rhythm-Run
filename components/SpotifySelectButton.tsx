@@ -3,11 +3,11 @@
 import SpotifyIcon from '@/components/icons/SpotifyIcon';
 import { cn } from '@/lib/css-utils';
 
-type SpotifySelectButtonProps = {
+type SpotifySelectButtonProps = Readonly<{
 	marked: boolean;
 	onClick: () => void;
 	title: string;
-};
+}>;
 
 /**
  * Toggle button used to mark a track for Spotify export.

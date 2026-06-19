@@ -2,11 +2,11 @@ import { Fragment } from 'react';
 import { cn } from '@/lib/css-utils';
 import { ReactNodeAndKey } from '@/models/rhythmRun';
 
-type FlatteningListProps = {
+type FlatteningListProps = Readonly<{
 	list: ReactNodeAndKey[];
 	className?: string;
 	separator?: string;
-};
+}>;
 
 export default function FlatteningList({
 	list,

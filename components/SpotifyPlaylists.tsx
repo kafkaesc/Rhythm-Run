@@ -4,9 +4,9 @@ import PlaylistButton from '@/components/PlaylistButton';
 import { useSpotifyEditablePlaylists } from '@/hooks/useSpotifyEditablePlaylists';
 import { SpotifyPlaylist } from '@/models/spotify';
 
-type SpotifyPlaylistsProps = {
+type SpotifyPlaylistsProps = Readonly<{
 	selectPlaylist?: (sp: SpotifyPlaylist) => void;
-};
+}>;
 
 /**
  * Renders the user's editable (owned or collaborative) Spotify playlists

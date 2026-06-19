@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/css-utils';
 import ChevronDownIcon from '@/components/icons/ChevronDownIcon';
 
-type ScrollableIconProps = {
+type ScrollableIconProps = Readonly<{
 	visible: boolean;
-};
+}>;
 
 function ScrollableIcon({ visible }: ScrollableIconProps) {
 	return (

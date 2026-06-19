@@ -12,10 +12,10 @@ import { useSpotifyArtistSearch } from '@/hooks/api/useSpotifyApi';
 import { normalizeSpotifyArtist } from '@/lib/normalize';
 import { SpotifyArtist } from '@/models/spotify';
 
-type SpotifyArtistSearchProps = {
+type SpotifyArtistSearchProps = Readonly<{
 	add?: (artist: SpotifyArtist) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Search form for querying the Spotify API by artist name.

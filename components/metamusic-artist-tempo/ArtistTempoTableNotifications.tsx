@@ -12,9 +12,9 @@ const formatArtists = (artists: string[]): string => {
 	return `${artists.slice(0, -1).join(', ')}, or ${artists[artists.length - 1]}`;
 };
 
-type ArtistTempoTableNotificationsProps = {
+type ArtistTempoTableNotificationsProps = Readonly<{
 	noDataArtists?: string[];
-};
+}>;
 
 /**
  * Displays a notice listing searched artists that have no tempo data,

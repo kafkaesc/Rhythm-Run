@@ -8,14 +8,14 @@ import TrackTable from '@/components/TrackTable';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { Track } from '@/models/rhythmRun';
 
-type TrackSelectionStepProps = {
+type TrackSelectionStepProps = Readonly<{
 	noDataArtists?: string[];
 	onNext: () => void;
 	onToggleSelect: (id: string) => void;
 	selectedIds: Set<string>;
 	title?: string;
 	tracks: Track[];
-};
+}>;
 
 /**
  * Displays tracks in a sortable table. If the user has a Spotify session

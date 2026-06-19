@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/css-utils';
 
-type NavItemProps = {
+type NavItemProps = Readonly<{
 	children: React.ReactNode;
 	href: string;
 	inDrawer?: boolean;
-};
+}>;
 
 /**
  * A navigation list item that highlights itself when its href matches the

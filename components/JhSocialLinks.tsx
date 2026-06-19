@@ -34,9 +34,9 @@ const colorModeStyles = {
 
 type ColorMode = keyof typeof colorModeStyles;
 
-interface JhSocialLinksProps {
+type JhSocialLinksProps = Readonly<{
 	colorMode?: ColorMode;
-}
+}>;
 
 /**
  * Renders a row of link icons for the social media profiles for the creator

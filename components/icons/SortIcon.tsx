@@ -1,8 +1,8 @@
 import { Icon } from '@iconify/react';
 
-type SortIconProps = {
+type SortIconProps = Readonly<{
 	isSorted: false | 'asc' | 'desc';
-};
+}>;
 
 /**
  * Renders the appropriate sort direction icon for a column header button.

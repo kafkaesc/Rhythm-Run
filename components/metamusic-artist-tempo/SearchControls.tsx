@@ -6,7 +6,7 @@ import LoadingMessages from '@/components/metamusic-artist-tempo/LoadingMessages
 import ProxyWarning from '@/components/metamusic-artist-tempo/ProxyWarning';
 import SearchStatus from '@/components/SearchStatus';
 
-type SearchControlsProps = {
+type SearchControlsProps = Readonly<{
 	artistCount: number;
 	disabled: boolean;
 	error: string | null;
@@ -14,7 +14,7 @@ type SearchControlsProps = {
 	onClear: () => void;
 	onFind: () => void;
 	streaming: boolean;
-};
+}>;
 
 /**
  * Renders the Find Tracks and Clear Results buttons along with

@@ -2,9 +2,9 @@
 
 import { SessionProvider as NextAuthSessionProvider } from 'next-auth/react';
 
-type SessionProviderProps = {
+type SessionProviderProps = Readonly<{
 	children: React.ReactNode;
-};
+}>;
 
 /**
  * Wraps the app in NextAuth's SessionProvider so that any client component

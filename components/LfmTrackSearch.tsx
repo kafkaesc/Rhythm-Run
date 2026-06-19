@@ -12,10 +12,10 @@ import { useLastFmTrackSearch } from '@/hooks/api/useLastFmApi';
 import { normalizeLfmSearchTrack } from '@/lib/normalize';
 import { LfmSearchTrack } from '@/models/lastFm';
 
-type LfmSearchTrackSearchProps = {
+type LfmSearchTrackSearchProps = Readonly<{
 	add?: (track: LfmSearchTrack) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Search form for querying the Last.fm API by track name.

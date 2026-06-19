@@ -12,10 +12,10 @@ import { useMusicBrainzArtistSearch } from '@/hooks/api/useMusicBrainzApi';
 import { normalizeMbArtist } from '@/lib/normalize';
 import { MbArtist } from '@/models/musicBrainz';
 
-type MbArtistSearchProps = {
+type MbArtistSearchProps = Readonly<{
 	add?: (artist: MbArtist) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Search form for querying the MusicBrainz API by artist name.

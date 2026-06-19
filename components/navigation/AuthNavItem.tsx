@@ -3,9 +3,9 @@
 import NavItem from '@/components/navigation/NavItem';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 
-type AuthNavItemProps = {
+type AuthNavItemProps = Readonly<{
 	inDrawer?: boolean;
-};
+}>;
 
 /** Renders a Login or Profile nav link depending on session state */
 export default function AuthNavItem({ inDrawer = false }: AuthNavItemProps) {
