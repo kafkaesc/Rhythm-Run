@@ -22,7 +22,7 @@ export default function ArtistTempoQueryDisplay({
 }: ArtistTempoQueryDisplayProps) {
 	const a = artists?.length ? artists.map((ar) => ar.name).join(', ') : '____';
 	const e = epsilon ? `, give or take ${epsilon} bpm,` : '';
-	const t = tempo ? tempo : '____';
+	const t = tempo || '____';
 
 	return (
 		<P>
