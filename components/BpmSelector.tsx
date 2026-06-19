@@ -49,7 +49,7 @@ export default function BpmSelector({
 	// the last valid BPM if the blur value is invalid
 	function handleInputBlur() {
 		const parsed = Number(inputValue);
-		if (!isNaN(parsed) && inputValue !== '') {
+		if (!Number.isNaN(parsed) && inputValue !== '') {
 			commitValue(parsed);
 		} else {
 			setInputValue(String(bpm));
@@ -63,7 +63,7 @@ export default function BpmSelector({
 		if (commitNextChangeRef.current) {
 			commitNextChangeRef.current = false;
 			const parsed = Number(e.target.value);
-			if (!isNaN(parsed) && e.target.value !== '') {
+			if (!Number.isNaN(parsed) && e.target.value !== '') {
 				commitValue(parsed);
 			}
 		}

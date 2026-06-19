@@ -46,5 +46,5 @@ export async function fetchGsbTempo(
 
 	// Pull the tempo off the GetSongBPM response and parse it to an int
 	const tempo = (results[0] as { tempo?: string })?.tempo;
-	return tempo ? parseInt(tempo, 10) : null;
+	return tempo ? Number.parseInt(tempo, 10) : null;
 }

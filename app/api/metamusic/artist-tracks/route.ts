@@ -50,16 +50,16 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json({ error: 'tempo is required' }, { status: 400 });
 
 	// Validate the tempo
-	const tempoNum = parseInt(tempo, 10);
-	if (isNaN(tempoNum))
+	const tempoNum = Number.parseInt(tempo, 10);
+	if (Number.isNaN(tempoNum))
 		return NextResponse.json(
 			{ error: 'tempo must be a number' },
 			{ status: 400 },
 		);
 
 	// Validate the epsilon or set to zero
-	const epsilonNum = epsilon !== null ? parseInt(epsilon, 10) : 0;
-	if (isNaN(epsilonNum))
+	const epsilonNum = epsilon !== null ? Number.parseInt(epsilon, 10) : 0;
+	if (Number.isNaN(epsilonNum))
 		return NextResponse.json(
 			{ error: 'epsilon must be a number' },
 			{ status: 400 },

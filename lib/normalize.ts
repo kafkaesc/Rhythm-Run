@@ -32,7 +32,7 @@ export function normalizeGsbTrack(track: GsbTrack): Track {
 		getSongBpmId: track.id,
 		title: track.title,
 		artists: [track.artist.name],
-		bpm: parseInt(track.tempo),
+		bpm: Number.parseInt(track.tempo),
 		gsbDanceability: track.danceability,
 	};
 }
