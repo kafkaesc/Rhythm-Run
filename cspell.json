@@ -12,6 +12,7 @@
 		"Linkin",
 		"Linkin Park",
 		"Nullsleep",
+		"Rihanna",
 		"Rilo",
 		"Shakira",
 		"Strava",
@@ -32,6 +33,7 @@
 		"nextauth",
 		"playcount",
 		"toptracks",
-		"upstash"
+		"upstash",
+		"vercel"
 	]
 }
