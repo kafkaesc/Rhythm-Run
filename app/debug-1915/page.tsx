@@ -13,7 +13,7 @@ import { useSpotifyTopArtistsApi } from '@/hooks/api/useSpotifyApi';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { SpotifyPlaylist } from '@/models/spotify';
 
-function SpotifyDebug({ session }: { session: Session | null }) {
+function SpotifyDebug({ session }: Readonly<{ session: Session | null }>) {
 	const [selectedSpotifyPlaylist, setSelectedSpotifyPlaylist] =
 		useState<SpotifyPlaylist | null>(null);
 	const { artists: allTimeFavorites } = useSpotifyTopArtistsApi(20);

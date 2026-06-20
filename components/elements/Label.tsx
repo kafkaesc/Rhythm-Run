@@ -1,6 +1,6 @@
 import { cn } from '@/lib/css-utils';
 
-type LabelProps = React.ComponentPropsWithoutRef<'label'>;
+type LabelProps = Readonly<React.ComponentPropsWithoutRef<'label'>>;
 
 /** A styled label element that accepts all native attributes */
 export default function Label({ children, className, ...props }: LabelProps) {

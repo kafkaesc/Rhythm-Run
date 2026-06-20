@@ -7,10 +7,10 @@ import { SpotifyPlaylist } from '@/models/spotify';
 const baseStyle =
 	'flex items-center gap-3 w-full rounded-md px-3 py-2 cursor-pointer transition-colors hover:bg-background-hover';
 
-type PlaylistButtonProps = React.ComponentPropsWithoutRef<'button'> & {
+type PlaylistButtonProps = Readonly<React.ComponentPropsWithoutRef<'button'> & {
 	href?: string;
 	playlist: SpotifyPlaylist;
-};
+}>;
 
 /**
  * Renders a Spotify playlist with its cover art and name.
