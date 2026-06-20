@@ -7,6 +7,7 @@ Built by Jared Hettinger
 ![Lint](https://github.com/kafkaesc/rhythm-run/actions/workflows/lint.yml/badge.svg)
 ![Typecheck](https://github.com/kafkaesc/rhythm-run/actions/workflows/typecheck.yml/badge.svg)
 ![CodeQL](https://github.com/kafkaesc/rhythm-run/actions/workflows/codeql.yml/badge.svg)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=kafkaesc_Rhythm-Run&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kafkaesc_Rhythm-Run)
 
 Rhythm Run is a Next.js app for finding tracks to match your pace.
 
@@ -80,6 +81,13 @@ Tests are written with [Jest](https://jestjs.io/) and [React Testing Library](ht
 ### Coverage Graph
 
 [![Coverage Graph](https://codecov.io/gh/kafkaesc/Rhythm-Run/graphs/sunburst.svg?token=I4SQ74QIAQ)](https://codecov.io/gh/kafkaesc/rhythm-run)
+
+## 🔍 Code Quality
+
+- [SonarQube Cloud](https://www.sonarsource.com/products/sonarqube/cloud/) - Quality gate, code smells, and security hotspots
+- [CodeQL](https://codeql.github.com) - Security-focused static analysis
+- [ESLint](https://eslint.org) - JavaScript linter
+- [tsc](https://www.typescriptlang.org/docs/handbook/compiler-options.html) - TypeScript compiler for type-checking
 
 ## 🧩 Project Details
 
