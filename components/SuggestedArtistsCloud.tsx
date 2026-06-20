@@ -29,7 +29,7 @@ function ErrorDisplay({ spotifyError, lookupError }: ErrorDisplayProps) {
 	return (
 		<p aria-live="polite" className="text-xs leading-none text-danger py-0.5">
 			{spotifyError && 'Could not load Spotify artists'}
-			{lookupError && lookupError}
+			{lookupError}
 			{!hasError && '\u00A0'}
 		</p>
 	);
