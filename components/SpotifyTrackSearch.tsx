@@ -12,10 +12,10 @@ import { useSpotifyTrackSearch } from '@/hooks/api/useSpotifyApi';
 import { normalizeSpotifyTrack } from '@/lib/normalize';
 import { SpotifyTrack } from '@/models/spotify';
 
-type SpotifyTrackSearchProps = {
+type SpotifyTrackSearchProps = Readonly<{
 	add?: (track: SpotifyTrack) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Search form for querying the Spotify API by track name.

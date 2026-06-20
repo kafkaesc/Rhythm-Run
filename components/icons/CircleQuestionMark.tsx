@@ -3,6 +3,6 @@ import type { ComponentPropsWithoutRef } from 'react';
 
 type Props = Readonly<Omit<ComponentPropsWithoutRef<typeof Icon>, 'icon'>>;
 
-export default function RemoveIcon(props: Props) {
-	return <Icon icon="lucide:x" {...props} />;
+export default function CircleQuestionMarkIcon(props: Props) {
+	return <Icon icon="lucide:circle-question-mark" {...props} />;
 }

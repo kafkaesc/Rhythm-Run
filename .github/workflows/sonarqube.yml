@@ -1,16 +1,17 @@
-name: Tests
+name: SonarQube
 
 on:
   push:
   pull_request:
 
 jobs:
-  test:
-    # https://youtu.be/yX8yrOAjfKM?t=230
+  sonarqube:
     runs-on: ubuntu-latest
     steps:
-      # GitHub checkout clones the repo into the runner
+      # Full history (fetch-depth: 0) lets SonarQube attribute new code accurately
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
       # Install pnpm into the runner
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
       # Install node on the runner
@@ -18,10 +19,10 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      # Install pnpm on the runner and run tests
+      # Install dependencies and generate coverage/lcov.info for SonarQube to read
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:ci
-      # Upload coverage to Codecov
-      - uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+      # Run the SonarQube Cloud scan (config lives in sonar-project.properties)
+      - uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

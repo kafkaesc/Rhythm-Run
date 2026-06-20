@@ -11,12 +11,12 @@ import SearchStatus from '@/components/SearchStatus';
 import { useLastFmArtistSearch } from '@/hooks/api/useLastFmApi';
 import { LfmArtist } from '@/models/lastFm';
 
-type LfmArtistSearchProps = {
+type LfmArtistSearchProps = Readonly<{
 	add?: (artist: LfmArtist) => void;
 	remove?: (artist: LfmArtist) => void;
 	selected?: LfmArtist[];
 	title?: string;
-};
+}>;
 
 /**
  * Search form for querying the Last.fm API by artist name.

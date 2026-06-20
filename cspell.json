@@ -12,8 +12,10 @@
 		"Linkin",
 		"Linkin Park",
 		"Nullsleep",
+		"Rihanna",
 		"Rilo",
 		"Shakira",
+		"SonarQube",
 		"Strava",
 		"Venusaur",
 		"acousticness",
@@ -32,6 +34,7 @@
 		"nextauth",
 		"playcount",
 		"toptracks",
-		"upstash"
+		"upstash",
+		"vercel"
 	]
 }

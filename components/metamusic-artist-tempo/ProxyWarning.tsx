@@ -22,9 +22,9 @@ function buildEstimateText(artistCount: number | undefined): string {
 	return ` Estimated wait: up to ${estimatedMinutes} minute${estimatedMinutes !== 1 ? 's' : ''}.`;
 }
 
-type ProxyWarningProps = {
+type ProxyWarningProps = Readonly<{
 	artistCount?: number;
-};
+}>;
 
 /**
  * Displays a warning that a secure proxy is likely buffering the stream.

@@ -1,10 +1,10 @@
 import { cn } from '@/lib/css-utils';
 
-type ButtonProps = React.ComponentPropsWithoutRef<'button'> & {
+type ButtonProps = Readonly<React.ComponentPropsWithoutRef<'button'> & {
 	buttonStyle?: 'black-white' | 'danger' | 'primary' | 'text' | 'warning';
 	icon?: React.ReactNode;
 	mini?: boolean;
-};
+}>;
 
 // Base styles shared across default buttons
 const baseStyle =

@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/css-utils';
 import ChevronDownIcon from '@/components/icons/ChevronDownIcon';
 
-type ScrollableIconProps = {
+type ScrollableIconProps = Readonly<{
 	visible: boolean;
-};
+}>;
 
 function ScrollableIcon({ visible }: ScrollableIconProps) {
 	return (
@@ -32,10 +32,10 @@ function ScrollableIcon({ visible }: ScrollableIconProps) {
 	);
 }
 
-type ScrollableProps = React.ComponentPropsWithoutRef<'div'> & {
+type ScrollableProps = Readonly<React.ComponentPropsWithoutRef<'div'> & {
 	height?: React.CSSProperties['height'];
 	maxHeight?: React.CSSProperties['maxHeight'];
-};
+}>;
 
 /**
  * A div with vertical scrolling enabled. Accepts dimensions to constrain

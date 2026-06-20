@@ -1,6 +1,6 @@
 import { cn } from '@/lib/css-utils';
 
-type ContainerProps = React.ComponentPropsWithoutRef<'div'>;
+type ContainerProps = Readonly<React.ComponentPropsWithoutRef<'div'>>;
 
 export default function Container({
 	children,

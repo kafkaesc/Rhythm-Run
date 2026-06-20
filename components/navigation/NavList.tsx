@@ -3,11 +3,11 @@ import NavItem from '@/components/navigation/NavItem';
 import { cn } from '@/lib/css-utils';
 import { SITE_MAP } from '@/lib/constants';
 
-type NavListProps = {
+type NavListProps = Readonly<{
 	className?: string;
 	inDrawer?: boolean;
 	stacked?: boolean;
-};
+}>;
 
 /** The site navigation list */
 export default function NavList({ className, inDrawer = false, stacked = false }: NavListProps) {

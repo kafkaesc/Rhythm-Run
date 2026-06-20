@@ -12,10 +12,10 @@ import { useGsbTrackSearch } from '@/hooks/api/useGetSongBpmApi';
 import { normalizeGsbTrack } from '@/lib/normalize';
 import { GsbTrack } from '@/models/getSongBpm';
 
-type GsbTrackSearchProps = {
+type GsbTrackSearchProps = Readonly<{
 	add?: (track: GsbTrack) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Search form for querying the GetSongBPM API by track name.
