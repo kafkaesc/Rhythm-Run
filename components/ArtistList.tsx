@@ -4,12 +4,12 @@ import RemoveIcon from '@/components/icons/RemoveIcon';
 import Scrollable from '@/components/layout/Scrollable';
 import { Artist } from '@/models/rhythmRun';
 
-type ArtistListProps<T> = {
+type ArtistListProps<T> = Readonly<{
 	add?: (artist: T) => void;
 	artists: T[] | null;
 	remove?: (artist: T) => void;
 	toArtist: (artist: T) => Artist;
-};
+}>;
 
 export default function ArtistList<T>({
 	add,

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { cn } from '@/lib/css-utils';
 
-type AProps = React.ComponentPropsWithoutRef<'a'>;
+type AProps = Readonly<React.ComponentPropsWithoutRef<'a'>>;
 
 const sharedStyles =
 	'text-foreground underline decoration-highlight decoration-[0.1em] transition-colors duration-300 hover:bg-background-hover focus-visible:bg-background-hover';
