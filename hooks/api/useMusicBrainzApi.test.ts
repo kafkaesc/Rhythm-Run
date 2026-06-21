@@ -70,7 +70,9 @@ it('Returns loading true while the track fetch is in flight', () => {
 });
 
 it('Returns tracks on a successful track fetch', async () => {
-	mockFetch.mockResolvedValue(mockResponse(true, [MbBasketCase, MbFeelGoodInc]));
+	mockFetch.mockResolvedValue(
+		mockResponse(true, [MbBasketCase, MbFeelGoodInc]),
+	);
 	const { result } = renderHook(() => useMusicBrainzTrackSearch('Basket Case'));
 	await waitFor(() => expect(result.current.loading).toBe(false));
 

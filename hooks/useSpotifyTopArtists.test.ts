@@ -1,9 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import {
-	SpBadBunny,
-	SpDaftPunk,
-	SpGreenDay,
-} from '@/mocks/SpotifyArtistMocks';
+import { SpBadBunny, SpDaftPunk, SpGreenDay } from '@/mocks/SpotifyArtistMocks';
 import { useSpotifyTopArtists } from './useSpotifyTopArtists';
 
 const mockUseSpotifyTopArtistsApi = jest.fn();
@@ -55,7 +51,10 @@ it('Passes through error from the API', () => {
 
 it('Returns the top n artists in order via getSpotifyTopArtists', () => {
 	const { result } = renderHook(() => useSpotifyTopArtists());
-	expect(result.current.getSpotifyTopArtists(2)).toEqual([SpBadBunny, SpDaftPunk]);
+	expect(result.current.getSpotifyTopArtists(2)).toEqual([
+		SpBadBunny,
+		SpDaftPunk,
+	]);
 });
 
 it('Returns 1 artist by default via getSpotifyTopArtists', () => {

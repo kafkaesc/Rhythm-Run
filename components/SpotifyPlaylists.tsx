@@ -47,7 +47,5 @@ export default function SpotifyPlaylists({
 		);
 	}
 
-	return (
-		<ul className="flex flex-col gap-1">{playlists.map(renderItem)}</ul>
-	);
+	return <ul className="flex flex-col gap-1">{playlists.map(renderItem)}</ul>;
 }

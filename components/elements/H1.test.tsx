@@ -15,4 +15,3 @@ it('Loads the className prop onto the child h1 element', () => {
 	expect(heading).toHaveTextContent(/hello world, but red/i);
 	expect(heading).toHaveClass('red');
 });
-

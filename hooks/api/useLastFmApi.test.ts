@@ -83,7 +83,9 @@ it('Uses the mbid param when mbid is provided', async () => {
 	);
 	await waitFor(() => expect(mockFetch).toHaveBeenCalled());
 	const url: URL = mockFetch.mock.calls[0][0];
-	expect(url.searchParams.get('mbid')).toBe('056e4f3e-d505-4dad-8ec1-d04f521cbb56');
+	expect(url.searchParams.get('mbid')).toBe(
+		'056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+	);
 	expect(url.searchParams.get('artist')).toBeNull();
 });
 
@@ -99,16 +101,23 @@ it('Falls back to the artist param when mbid is null', async () => {
 it('Prefers mbid over artist when both are provided', async () => {
 	mockFetch.mockResolvedValue(mockResponse(true, []));
 	renderHook(() =>
-		useLastFmArtistTopTracks('056e4f3e-d505-4dad-8ec1-d04f521cbb56', 'Daft Punk'),
+		useLastFmArtistTopTracks(
+			'056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+			'Daft Punk',
+		),
 	);
 	await waitFor(() => expect(mockFetch).toHaveBeenCalled());
 	const url: URL = mockFetch.mock.calls[0][0];
-	expect(url.searchParams.get('mbid')).toBe('056e4f3e-d505-4dad-8ec1-d04f521cbb56');
+	expect(url.searchParams.get('mbid')).toBe(
+		'056e4f3e-d505-4dad-8ec1-d04f521cbb56',
+	);
 	expect(url.searchParams.get('artist')).toBeNull();
 });
 
 it('Returns tracks on a successful top tracks fetch', async () => {
-	mockFetch.mockResolvedValue(mockResponse(true, [LfmBasketCase, LfmFeelGoodInc]));
+	mockFetch.mockResolvedValue(
+		mockResponse(true, [LfmBasketCase, LfmFeelGoodInc]),
+	);
 	const { result } = renderHook(() =>
 		useLastFmArtistTopTracks('056e4f3e-d505-4dad-8ec1-d04f521cbb56'),
 	);
@@ -169,7 +178,10 @@ it('Returns tracks on a successful track search fetch', async () => {
 	const { result } = renderHook(() => useLastFmTrackSearch('Basket Case'));
 	await waitFor(() => expect(result.current.loading).toBe(false));
 
-	expect(result.current.tracks).toEqual([LfmSearchBasketCase, LfmSearchFeelGoodInc]);
+	expect(result.current.tracks).toEqual([
+		LfmSearchBasketCase,
+		LfmSearchFeelGoodInc,
+	]);
 	expect(result.current.error).toBeNull();
 });
 

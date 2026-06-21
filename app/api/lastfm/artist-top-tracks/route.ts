@@ -49,7 +49,12 @@ export async function GET(request: NextRequest) {
 	const res = await fetch(url);
 	if (!res.ok) {
 		const body = await res.text();
-		console.error('Last.fm top tracks fetch failed for artist', artist, res.status, body);
+		console.error(
+			'Last.fm top tracks fetch failed for artist',
+			artist,
+			res.status,
+			body,
+		);
 		return NextResponse.json(
 			{ error: 'Last.fm API error' },
 			{ status: res.status },

@@ -55,7 +55,11 @@ it('Does not render a non-breaking space when loading', () => {
 
 it('Does not render a non-breaking space when there is an error', () => {
 	render(
-		<SearchStatus err="error" errMessage="Error with the API" loading={false} />,
+		<SearchStatus
+			err="error"
+			errMessage="Error with the API"
+			loading={false}
+		/>,
 	);
 	const status = screen.queryByText(/\u00A0/, { normalizer: (text) => text });
 	expect(status).not.toBeInTheDocument();
