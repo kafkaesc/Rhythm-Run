@@ -1,10 +1,12 @@
 import { cn } from '@/lib/css-utils';
 
-type ButtonProps = Readonly<React.ComponentPropsWithoutRef<'button'> & {
-	buttonStyle?: 'black-white' | 'danger' | 'primary' | 'text' | 'warning';
-	icon?: React.ReactNode;
-	mini?: boolean;
-}>;
+type ButtonProps = Readonly<
+	React.ComponentPropsWithoutRef<'button'> & {
+		buttonStyle?: 'black-white' | 'danger' | 'primary' | 'text' | 'warning';
+		icon?: React.ReactNode;
+		mini?: boolean;
+	}
+>;
 
 // Base styles shared across default buttons
 const baseStyle =
@@ -34,7 +36,10 @@ export default function Button({
 
 	if (buttonStyle === 'text') {
 		return (
-			<button className={cn(styleClasses.text, iconClass, className)} {...props}>
+			<button
+				className={cn(styleClasses.text, iconClass, className)}
+				{...props}
+			>
 				{icon}
 				{children}
 			</button>
@@ -44,7 +49,13 @@ export default function Button({
 	const secondaryStyle = styleClasses[buttonStyle ?? 'primary'];
 	return (
 		<button
-			className={cn(baseStyle, mini && miniStyle, secondaryStyle, iconClass, className)}
+			className={cn(
+				baseStyle,
+				mini && miniStyle,
+				secondaryStyle,
+				iconClass,
+				className,
+			)}
 			{...props}
 		>
 			{icon}

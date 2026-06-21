@@ -11,7 +11,16 @@ type AuthNavItemProps = Readonly<{
 export default function AuthNavItem({ inDrawer = false }: AuthNavItemProps) {
 	const { hasSession } = useSessionStatus();
 
-	if (hasSession()) return <NavItem href="/profile" inDrawer={inDrawer}>Profile</NavItem>;
+	if (hasSession())
+		return (
+			<NavItem href="/profile" inDrawer={inDrawer}>
+				Profile
+			</NavItem>
+		);
 
-	return <NavItem href="/login" inDrawer={inDrawer}>Login</NavItem>;
+	return (
+		<NavItem href="/login" inDrawer={inDrawer}>
+			Login
+		</NavItem>
+	);
 }

@@ -9,7 +9,12 @@ afterEach(() => {
 	mockFetch.mockReset();
 });
 
-function mockResponse(ok: boolean, data?: unknown, body = '', status = 200): Response {
+function mockResponse(
+	ok: boolean,
+	data?: unknown,
+	body = '',
+	status = 200,
+): Response {
 	return {
 		ok,
 		status,
@@ -20,7 +25,9 @@ function mockResponse(ok: boolean, data?: unknown, body = '', status = 200): Res
 
 it('Has fetchGsbTempo return null when the response is not ok', async () => {
 	const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-	mockFetch.mockResolvedValue(mockResponse(false, undefined, 'Service Unavailable', 503));
+	mockFetch.mockResolvedValue(
+		mockResponse(false, undefined, 'Service Unavailable', 503),
+	);
 	const result = await fetchGsbTempo('Basket Case', 'Green Day', 'test-key');
 	expect(result).toBeNull();
 	expect(warnSpy).toHaveBeenCalledWith(

@@ -18,7 +18,11 @@ type NavItemProps = Readonly<{
  * @param href - The URL to navigate to
  * @param children - The link text or element
  */
-export default function NavItem({ children, href, inDrawer = false }: NavItemProps) {
+export default function NavItem({
+	children,
+	href,
+	inDrawer = false,
+}: NavItemProps) {
 	// Determine if the current path matches the href to apply active CSS
 	const pathname = usePathname();
 	const isActive = pathname === href;

@@ -42,7 +42,9 @@ it('Does not show the Select a Spotify Playlist button when not logged in with S
 
 it('Shows the Select a Spotify Playlist button when logged in with Spotify', () => {
 	mockUseSession.mockReturnValueOnce(spotifySession);
-	render(<TrackSelectionStep {...defaultProps} selectedIds={new Set(['track-1'])} />);
+	render(
+		<TrackSelectionStep {...defaultProps} selectedIds={new Set(['track-1'])} />,
+	);
 	const btn = screen.getByRole('button', {
 		name: /select a spotify playlist/i,
 	});
@@ -60,7 +62,9 @@ it('Select a Spotify Playlist button is disabled when no tracks are selected', (
 
 it('Select a Spotify Playlist button is enabled when tracks are selected', () => {
 	mockUseSession.mockReturnValueOnce(spotifySession);
-	render(<TrackSelectionStep {...defaultProps} selectedIds={new Set(['track-1'])} />);
+	render(
+		<TrackSelectionStep {...defaultProps} selectedIds={new Set(['track-1'])} />,
+	);
 	const btn = screen.getByRole('button', {
 		name: /select a spotify playlist/i,
 	});
