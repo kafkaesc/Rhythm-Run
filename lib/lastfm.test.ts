@@ -3,7 +3,7 @@ import { fetchArtistByName, fetchArtistTopTracks } from './lastfm';
 
 // Replace the global fetch for testing
 const mockFetch = jest.fn();
-global.fetch = mockFetch;
+globalThis.fetch = mockFetch;
 
 // Reset after each test
 afterEach(() => {
