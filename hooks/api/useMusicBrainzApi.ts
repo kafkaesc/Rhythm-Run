@@ -36,7 +36,7 @@ export function useMusicBrainzArtistSearch(
 		dispatch({ type: 'fetch' });
 
 		const controller = new AbortController();
-		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
+		const url = new URL(LOCAL_ARTIST_ENDPOINT, globalThis.location.origin);
 		url.searchParams.set('artist', artist);
 
 		fetch(url, {
@@ -92,7 +92,7 @@ export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {
 		dispatch({ type: 'fetch' });
 
 		const controller = new AbortController();
-		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
+		const url = new URL(LOCAL_TRACK_ENDPOINT, globalThis.location.origin);
 		url.searchParams.set('track', track);
 
 		fetch(url, {

@@ -37,7 +37,7 @@ export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
 		dispatch({ type: 'fetch' });
 
 		const controller = new AbortController();
-		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
+		const url = new URL(LOCAL_ARTIST_ENDPOINT, globalThis.location.origin);
 		url.searchParams.set('artist', artist);
 
 		fetch(url, {
@@ -92,7 +92,7 @@ export function useGsbTrackSearch(track: string | null): GsbTrackResult {
 		dispatch({ type: 'fetch' });
 
 		const controller = new AbortController();
-		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
+		const url = new URL(LOCAL_TRACK_ENDPOINT, globalThis.location.origin);
 		url.searchParams.set('song', track);
 
 		fetch(url, {
@@ -147,7 +147,7 @@ export function useGsbTempoSearch(bpm: number | null): GsbTempoResult {
 		dispatch({ type: 'fetch' });
 
 		const controller = new AbortController();
-		const url = new URL(LOCAL_TEMPO_ENDPOINT, window.location.origin);
+		const url = new URL(LOCAL_TEMPO_ENDPOINT, globalThis.location.origin);
 		url.searchParams.set('bpm', String(bpm));
 
 		fetch(url, {

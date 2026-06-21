@@ -37,7 +37,7 @@ export function useLastFmArtistSearch(artist: string | null): LfmArtistResult {
 		dispatch({ type: 'fetch' });
 
 		const controller = new AbortController();
-		const url = new URL(LOCAL_ARTIST_SEARCH_ENDPOINT, window.location.origin);
+		const url = new URL(LOCAL_ARTIST_SEARCH_ENDPOINT, globalThis.location.origin);
 		url.searchParams.set('artist', artist);
 
 		fetch(url, {
@@ -99,7 +99,7 @@ export function useLastFmArtistTopTracks(
 		const controller = new AbortController();
 		const url = new URL(
 			LOCAL_ARTIST_TOP_TRACKS_ENDPOINT,
-			window.location.origin,
+			globalThis.location.origin,
 		);
 
 		if (mbid) url.searchParams.set('mbid', mbid);
@@ -161,7 +161,7 @@ export function useLastFmTrackSearch(
 		dispatch({ type: 'fetch' });
 
 		const controller = new AbortController();
-		const url = new URL(LOCAL_TRACK_SEARCH_ENDPOINT, window.location.origin);
+		const url = new URL(LOCAL_TRACK_SEARCH_ENDPOINT, globalThis.location.origin);
 		url.searchParams.set('track', track);
 		if (artist) url.searchParams.set('artist', artist);
 
