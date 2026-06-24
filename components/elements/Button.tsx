@@ -24,6 +24,13 @@ const styleClasses: Record<string, string> = {
 	warning: 'bg-warning text-dark hover:border-foreground',
 };
 
+/**
+ * A styled button element that accepts all native attributes.
+ *
+ * @param buttonStyle - Indicates what style to render, defaults to 'primary'
+ * @param icon - Optional, ReactNode rendered at the start of the button
+ * @param mini - Optional, if true renders a more compact button
+ */
 export default function Button({
 	buttonStyle,
 	children,
