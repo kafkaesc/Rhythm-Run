@@ -13,7 +13,7 @@ export const LFM_TOP_TRACKS_LIMIT = 100;
 export async function fetchArtistByName(
 	name: string,
 ): Promise<LfmArtist | null> {
-	const url = new URL('/api/lastfm/artist-search', window.location.origin);
+	const url = new URL('/api/lastfm/artist-search', globalThis.location.origin);
 	url.searchParams.set('artist', name);
 
 	const res = await fetch(url, {

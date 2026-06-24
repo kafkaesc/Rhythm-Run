@@ -1,7 +1,7 @@
 'use client';
 
-import { useReducer, useEffect } from 'react';
-import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import { useAsyncData } from '@/hooks/api/useAsyncData';
+import { fetchLocalJson } from '@/lib/api-fetch';
 import {
 	GsbArtist,
 	GsbArtistResult,
@@ -23,52 +23,20 @@ const LOCAL_TEMPO_ENDPOINT = '/api/gsb/tempo';
  * @returns A {@link GsbArtistResult}
  */
 export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
-	const [state, dispatch] = useReducer(
-		reducer<GsbArtist[]>,
-		initialState<GsbArtist[]>(),
+	const { data, loading, error } = useAsyncData<GsbArtist[]>(
+		artist
+			? (signal) =>
+					fetchLocalJson(
+						LOCAL_ARTIST_ENDPOINT,
+						{ artist },
+						signal,
+						'GetSongBPM API',
+					)
+			: null,
+		[artist],
 	);
 
-	useEffect(() => {
-		if (!artist) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
-		url.searchParams.set('artist', artist);
-
-		fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: controller.signal,
-		})
-			.then((res) => {
-				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
-				return res.json() as Promise<GsbArtist[]>;
-			})
-			.then((data) => {
-				dispatch({ type: 'success', data });
-			})
-			.catch((err: unknown) => {
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [artist]);
-
-	return {
-		artists: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
+	return { artists: data, loading, error };
 }
 
 /**
@@ -78,52 +46,20 @@ export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
  * @returns A {@link GsbTrackResult}
  */
 export function useGsbTrackSearch(track: string | null): GsbTrackResult {
-	const [state, dispatch] = useReducer(
-		reducer<GsbTrack[]>,
-		initialState<GsbTrack[]>(),
+	const { data, loading, error } = useAsyncData<GsbTrack[]>(
+		track
+			? (signal) =>
+					fetchLocalJson(
+						LOCAL_TRACK_ENDPOINT,
+						{ song: track },
+						signal,
+						'GetSongBPM API',
+					)
+			: null,
+		[track],
 	);
 
-	useEffect(() => {
-		if (!track) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
-		url.searchParams.set('song', track);
-
-		fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: controller.signal,
-		})
-			.then((res) => {
-				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
-				return res.json() as Promise<GsbTrack[]>;
-			})
-			.then((data) => {
-				dispatch({ type: 'success', data });
-			})
-			.catch((err: unknown) => {
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [track]);
-
-	return {
-		tracks: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
+	return { tracks: data, loading, error };
 }
 
 /**
@@ -133,50 +69,18 @@ export function useGsbTrackSearch(track: string | null): GsbTrackResult {
  * @returns A {@link GsbTempoResult}
  */
 export function useGsbTempoSearch(bpm: number | null): GsbTempoResult {
-	const [state, dispatch] = useReducer(
-		reducer<GsbTempo[]>,
-		initialState<GsbTempo[]>(),
+	const { data, loading, error } = useAsyncData<GsbTempo[]>(
+		bpm
+			? (signal) =>
+					fetchLocalJson(
+						LOCAL_TEMPO_ENDPOINT,
+						{ bpm: String(bpm) },
+						signal,
+						'GetSongBPM API',
+					)
+			: null,
+		[bpm],
 	);
 
-	useEffect(() => {
-		if (!bpm) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-		const url = new URL(LOCAL_TEMPO_ENDPOINT, window.location.origin);
-		url.searchParams.set('bpm', String(bpm));
-
-		fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: controller.signal,
-		})
-			.then((res) => {
-				if (!res.ok) throw new Error(`GetSongBPM API error: ${res.status}`);
-				return res.json() as Promise<GsbTempo[]>;
-			})
-			.then((data) => {
-				dispatch({ type: 'success', data });
-			})
-			.catch((err: unknown) => {
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [bpm]);
-
-	return {
-		tracks: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
+	return { tracks: data, loading, error };
 }

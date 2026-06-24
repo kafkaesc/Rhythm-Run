@@ -7,7 +7,7 @@ import {
 } from './useMusicBrainzApi';
 
 const mockFetch = jest.fn();
-global.fetch = mockFetch;
+globalThis.fetch = mockFetch;
 
 afterEach(() => {
 	mockFetch.mockReset();

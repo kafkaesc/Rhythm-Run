@@ -12,7 +12,7 @@ import {
 } from './useLastFmApi';
 
 const mockFetch = jest.fn();
-global.fetch = mockFetch;
+globalThis.fetch = mockFetch;
 
 afterEach(() => {
 	mockFetch.mockReset();

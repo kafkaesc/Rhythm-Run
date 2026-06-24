@@ -1,7 +1,7 @@
 'use client';
 
-import { useReducer, useEffect } from 'react';
-import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import { useAsyncData } from '@/hooks/api/useAsyncData';
+import { fetchLocalJson } from '@/lib/api-fetch';
 import {
 	MbArtist,
 	MbArtistResult,
@@ -22,53 +22,20 @@ const LOCAL_TRACK_ENDPOINT = '/api/musicbrainz/recording';
 export function useMusicBrainzArtistSearch(
 	artist: string | null,
 ): MbArtistResult {
-	const [state, dispatch] = useReducer(
-		reducer<MbArtist[]>,
-		initialState<MbArtist[]>(),
+	const { data, loading, error } = useAsyncData<MbArtist[]>(
+		artist
+			? (signal) =>
+					fetchLocalJson(
+						LOCAL_ARTIST_ENDPOINT,
+						{ artist },
+						signal,
+						'MusicBrainz API',
+					)
+			: null,
+		[artist],
 	);
 
-	useEffect(() => {
-		if (!artist) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-		const url = new URL(LOCAL_ARTIST_ENDPOINT, window.location.origin);
-		url.searchParams.set('artist', artist);
-
-		fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: controller.signal,
-		})
-			.then((res) => {
-				if (!res.ok) throw new Error(`MusicBrainz API error: ${res.status}`);
-
-				return res.json() as Promise<MbArtist[]>;
-			})
-			.then((data) => {
-				dispatch({ type: 'success', data });
-			})
-			.catch((err: unknown) => {
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [artist]);
-
-	return {
-		artists: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
+	return { artists: data, loading, error };
 }
 
 /**
@@ -78,50 +45,18 @@ export function useMusicBrainzArtistSearch(
  * @returns A {@link MbTrackResult}
  */
 export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {
-	const [state, dispatch] = useReducer(
-		reducer<MbTrack[]>,
-		initialState<MbTrack[]>(),
+	const { data, loading, error } = useAsyncData<MbTrack[]>(
+		track
+			? (signal) =>
+					fetchLocalJson(
+						LOCAL_TRACK_ENDPOINT,
+						{ track },
+						signal,
+						'MusicBrainz API',
+					)
+			: null,
+		[track],
 	);
 
-	useEffect(() => {
-		if (!track) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-		const url = new URL(LOCAL_TRACK_ENDPOINT, window.location.origin);
-		url.searchParams.set('track', track);
-
-		fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: controller.signal,
-		})
-			.then((res) => {
-				if (!res.ok) throw new Error(`MusicBrainz API error: ${res.status}`);
-				return res.json() as Promise<MbTrack[]>;
-			})
-			.then((data) => {
-				dispatch({ type: 'success', data });
-			})
-			.catch((err: unknown) => {
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [track]);
-
-	return {
-		tracks: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
+	return { tracks: data, loading, error };
 }

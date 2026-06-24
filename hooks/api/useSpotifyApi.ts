@@ -52,7 +52,7 @@ function getCachedToken(): Promise<string> {
 		return Promise.resolve(tokenCache.token);
 
 	// Fetch a new token from Spotify
-	const url = new URL(LOCAL_TOKEN_ENDPOINT, window.location.origin);
+	const url = new URL(LOCAL_TOKEN_ENDPOINT, globalThis.location.origin);
 	return fetch(url, {
 		headers: {
 			'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',

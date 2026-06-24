@@ -28,9 +28,7 @@ export default function PlaylistButton({
 	playlist,
 	...props
 }: PlaylistButtonProps) {
-	const image =
-		playlist.images[playlist.images.length - 2] ??
-		playlist.images[playlist.images.length - 1];
+	const image = playlist.images.at(-2) ?? playlist.images.at(-1);
 
 	// Anchor/Button content
 	const child = (
