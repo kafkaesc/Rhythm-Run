@@ -16,10 +16,11 @@ type TrackListProps<T> = Readonly<{
 
 /**
  * Renders a list of tracks
+ *
  * @param add - Optional delegate function to add a track somewhere external
  * @param tracks - The list of tracks to display
  * @param remove - Optional delegate function to remove a track from somewhere external
- * @param toTrackItem - Maps a track to the common {@link Track} shape for display
+ * @param toTrack - Maps a track to the common {@link Track} shape for display
  */
 export default function TrackList<T>({
 	add,

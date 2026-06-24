@@ -19,7 +19,7 @@ const LOCAL_TEMPO_ENDPOINT = '/api/gsb/tempo';
 /**
  * Calls the GetSongBPM API to search for artists matching a name.
  *
- * @param artist - Artist name to search for.
+ * @param artist - Artist name to search for
  * @returns A {@link GsbArtistResult}
  */
 export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
@@ -42,7 +42,7 @@ export function useGsbArtistSearch(artist: string | null): GsbArtistResult {
 /**
  * Calls the GetSongBPM API to search for tracks matching a title.
  *
- * @param track - Track title to search for.
+ * @param track - Track title to search for
  * @returns A {@link GsbTrackResult}
  */
 export function useGsbTrackSearch(track: string | null): GsbTrackResult {
@@ -65,7 +65,7 @@ export function useGsbTrackSearch(track: string | null): GsbTrackResult {
 /**
  * Calls the GetSongBPM API to search for tracks matching a target BPM.
  *
- * @param bpm - Target tempo in beats per minute.
+ * @param bpm - Target tempo in beats per minute
  * @returns A {@link GsbTempoResult}
  */
 export function useGsbTempoSearch(bpm: number | null): GsbTempoResult {

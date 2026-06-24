@@ -16,7 +16,7 @@ const LOCAL_TRACK_ENDPOINT = '/api/musicbrainz/recording';
 /**
  * Calls the MusicBrainz API to search for artists matching a name.
  *
- * @param artist - Artist name to search for.
+ * @param artist - Artist name to search for
  * @returns A {@link MbArtistResult}
  */
 export function useMusicBrainzArtistSearch(
@@ -41,7 +41,7 @@ export function useMusicBrainzArtistSearch(
 /**
  * Calls the MusicBrainz API to search for tracks matching a title.
  *
- * @param track - Track title to search for.
+ * @param track - Track title to search for
  * @returns A {@link MbTrackResult}
  */
 export function useMusicBrainzTrackSearch(track: string | null): MbTrackResult {

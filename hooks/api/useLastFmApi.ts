@@ -19,7 +19,7 @@ const LOCAL_TRACK_SEARCH_ENDPOINT = '/api/lastfm/track-search';
 /**
  * Calls the Last.fm API to search for artists matching a name.
  *
- * @param artist - Artist name to search for.
+ * @param artist - Artist name to search for
  * @returns A {@link LfmArtistResult}
  */
 export function useLastFmArtistSearch(artist: string | null): LfmArtistResult {
@@ -70,8 +70,8 @@ export function useLastFmArtistTopTracks(
 /**
  * Calls the Last.fm API to search for tracks matching a title.
  *
- * @param track - Track title to search for.
- * @param artist - Optional artist name to narrow results.
+ * @param track - Track title to search for
+ * @param artist - Optional artist name to narrow results
  * @returns A {@link LfmTrackSearchResult}
  */
 export function useLastFmTrackSearch(
