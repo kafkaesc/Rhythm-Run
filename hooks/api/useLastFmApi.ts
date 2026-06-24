@@ -1,7 +1,7 @@
 'use client';
 
-import { useReducer, useEffect } from 'react';
-import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import { useAsyncData } from '@/hooks/api/useAsyncData';
+import { fetchLocalJson } from '@/lib/api-fetch';
 import {
 	LfmArtist,
 	LfmArtistResult,
@@ -23,52 +23,20 @@ const LOCAL_TRACK_SEARCH_ENDPOINT = '/api/lastfm/track-search';
  * @returns A {@link LfmArtistResult}
  */
 export function useLastFmArtistSearch(artist: string | null): LfmArtistResult {
-	const [state, dispatch] = useReducer(
-		reducer<LfmArtist[]>,
-		initialState<LfmArtist[]>(),
+	const { data, loading, error } = useAsyncData<LfmArtist[]>(
+		artist
+			? (signal) =>
+					fetchLocalJson(
+						LOCAL_ARTIST_SEARCH_ENDPOINT,
+						{ artist },
+						signal,
+						'Last.fm API',
+					)
+			: null,
+		[artist],
 	);
 
-	useEffect(() => {
-		if (!artist) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-		const url = new URL(LOCAL_ARTIST_SEARCH_ENDPOINT, globalThis.location.origin);
-		url.searchParams.set('artist', artist);
-
-		fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: controller.signal,
-		})
-			.then((res) => {
-				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
-				return res.json() as Promise<LfmArtist[]>;
-			})
-			.then((data) => {
-				dispatch({ type: 'success', data });
-			})
-			.catch((err: unknown) => {
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [artist]);
-
-	return {
-		artists: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
+	return { artists: data, loading, error };
 }
 
 /**
@@ -83,57 +51,20 @@ export function useLastFmArtistTopTracks(
 	mbid: string | null,
 	artist: string | null = null,
 ): LfmTopTrackResult {
-	const [state, dispatch] = useReducer(
-		reducer<LfmTopTrack[]>,
-		initialState<LfmTopTrack[]>(),
+	const { data, loading, error } = useAsyncData<LfmTopTrack[]>(
+		mbid || artist
+			? (signal) =>
+					fetchLocalJson(
+						LOCAL_ARTIST_TOP_TRACKS_ENDPOINT,
+						mbid ? { mbid } : { artist: artist as string },
+						signal,
+						'Last.fm API',
+					)
+			: null,
+		[mbid, artist],
 	);
 
-	useEffect(() => {
-		if (!mbid && !artist) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-		const url = new URL(
-			LOCAL_ARTIST_TOP_TRACKS_ENDPOINT,
-			globalThis.location.origin,
-		);
-
-		if (mbid) url.searchParams.set('mbid', mbid);
-		else if (artist) url.searchParams.set('artist', artist);
-
-		fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: controller.signal,
-		})
-			.then((res) => {
-				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
-				return res.json() as Promise<LfmTopTrack[]>;
-			})
-			.then((data) => {
-				dispatch({ type: 'success', data });
-			})
-			.catch((err: unknown) => {
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [mbid, artist]);
-
-	return {
-		tracks: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
+	return { tracks: data, loading, error };
 }
 
 /**
@@ -147,51 +78,18 @@ export function useLastFmTrackSearch(
 	track: string | null,
 	artist: string | null = null,
 ): LfmTrackSearchResult {
-	const [state, dispatch] = useReducer(
-		reducer<LfmSearchTrack[]>,
-		initialState<LfmSearchTrack[]>(),
+	const { data, loading, error } = useAsyncData<LfmSearchTrack[]>(
+		track
+			? (signal) =>
+					fetchLocalJson(
+						LOCAL_TRACK_SEARCH_ENDPOINT,
+						artist ? { track, artist } : { track },
+						signal,
+						'Last.fm API',
+					)
+			: null,
+		[track, artist],
 	);
 
-	useEffect(() => {
-		if (!track) {
-			dispatch({ type: 'clear' });
-			return;
-		}
-
-		dispatch({ type: 'fetch' });
-
-		const controller = new AbortController();
-		const url = new URL(LOCAL_TRACK_SEARCH_ENDPOINT, globalThis.location.origin);
-		url.searchParams.set('track', track);
-		if (artist) url.searchParams.set('artist', artist);
-
-		fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: controller.signal,
-		})
-			.then((res) => {
-				if (!res.ok) throw new Error(`Last.fm API error: ${res.status}`);
-				return res.json() as Promise<LfmSearchTrack[]>;
-			})
-			.then((data) => {
-				dispatch({ type: 'success', data });
-			})
-			.catch((err: unknown) => {
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
-			});
-
-		return () => controller.abort();
-	}, [track, artist]);
-
-	return {
-		tracks: state.data,
-		loading: state.status === 'loading',
-		error: state.error,
-	};
+	return { tracks: data, loading, error };
 }
