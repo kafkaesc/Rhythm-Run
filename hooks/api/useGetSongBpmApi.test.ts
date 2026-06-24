@@ -65,6 +65,14 @@ it('Returns an error when the artist fetch is not ok', async () => {
 	expect(result.current.artists).toBeNull();
 });
 
+it('Returns an Unknown error when the fetch rejects with a non-Error', async () => {
+	mockFetch.mockRejectedValue('network blip');
+	const { result } = renderHook(() => useGsbArtistSearch('Bad Bunny'));
+	await waitFor(() => expect(result.current.error).toBe('Unknown error'));
+
+	expect(result.current.artists).toBeNull();
+});
+
 // useGsbTrackSearch
 
 it('Returns null tracks and not loading when track is null', () => {
