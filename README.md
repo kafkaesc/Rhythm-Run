@@ -9,7 +9,7 @@ Built by Jared Hettinger
 ![CodeQL](https://github.com/kafkaesc/rhythm-run/actions/workflows/codeql.yml/badge.svg)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=kafkaesc_Rhythm-Run&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kafkaesc_Rhythm-Run)
 
-Rhythm Run is a Next.js app for finding tracks to match your pace.
+Rhythm Run is a Next app for finding tracks to match your pace.
 
 ## 📋 Prerequisites
 
@@ -68,7 +68,6 @@ Once the project is installed and set up, running it just takes two steps:
 - [Last.fm](https://www.last.fm/api)
 - [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API)
 - [Spotify](https://developer.spotify.com/documentation/web-api)
-- [Strava](https://developers.strava.com)
 
 ## 🎯 Testing
 
@@ -84,12 +83,26 @@ Tests are written with [Jest](https://jestjs.io/) and [React Testing Library](ht
 
 ## 🔍 Code Quality
 
-- [SonarQube Cloud](https://www.sonarsource.com/products/sonarqube/cloud/) - Quality gate, code smells, and security hotspots
 - [CodeQL](https://codeql.github.com) - Security-focused static analysis
 - [ESLint](https://eslint.org) - JavaScript linter
+- [SonarQube Cloud](https://www.sonarsource.com/products/sonarqube/cloud/) - Quality gate, code smells, and security hotspots
 - [tsc](https://www.typescriptlang.org/docs/handbook/compiler-options.html) - TypeScript compiler for type-checking
 
 ## 🧩 Project Details
+
+### Folder Structure
+
+| Path                    | Purpose                                                                                       |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| `/app/`                 | Next App Router: pages, layouts, and route handlers                                           |
+| `/app/api/`             | Internal API routes that proxy external APIs, keeping secret keys server-side                 |
+| `/components/`          | Feature and composite UI components                                                           |
+| `/components/elements/` | Styled primitives wrapping native HTML elements (A, Button, P) that forward native attributes |
+| `/hooks/`               | Reusable React hooks for state, UI/focus, and session logic                                   |
+| `/hooks/api/`           | Hooks dedicated to data fetching and external API calls                                       |
+| `/lib/`                 | Shared non-UI logic: API clients, auth, caching, normalization, constants                     |
+| `/mocks/`               | Test fixtures mirroring the external API model shapes                                         |
+| `/models/`              | TypeScript types — one file per external API plus the app's canonical types                   |
 
 ### MetaMusic API
 

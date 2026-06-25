@@ -7,13 +7,13 @@ const KEY = 'tr-theme';
 
 // Subscribe to changes in the theme by listening to the custom 'theme-change' event
 function subscribe(callback: () => void) {
-	window.addEventListener('theme-change', callback);
-	return () => window.removeEventListener('theme-change', callback);
+	globalThis.addEventListener('theme-change', callback);
+	return () => globalThis.removeEventListener('theme-change', callback);
 }
 
 /**
  * Subscribes to the current dark mode state and provides a toggle function.
- * 
+ *
  * @returns An object containing:
  * - `isDark` (whether dark mode is active)
  * - `toggle` (a function to switch between light and dark mode)
@@ -34,7 +34,7 @@ export function useDarkMode() {
 		const next = !isDark;
 		document.documentElement.classList.toggle('dark', next);
 		localStorage.setItem(KEY, next ? 'dark' : 'light');
-		window.dispatchEvent(new Event('theme-change'));
+		globalThis.dispatchEvent(new Event('theme-change'));
 	}
 
 	return { isDark, toggle };

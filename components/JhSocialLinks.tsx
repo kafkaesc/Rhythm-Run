@@ -41,7 +41,7 @@ type JhSocialLinksProps = Readonly<{
 /**
  * Renders a row of link icons for the social media profiles for the creator
  *
- * @param colorMode - pass "light" or "dark" to enforce icon color, in order
+ * @param colorMode - Pass "light" or "dark" to enforce icon color, in order
  * to contrast on different backgrounds
  */
 export default function JhSocialLinks({ colorMode }: JhSocialLinksProps) {

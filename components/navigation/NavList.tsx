@@ -10,9 +10,15 @@ type NavListProps = Readonly<{
 }>;
 
 /** The site navigation list */
-export default function NavList({ className, inDrawer = false, stacked = false }: NavListProps) {
+export default function NavList({
+	className,
+	inDrawer = false,
+	stacked = false,
+}: NavListProps) {
 	return (
-		<ul className={cn(stacked ? 'flex flex-col gap-1' : 'flex gap-2', className)}>
+		<ul
+			className={cn(stacked ? 'flex flex-col gap-1' : 'flex gap-2', className)}
+		>
 			{Object.values(SITE_MAP)
 				.filter(({ display }) => display)
 				.map(({ href, name }) => (

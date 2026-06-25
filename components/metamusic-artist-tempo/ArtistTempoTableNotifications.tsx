@@ -9,7 +9,7 @@ const formatArtists = (artists: string[]): string => {
 
 	if (artists.length === 2) return `${artists[0]} or ${artists[1]}`;
 
-	return `${artists.slice(0, -1).join(', ')}, or ${artists[artists.length - 1]}`;
+	return `${artists.slice(0, -1).join(', ')}, or ${artists.at(-1)}`;
 };
 
 type ArtistTempoTableNotificationsProps = Readonly<{

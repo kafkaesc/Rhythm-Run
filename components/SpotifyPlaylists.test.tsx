@@ -4,7 +4,11 @@ import { SpotifyJVibesPlaylist } from '@/mocks/SpotifyPlaylistMocks';
 import SpotifyPlaylists from './SpotifyPlaylists';
 
 const mockUseSpotifyEditablePlaylists = jest.fn();
-mockUseSpotifyEditablePlaylists.mockReturnValue({ playlists: null, loading: false, error: null });
+mockUseSpotifyEditablePlaylists.mockReturnValue({
+	playlists: null,
+	loading: false,
+	error: null,
+});
 
 jest.mock('../hooks/useSpotifyEditablePlaylists', () => ({
 	useSpotifyEditablePlaylists: (...args: unknown[]) =>

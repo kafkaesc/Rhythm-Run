@@ -8,7 +8,7 @@ import { MbArtist, MbTrack } from '@/models/musicBrainz';
  * Normalizes a {@link GsbArtist} from the GetSongBPM API into the common {@link Artist} shape
  *
  * @param artist - {@link GsbArtist} object
- * @returns - a normalized {@link Artist} object matching the argument
+ * @returns A normalized {@link Artist} object matching the argument
  */
 export function normalizeGsbArtist(artist: GsbArtist): Artist {
 	return {
@@ -24,7 +24,7 @@ export function normalizeGsbArtist(artist: GsbArtist): Artist {
  * Normalizes a {@link GsbTrack} from the GetSongBPM API into the common {@link Track} shape
  *
  * @param track - {@link GsbTrack} object
- * @returns - a normalized {@link Track} object matching the argument
+ * @returns A normalized {@link Track} object matching the argument
  */
 export function normalizeGsbTrack(track: GsbTrack): Track {
 	return {
@@ -41,7 +41,7 @@ export function normalizeGsbTrack(track: GsbTrack): Track {
  * Normalizes a {@link LfmArtist} from the Last.fm API into the common {@link Artist} shape
  *
  * @param artist - {@link LfmArtist} object
- * @returns - a normalized {@link Artist} object matching the argument
+ * @returns A normalized {@link Artist} object matching the argument
  */
 export function normalizeLfmArtist(artist: LfmArtist): Artist {
 	return {
@@ -56,7 +56,7 @@ export function normalizeLfmArtist(artist: LfmArtist): Artist {
  * Normalizes a {@link LfmSearchTrack} from the Last.fm API into the common {@link Track} shape
  *
  * @param track - {@link LfmSearchTrack} object
- * @returns - a normalized {@link Track} object matching the argument
+ * @returns A normalized {@link Track} object matching the argument
  */
 export function normalizeLfmSearchTrack(track: LfmSearchTrack): Track {
 	return {
@@ -71,7 +71,7 @@ export function normalizeLfmSearchTrack(track: LfmSearchTrack): Track {
  * Normalizes a {@link LfmTopTrack} from the Last.fm API into the common {@link Track} shape
  *
  * @param track - {@link LfmTopTrack} object
- * @returns - a normalized {@link Track} object matching the argument
+ * @returns A normalized {@link Track} object matching the argument
  */
 export function normalizeLfmTopTrack(track: LfmTopTrack): Track {
 	return {
@@ -86,7 +86,7 @@ export function normalizeLfmTopTrack(track: LfmTopTrack): Track {
  * Normalizes a {@link MbArtist} from the MusicBrainz API into the common {@link Artist} shape
  *
  * @param artist - {@link MbArtist} object
- * @returns - a normalized {@link Artist} object matching the argument
+ * @returns A normalized {@link Artist} object matching the argument
  */
 export function normalizeMbArtist(artist: MbArtist): Artist {
 	return {
@@ -101,7 +101,7 @@ export function normalizeMbArtist(artist: MbArtist): Artist {
  * Normalizes a {@link MbTrack} from the MusicBrainz API into the common {@link Track} shape
  *
  * @param track - {@link MbTrack} object
- * @returns - a normalized {@link Track} object matching the argument
+ * @returns A normalized {@link Track} object matching the argument
  */
 export function normalizeMbTrack(track: MbTrack): Track {
 	return {
@@ -117,7 +117,7 @@ export function normalizeMbTrack(track: MbTrack): Track {
  * Normalizes a {@link SpotifyArtist} from the Spotify API into the common {@link Artist} shape
  *
  * @param artist - {@link SpotifyArtist} object
- * @returns - a normalized {@link Artist} object matching the argument
+ * @returns A normalized {@link Artist} object matching the argument
  */
 export function normalizeSpotifyArtist(artist: SpotifyArtist): Artist {
 	return {
@@ -132,7 +132,7 @@ export function normalizeSpotifyArtist(artist: SpotifyArtist): Artist {
  * Normalizes a {@link SpotifyTrack} from the Spotify API into the common {@link Track} shape
  *
  * @param track - {@link SpotifyTrack} object
- * @returns - a normalized {@link Track} object matching the argument
+ * @returns A normalized {@link Track} object matching the argument
  */
 export function normalizeSpotifyTrack(track: SpotifyTrack): Track {
 	return {

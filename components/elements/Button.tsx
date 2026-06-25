@@ -1,10 +1,12 @@
 import { cn } from '@/lib/css-utils';
 
-type ButtonProps = Readonly<React.ComponentPropsWithoutRef<'button'> & {
-	buttonStyle?: 'black-white' | 'danger' | 'primary' | 'text' | 'warning';
-	icon?: React.ReactNode;
-	mini?: boolean;
-}>;
+type ButtonProps = Readonly<
+	React.ComponentPropsWithoutRef<'button'> & {
+		buttonStyle?: 'black-white' | 'danger' | 'primary' | 'text' | 'warning';
+		icon?: React.ReactNode;
+		mini?: boolean;
+	}
+>;
 
 // Base styles shared across default buttons
 const baseStyle =
@@ -22,6 +24,13 @@ const styleClasses: Record<string, string> = {
 	warning: 'bg-warning text-dark hover:border-foreground',
 };
 
+/**
+ * A styled button element that accepts all native attributes.
+ *
+ * @param buttonStyle - Indicates what style to render, defaults to 'primary'
+ * @param icon - Optional, ReactNode rendered at the start of the button
+ * @param mini - Optional, if true renders a more compact button
+ */
 export default function Button({
 	buttonStyle,
 	children,
@@ -34,7 +43,10 @@ export default function Button({
 
 	if (buttonStyle === 'text') {
 		return (
-			<button className={cn(styleClasses.text, iconClass, className)} {...props}>
+			<button
+				className={cn(styleClasses.text, iconClass, className)}
+				{...props}
+			>
 				{icon}
 				{children}
 			</button>
@@ -44,7 +56,13 @@ export default function Button({
 	const secondaryStyle = styleClasses[buttonStyle ?? 'primary'];
 	return (
 		<button
-			className={cn(baseStyle, mini && miniStyle, secondaryStyle, iconClass, className)}
+			className={cn(
+				baseStyle,
+				mini && miniStyle,
+				secondaryStyle,
+				iconClass,
+				className,
+			)}
 			{...props}
 		>
 			{icon}

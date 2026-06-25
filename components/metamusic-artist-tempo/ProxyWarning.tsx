@@ -19,7 +19,7 @@ function buildEstimateText(artistCount: number | undefined): string {
 	const estimatedSeconds =
 		(artistCount * LFM_TOP_TRACKS_LIMIT * GSB_RATE_LIMIT_MS) / MS_PER_SECOND;
 	const estimatedMinutes = Math.ceil(estimatedSeconds / SECONDS_PER_MINUTE);
-	return ` Estimated wait: up to ${estimatedMinutes} minute${estimatedMinutes !== 1 ? 's' : ''}.`;
+	return ` Estimated wait: up to ${estimatedMinutes} minute${estimatedMinutes === 1 ? '' : 's'}.`;
 }
 
 type ProxyWarningProps = Readonly<{
