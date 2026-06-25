@@ -3,20 +3,20 @@
 import SpotifyIcon from '@/components/icons/SpotifyIcon';
 import { cn } from '@/lib/css-utils';
 
-type SpotifySelectButtonProps = {
+type SpotifySelectButtonProps = Readonly<{
 	marked: boolean;
 	onClick: () => void;
 	title: string;
-};
+}>;
 
 /**
  * Toggle button used to mark a track for Spotify export.
  * Unselected: green border, green icon.
  * Selected: green border, green fill rising from the bottom over 1.2 seconds, white icon.
  *
- * @param marked - whether the track is currently marked
- * @param onClick - callback to toggle the marked state
- * @param title - track title, used in the accessible aria-label
+ * @param marked - Whether the track is currently marked
+ * @param onClick - Callback to toggle the marked state
+ * @param title - Track title, used in the accessible aria-label
  */
 export default function SpotifySelectButton({
 	marked,

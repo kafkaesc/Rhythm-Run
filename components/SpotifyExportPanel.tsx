@@ -8,11 +8,11 @@ import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { useSpotifyExportState } from '@/hooks/useSpotifyExportState';
 import { Track } from '@/models/rhythmRun';
 
-type SpotifyExportPanelProps = {
+type SpotifyExportPanelProps = Readonly<{
 	onBack: () => void;
 	onSuccess?: () => void;
 	tracks: Track[];
-};
+}>;
 
 /**
  * Spotify export panel: add selected tracks to a Spotify playlist.

@@ -1,6 +1,6 @@
 import { cn } from '@/lib/css-utils';
 
-type InputProps = React.ComponentPropsWithoutRef<'input'>;
+type InputProps = Readonly<React.ComponentPropsWithoutRef<'input'>>;
 
 /** A styled text input that accepts all native attributes */
 export default function Input({ className, ...props }: InputProps) {

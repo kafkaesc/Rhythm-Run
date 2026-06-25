@@ -3,17 +3,19 @@
 import Button from '@/components/elements/Button';
 import H2 from '@/components/elements/H2';
 import SpotifyIcon from '@/components/icons/SpotifyIcon';
+import ArtistTempoTableNotifications from '@/components/metamusic-artist-tempo/ArtistTempoTableNotifications';
 import TrackTable from '@/components/TrackTable';
 import { useSessionStatus } from '@/hooks/useSessionStatus';
 import { Track } from '@/models/rhythmRun';
 
-type TrackSelectionStepProps = {
+type TrackSelectionStepProps = Readonly<{
+	noDataArtists?: string[];
 	onNext: () => void;
 	onToggleSelect: (id: string) => void;
 	selectedIds: Set<string>;
 	title?: string;
 	tracks: Track[];
-};
+}>;
 
 /**
  * Displays tracks in a sortable table. If the user has a Spotify session
@@ -27,6 +29,7 @@ type TrackSelectionStepProps = {
  * @param tracks - Array of tracks to display
  */
 export default function TrackSelectionStep({
+	noDataArtists,
 	onNext,
 	onToggleSelect,
 	selectedIds,
@@ -38,7 +41,10 @@ export default function TrackSelectionStep({
 
 	return (
 		<>
-			<H2>{title}</H2>
+			<div className="-mb-4">
+				<H2>{title}</H2>
+				<ArtistTempoTableNotifications noDataArtists={noDataArtists} />
+			</div>
 			<TrackTable
 				selectedIds={spotifyConnected ? selectedIds : undefined}
 				onToggleSelect={spotifyConnected ? onToggleSelect : undefined}

@@ -13,10 +13,10 @@ import { SpotifyArtist } from '@/models/spotify';
 
 const CLOUD_SIZE = 8;
 
-type ErrorDisplayProps = {
+type ErrorDisplayProps = Readonly<{
 	lookupError?: string | null;
 	spotifyError?: string | boolean | null;
-};
+}>;
 
 /**
  * Displays Spotify or lookup errors, holds space if none present
@@ -29,19 +29,19 @@ function ErrorDisplay({ spotifyError, lookupError }: ErrorDisplayProps) {
 	return (
 		<p aria-live="polite" className="text-xs leading-none text-danger py-0.5">
 			{spotifyError && 'Could not load Spotify artists'}
-			{lookupError && lookupError}
+			{lookupError}
 			{!hasError && '\u00A0'}
 		</p>
 	);
 }
 
-type CallbackCloudItemProps = {
+type CallbackCloudItemProps = Readonly<{
 	artist: SpotifyArtist;
 	isDisabled?: boolean;
 	isLoading?: boolean;
 	label: string;
 	onClick: () => void;
-};
+}>;
 
 /**
  * Renders a suggested artist as a clickable button
@@ -75,10 +75,10 @@ function CallbackCloudItem({
 	);
 }
 
-type SuggestedArtistsCloudProps = {
+type SuggestedArtistsCloudProps = Readonly<{
 	isFull?: boolean;
 	onSelect?: (artist: LfmArtist) => void;
-};
+}>;
 
 /**
  * Renders a random list of artists from the user's Spotify top 50.

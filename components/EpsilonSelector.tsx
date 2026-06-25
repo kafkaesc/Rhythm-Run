@@ -8,11 +8,11 @@ import { clamp } from '@/lib/math';
 const MAX_EPSILON = 20;
 const MIN_EPSILON = 0;
 
-type EpsilonSelectorProps = {
+type EpsilonSelectorProps = Readonly<{
 	initialVal?: number;
 	onChange?: (epsilon: number) => void;
 	title?: string;
-};
+}>;
 
 export default function EpsilonSelector({
 	initialVal = DEFAULT_EPSILON,

@@ -104,9 +104,7 @@ it('Sets aria-label to add artist when not disabled', () => {
 });
 
 it('Sets aria-label to max message when isFull is true', () => {
-	render(
-		<SuggestedArtistsCloud isFull={true} onSelect={jest.fn()} />,
-	);
+	render(<SuggestedArtistsCloud isFull={true} onSelect={jest.fn()} />);
 	const buttons = screen.getAllByRole('button');
 	buttons.forEach((btn) =>
 		expect(btn).toHaveAccessibleName(

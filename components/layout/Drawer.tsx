@@ -5,13 +5,13 @@ import CloseIcon from '@/components/icons/CloseIcon';
 import MenuIcon from '@/components/icons/MenuIcon';
 import { cn } from '@/lib/css-utils';
 
-type DrawerProps = {
+type DrawerProps = Readonly<{
 	children?: ReactNode;
 	className?: string;
 	headerRight?: ReactNode;
 	side?: 'left' | 'right';
 	title?: ReactNode;
-};
+}>;
 
 /**
  * Slide-out panel anchored to the left or right edge of the screen.
@@ -84,6 +84,20 @@ export default function Drawer({
 		return () => affected.forEach((el) => el.removeAttribute('inert'));
 	}, [open]);
 
+	/**
+	 * Return the panel slide transform:
+	 *
+	 * - open => in view
+	 * - closed + left-anchored => off-screen left
+	 * - closed + right-anchored => off-screen right
+	 */
+	function getPanelTransform() {
+		if (open) return 'translate-x-0';
+		if (isLeft) return '-translate-x-full';
+
+		return 'translate-x-full';
+	}
+
 	return (
 		<>
 			{open && (
@@ -111,11 +125,7 @@ export default function Drawer({
 					'fixed top-0 h-full w-[80dvw] max-w-[360px] z-50',
 					isLeft ? 'left-0' : 'right-0',
 					'transition-transform duration-300 ease-in-out',
-					open
-						? 'translate-x-0'
-						: isLeft
-							? '-translate-x-full'
-							: 'translate-x-full',
+					getPanelTransform(),
 				].join(' ')}
 				inert={!open || undefined}
 				ref={panelRef}

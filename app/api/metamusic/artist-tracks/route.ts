@@ -50,16 +50,16 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json({ error: 'tempo is required' }, { status: 400 });
 
 	// Validate the tempo
-	const tempoNum = parseInt(tempo, 10);
-	if (isNaN(tempoNum))
+	const tempoNum = Number.parseInt(tempo, 10);
+	if (Number.isNaN(tempoNum))
 		return NextResponse.json(
 			{ error: 'tempo must be a number' },
 			{ status: 400 },
 		);
 
 	// Validate the epsilon or set to zero
-	const epsilonNum = epsilon !== null ? parseInt(epsilon, 10) : 0;
-	if (isNaN(epsilonNum))
+	const epsilonNum = epsilon === null ? 0 : Number.parseInt(epsilon, 10);
+	if (Number.isNaN(epsilonNum))
 		return NextResponse.json(
 			{ error: 'epsilon must be a number' },
 			{ status: 400 },
@@ -70,8 +70,8 @@ export async function GET(request: NextRequest) {
 	const uncachedMbids: string[] = [];
 	for (const mbid of artistMbids) {
 		const cached = await getCachedTracks(mbid);
-		if (cached !== null) cachedTracks.push(cached);
-		else uncachedMbids.push(mbid);
+		if (cached === null) uncachedMbids.push(mbid);
+		else cachedTracks.push(cached);
 	}
 
 	// For uncached artists, fetch top tracks from Last.fm, staggered by 1 second
@@ -90,7 +90,11 @@ export async function GET(request: NextRequest) {
 				),
 			);
 		} catch (err) {
-			console.error('Last.fm top tracks fetch failed for mbids', uncachedMbids, err);
+			console.error(
+				'Last.fm top tracks fetch failed for mbids',
+				uncachedMbids,
+				err,
+			);
 			return NextResponse.json(
 				{ error: 'Failed to fetch top tracks from Last.fm' },
 				{ status: 502 },

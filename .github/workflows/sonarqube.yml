@@ -1,0 +1,28 @@
+name: SonarQube
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      # Full history (fetch-depth: 0) lets SonarQube attribute new code accurately
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      # Install pnpm into the runner
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      # Install node on the runner
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: pnpm
+      # Install dependencies and generate coverage/lcov.info for SonarQube to read
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:ci
+      # Run the SonarQube Cloud scan (config lives in sonar-project.properties)
+      - uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

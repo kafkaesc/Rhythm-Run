@@ -2,11 +2,11 @@ import P from '@/components/elements/P';
 import { LfmArtist } from '@/models/lastFm';
 import { MbArtist } from '@/models/musicBrainz';
 
-type ArtistTempoQueryDisplayProps = {
+type ArtistTempoQueryDisplayProps = Readonly<{
 	artists?: LfmArtist[] | MbArtist[];
 	epsilon?: number | string;
 	tempo?: number | string;
-};
+}>;
 
 /**
  * Displays a natural-language summary of the current search query
@@ -22,7 +22,7 @@ export default function ArtistTempoQueryDisplay({
 }: ArtistTempoQueryDisplayProps) {
 	const a = artists?.length ? artists.map((ar) => ar.name).join(', ') : '____';
 	const e = epsilon ? `, give or take ${epsilon} bpm,` : '';
-	const t = tempo ? tempo : '____';
+	const t = tempo || '____';
 
 	return (
 		<P>

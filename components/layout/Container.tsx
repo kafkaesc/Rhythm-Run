@@ -1,6 +1,6 @@
 import { cn } from '@/lib/css-utils';
 
-type ContainerProps = React.ComponentPropsWithoutRef<'div'>;
+type ContainerProps = Readonly<React.ComponentPropsWithoutRef<'div'>>;
 
 export default function Container({
 	children,
@@ -8,7 +8,10 @@ export default function Container({
 	...props
 }: ContainerProps) {
 	return (
-		<div className={cn('mx-auto w-full max-w-4xl px-2 md:px-4', className)} {...props}>
+		<div
+			className={cn('mx-auto w-full max-w-4xl px-2 md:px-4', className)}
+			{...props}
+		>
 			{children}
 		</div>
 	);

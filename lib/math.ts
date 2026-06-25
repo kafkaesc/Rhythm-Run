@@ -20,6 +20,10 @@ export function clamp(value: number, min: number, max: number): number {
  * @param target - The center of the range
  * @param epsilon - The half-width of the range
  */
-export function inRange(value: number, target: number, epsilon: number): boolean {
+export function inRange(
+	value: number,
+	target: number,
+	epsilon: number,
+): boolean {
 	return value >= target - epsilon && value <= target + epsilon;
 }

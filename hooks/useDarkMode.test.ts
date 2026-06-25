@@ -41,9 +41,9 @@ it('Toggle switches from dark to light', () => {
 
 it('Toggle dispatches a theme-change event', () => {
 	const listener = jest.fn();
-	window.addEventListener('theme-change', listener);
+	globalThis.addEventListener('theme-change', listener);
 	const { result } = renderHook(() => useDarkMode());
 	act(() => result.current.toggle());
 	expect(listener).toHaveBeenCalledTimes(1);
-	window.removeEventListener('theme-change', listener);
+	globalThis.removeEventListener('theme-change', listener);
 });

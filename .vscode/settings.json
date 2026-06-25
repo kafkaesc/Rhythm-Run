@@ -1,0 +1,6 @@
+{
+	"sonarlint.connectedMode.project": {
+		"connectionId": "kafkaesc",
+		"projectKey": "kafkaesc_Rhythm-Run"
+	}
+}

@@ -98,7 +98,7 @@ export function useMetaMusicArtistTempo(
 		const controller = new AbortController();
 
 		// Build the request URL with each MBID as a separate param, then tempo and epsilon
-		const url = new URL(LOCAL_ARTIST_TRACKS_ENDPOINT, window.location.origin);
+		const url = new URL(LOCAL_ARTIST_TRACKS_ENDPOINT, globalThis.location.origin);
 		mbidList.forEach((mbid) => url.searchParams.append('artistMbid', mbid));
 		url.searchParams.set('tempo', String(tempo ?? FALLBACK_TEMPO));
 		url.searchParams.set('epsilon', String(epsilon ?? FALLBACK_EPSILON));

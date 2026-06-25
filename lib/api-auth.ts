@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * Checks the x-api-key header against the configured internal API key.
  * Returns a NextResponse error if the key is missing or wrong, null if valid.
  *
- * @param request - The Next request to validate.
+ * @param request - The Next request to validate
  */
 export function requireApiKey(request: NextRequest): NextResponse | null {
 	// A missing env var is a server misconfiguration, return 500

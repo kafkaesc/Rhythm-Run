@@ -5,11 +5,11 @@ import Scrollable from '@/components/layout/Scrollable';
 import { normalizeLfmArtist } from '@/lib/normalize';
 import { LfmArtist } from '@/models/lastFm';
 
-type ArtistRowProps = {
+type ArtistRowProps = Readonly<{
 	artist: LfmArtist;
 	onAdd?: () => void;
 	onRemove?: () => void;
-};
+}>;
 
 /**
  * A single row in the ArtistSearchList, with optional add or remove buttons
@@ -54,12 +54,12 @@ function ArtistRow({ artist, onAdd, onRemove }: ArtistRowProps) {
 	);
 }
 
-type ArtistSearchListProps = {
+type ArtistSearchListProps = Readonly<{
 	add?: (artist: LfmArtist) => void;
 	remove?: (artist: LfmArtist) => void;
 	results: LfmArtist[] | null;
 	selected: LfmArtist[];
-};
+}>;
 
 /**
  * Displays a unified, scrollable list of Last.fm artists for the artist

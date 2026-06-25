@@ -1,6 +1,6 @@
 import { cn } from '@/lib/css-utils';
 
-type PProps = React.ComponentPropsWithoutRef<'p'>;
+type PProps = Readonly<React.ComponentPropsWithoutRef<'p'>>;
 
 /** A styled paragraph element that accepts all native attributes */
 export default function P({ children, className, ...props }: PProps) {

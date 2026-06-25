@@ -31,14 +31,13 @@ export function useSuggestedArtistCloudFocus<T>(items: T[]) {
 			// to the top of the DOM
 			const list = listRef.current;
 			getTabbableElements()
-				.filter(
+				.findLast(
 					(el) =>
 						!!(
 							list.compareDocumentPosition(el) &
 							Node.DOCUMENT_POSITION_PRECEDING
 						),
 				)
-				.at(-1)
 				?.focus();
 		}
 

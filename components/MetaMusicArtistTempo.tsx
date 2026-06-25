@@ -77,6 +77,21 @@ export default function MetaMusicArtistTempo() {
 		setStep('results');
 	};
 
+	/**
+	 * Returns the names of searched artists that have no matching tracks
+	 * in the results, or undefined if every searched artist has data
+	 */
+	const getNoDataArtists = (): string[] | undefined => {
+		const trackArtistsSet = new Set(
+			(tracks ?? []).flatMap((tr) => tr.artists.map((ar) => ar.toLowerCase())),
+		);
+		const noDataArtists = artists
+			.map((ar) => ar.name)
+			.filter((name) => !trackArtistsSet.has(name.toLowerCase()));
+
+		return noDataArtists.length > 0 ? noDataArtists : undefined;
+	};
+
 	return (
 		<div className="flex flex-col gap-4">
 			{step === 'search' && (
@@ -113,6 +128,7 @@ export default function MetaMusicArtistTempo() {
 			)}
 			{step === 'results' && tracks && (
 				<TrackSelectionStep
+					noDataArtists={getNoDataArtists()}
 					onNext={() => setStep('export')}
 					onToggleSelect={toggle}
 					selectedIds={selectedIds}

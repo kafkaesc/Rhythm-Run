@@ -31,5 +31,5 @@ export const LfmSearchSugarWereGoinDown: LfmSearchTrack = {
 	artist: 'Fall Out Boy',
 	mbid: '',
 	listeners: '1516438',
-	url: "https://www.last.fm/music/Fall+Out+Boy/_/Sugar,+We%27re+Goin+Down",
+	url: 'https://www.last.fm/music/Fall+Out+Boy/_/Sugar,+We%27re+Goin+Down',
 };

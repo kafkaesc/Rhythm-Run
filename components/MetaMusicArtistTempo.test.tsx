@@ -71,7 +71,11 @@ jest.mock('../hooks/api/useSpotifyApi', () => ({
 	}),
 }));
 
-const mockTrack = { artists: ['Green Day'], id: 'track-1', title: 'Basket Case' };
+const mockTrack = {
+	artists: ['Green Day'],
+	id: 'track-1',
+	title: 'Basket Case',
+};
 
 afterEach(() => {
 	mockUseSession.mockReturnValue({ data: null, status: 'unauthenticated' });
@@ -162,12 +166,17 @@ it('Shows loading status when the hook is loading', () => {
 
 it('Does not show the Select a Spotify Playlist button when not logged in with Spotify', () => {
 	render(<MetaMusicArtistTempo />);
-	const btn = screen.queryByRole('button', { name: /select a spotify playlist/i });
+	const btn = screen.queryByRole('button', {
+		name: /select a spotify playlist/i,
+	});
 	expect(btn).not.toBeInTheDocument();
 });
 
 it('Shows the Select a Spotify Playlist button when logged in with Spotify and tracks are present', async () => {
-	const spotifySession = { data: { spotifyAccessToken: 'token' }, status: 'authenticated' };
+	const spotifySession = {
+		data: { spotifyAccessToken: 'token' },
+		status: 'authenticated',
+	};
 	mockUseSession.mockReturnValue(spotifySession);
 	mockUseSet.mockReturnValue({
 		set: [LfmBadBunny],
@@ -185,6 +194,8 @@ it('Shows the Select a Spotify Playlist button when logged in with Spotify and t
 	render(<MetaMusicArtistTempo />);
 	const findBtn = screen.getByRole('button', { name: /find tracks/i });
 	await userEvent.click(findBtn);
-	const btn = screen.getByRole('button', { name: /select a spotify playlist/i });
+	const btn = screen.getByRole('button', {
+		name: /select a spotify playlist/i,
+	});
 	expect(btn).toBeInTheDocument();
 });

@@ -8,11 +8,11 @@ import { clamp } from '@/lib/math';
 const MAX_BPM = 220;
 const MIN_BPM = 60;
 
-type BpmSelectorProps = {
+type BpmSelectorProps = Readonly<{
 	initialVal?: number;
 	onChange?: (bpm: number) => void;
 	title?: string;
-};
+}>;
 
 /**
  * Slider and number input for selecting a target BPM within a fixed range.
@@ -36,6 +36,12 @@ export default function BpmSelector({
 	// on the track.
 	const fillPercent = ((bpm - MIN_BPM) / (MAX_BPM - MIN_BPM)) * 100;
 
+	// React.CSSProperties (this @types/react) doesn't include custom (--*)
+	// properties, so intersect the type to make --range-fill a known key
+	const rangeStyle: React.CSSProperties & { '--range-fill': string } = {
+		'--range-fill': `${fillPercent}%`,
+	};
+
 	// Clamps value to the valid BPM range, then syncs
 	// the slider, number input, and onChange callback
 	function commitValue(value: number) {
@@ -49,7 +55,7 @@ export default function BpmSelector({
 	// the last valid BPM if the blur value is invalid
 	function handleInputBlur() {
 		const parsed = Number(inputValue);
-		if (!isNaN(parsed) && inputValue !== '') {
+		if (!Number.isNaN(parsed) && inputValue !== '') {
 			commitValue(parsed);
 		} else {
 			setInputValue(String(bpm));
@@ -63,7 +69,7 @@ export default function BpmSelector({
 		if (commitNextChangeRef.current) {
 			commitNextChangeRef.current = false;
 			const parsed = Number(e.target.value);
-			if (!isNaN(parsed) && e.target.value !== '') {
+			if (!Number.isNaN(parsed) && e.target.value !== '') {
 				commitValue(parsed);
 			}
 		}
@@ -98,11 +104,7 @@ export default function BpmSelector({
 					min={MIN_BPM}
 					onChange={(e) => commitValue(Number(e.target.value))}
 					// Is this worth it for the slider to match the rest of the UI? Maybe
-					style={
-						{
-							['--range-fill' as string]: `${fillPercent}%`,
-						} as React.CSSProperties
-					}
+					style={rangeStyle}
 					type="range"
 					value={bpm}
 				/>

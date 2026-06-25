@@ -10,8 +10,8 @@ type useSetArgs<T> = {
 /**
  * A hook to manage a set of items with an optional limit and basic utility functions
  *
- * @param limit - the maximum number of items allowed in the set
- * @param key - a function that returns a unique identifier for an item, use to prevent duplicates
+ * @param limit - The maximum number of items allowed in the set
+ * @param key - A function that returns a unique identifier for an item, use to prevent duplicates
  */
 export function useSet<T>({ limit, key }: useSetArgs<T> = {}) {
 	// A set of items of type T
