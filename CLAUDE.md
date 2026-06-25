@@ -34,6 +34,7 @@ Stack: Next 16, React 19, Tailwind 4, Jest.
 ## Gotchas
 
 - Important: `proxy.ts` and its exported `proxy` function are the current Next convention (they replaced `middleware`). Never rename them to `middleware.ts`/`middleware`. The rename breaks the build in newer Next versions.
+- The `proxy`/`middleware` naming is settled and correct. It only trips up Claude. Do not keep re-flagging, re-explaining, or stressing it.
 - Never invent Tailwind classes. Check `app/globals.css` for the full set of color tokens.
 
 ## Definition of Done
