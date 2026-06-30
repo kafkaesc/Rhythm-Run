@@ -77,7 +77,7 @@ export async function fetchLocalJson<T>(
 
 /**
  * Fetches a streaming response body from an internal API route for routes
- * that emit data progressively, e.g., NDJSON. Attaches the public API key
+ * that emit data progressively, e.g., NDJSON. Attaches the internal API key
  * header, and throws a labeled error for a non-ok or bodyless response.
  *
  * @param endpoint - Internal API path, e.g., '/api/metamusic/artist-tracks'
