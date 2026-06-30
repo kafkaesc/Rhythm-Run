@@ -66,8 +66,24 @@ it('Has readNdjsonStream skip a malformed line and yield the rest', async () => 
 	warnSpy.mockRestore();
 });
 
-it('Has readNdjsonStream ignore a trailing line without a newline', async () => {
+it('Has readNdjsonStream flush a trailing line without a newline', async () => {
 	const stream = streamFrom(['{"a":1}\n{"a":2}']);
 	const records = await collect(readNdjsonStream<{ a: number }>(stream));
-	expect(records).toEqual([{ a: 1 }]);
+	expect(records).toEqual([{ a: 1 }, { a: 2 }]);
+});
+
+it('Has readNdjsonStream reassemble a multibyte char split across chunks', async () => {
+	// 'ñ' is two UTF-8 bytes (c3 b1) at indices 6-7; cut between them so the
+	// lead byte lands in the first chunk and the continuation in the second
+	const encoder = new TextEncoder();
+	const bytes = encoder.encode('{"a":"ñ"}\n');
+	const stream = new ReadableStream<Uint8Array>({
+		start(controller) {
+			controller.enqueue(bytes.slice(0, 7));
+			controller.enqueue(bytes.slice(7));
+			controller.close();
+		},
+	});
+	const records = await collect(readNdjsonStream<{ a: string }>(stream));
+	expect(records).toEqual([{ a: 'ñ' }]);
 });

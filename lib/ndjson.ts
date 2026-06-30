@@ -50,4 +50,11 @@ export async function* readNdjsonStream<T>(
 			if (record !== null) yield record;
 		}
 	}
+
+	// Flush any bytes the decoder held back at a chunk boundary, then
+	// yield a final record so a stream whose last line lacks a trailing
+	// newline does not silently drop it
+	buffer += decoder.decode();
+	const record = parseNdjsonLine<T>(buffer);
+	if (record !== null) yield record;
 }
