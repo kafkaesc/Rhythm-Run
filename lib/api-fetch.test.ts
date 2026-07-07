@@ -4,22 +4,25 @@ import { fetchLocalJson, fetchLocalStream } from './api-fetch';
 const mockFetch = jest.fn();
 globalThis.fetch = mockFetch;
 
+const originalKey = process.env.NEXT_PUBLIC_INTERNAL_API_KEY;
+
 // Reset after each test
 afterEach(() => {
 	mockFetch.mockReset();
+	process.env.NEXT_PUBLIC_INTERNAL_API_KEY = originalKey;
 });
 
 function mockResponse(
 	ok: boolean,
 	data?: unknown,
 	body: ReadableStream<Uint8Array> | null = null,
-	status = 200,
+	status?: number,
 ): Response {
 	return {
 		body,
 		json: () => Promise.resolve(data),
 		ok,
-		status,
+		status: status ?? (ok ? 200 : 500),
 	} as unknown as Response;
 }
 
@@ -28,45 +31,76 @@ function lastFetchedUrl(): URL {
 	return mockFetch.mock.calls[0][0] as URL;
 }
 
-it('Has fetchLocalJson return the parsed JSON payload', async () => {
+it('Returns the parsed JSON on a successful response', async () => {
 	mockFetch.mockResolvedValue(mockResponse(true, { hello: 'world' }));
-	const data = await fetchLocalJson(
-		'/api/test',
-		{ q: 'x' },
-		new AbortController().signal,
-		'Test API',
-	);
-	expect(data).toEqual({ hello: 'world' });
-});
-
-it('Has fetchLocalJson throw a labeled error for a non-ok response', async () => {
-	mockFetch.mockResolvedValue(mockResponse(false, undefined, null, 500));
-	await expect(
-		fetchLocalJson('/api/test', {}, new AbortController().signal, 'Test API'),
-	).rejects.toThrow('Test API error: 500');
-});
-
-it('Has fetchLocalJson set the internal API key header', async () => {
-	mockFetch.mockResolvedValue(mockResponse(true, {}));
-	await fetchLocalJson(
-		'/api/test',
+	const result = await fetchLocalJson(
+		'/api/lastfm/artist-search',
 		{},
 		new AbortController().signal,
-		'Test API',
+		'Last.fm API',
 	);
-	const init = mockFetch.mock.calls[0][1];
-	expect(init.headers).toHaveProperty('x-api-key');
+	expect(result).toEqual({ hello: 'world' });
 });
 
-it('Has fetchLocalJson append a string param to the URL', async () => {
-	mockFetch.mockResolvedValue(mockResponse(true, {}));
+it('Builds the URL against the current origin with query params applied', async () => {
+	mockFetch.mockResolvedValue(mockResponse(true, []));
 	await fetchLocalJson(
-		'/api/test',
-		{ artist: 'Green Day' },
+		'/api/lastfm/artist-search',
+		{ artist: 'Daft Punk', limit: '10' },
 		new AbortController().signal,
-		'Test API',
+		'Last.fm API',
 	);
-	expect(lastFetchedUrl().searchParams.get('artist')).toBe('Green Day');
+	const url = mockFetch.mock.calls[0][0] as URL;
+	expect(url.pathname).toBe('/api/lastfm/artist-search');
+	expect(url.searchParams.get('artist')).toBe('Daft Punk');
+	expect(url.searchParams.get('limit')).toBe('10');
+});
+
+it('Attaches the internal API key header', async () => {
+	process.env.NEXT_PUBLIC_INTERNAL_API_KEY = 'secret-key';
+	mockFetch.mockResolvedValue(mockResponse(true, []));
+	await fetchLocalJson(
+		'/api/gsb/song',
+		{},
+		new AbortController().signal,
+		'GSB',
+	);
+	const options = mockFetch.mock.calls[0][1] as RequestInit;
+	expect((options.headers as Record<string, string>)['x-api-key']).toBe(
+		'secret-key',
+	);
+});
+
+it('Sends an empty API key header when the env var is unset', async () => {
+	delete process.env.NEXT_PUBLIC_INTERNAL_API_KEY;
+	mockFetch.mockResolvedValue(mockResponse(true, []));
+	await fetchLocalJson(
+		'/api/gsb/song',
+		{},
+		new AbortController().signal,
+		'GSB',
+	);
+	const options = mockFetch.mock.calls[0][1] as RequestInit;
+	expect((options.headers as Record<string, string>)['x-api-key']).toBe('');
+});
+
+it('Forwards the abort signal to fetch', async () => {
+	mockFetch.mockResolvedValue(mockResponse(true, []));
+	const signal = new AbortController().signal;
+	await fetchLocalJson('/api/gsb/song', {}, signal, 'GSB');
+	const options = mockFetch.mock.calls[0][1] as RequestInit;
+	expect(options.signal).toBe(signal);
+});
+
+it('Throws a labeled error on a non-ok response', async () => {
+	mockFetch.mockResolvedValue(mockResponse(false, undefined, null, 404));
+	const promise = fetchLocalJson(
+		'/api/gsb/song',
+		{},
+		new AbortController().signal,
+		'GetSongBPM API',
+	);
+	await expect(promise).rejects.toThrow('GetSongBPM API error: 404');
 });
 
 it('Has fetchLocalStream return the response body stream', async () => {
