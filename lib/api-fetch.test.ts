@@ -1,21 +1,34 @@
-import { fetchLocalJson } from './api-fetch';
+import { fetchLocalJson, fetchLocalStream } from './api-fetch';
 
+// Replace the global fetch for testing
 const mockFetch = jest.fn();
 globalThis.fetch = mockFetch;
 
 const originalKey = process.env.NEXT_PUBLIC_INTERNAL_API_KEY;
 
+// Reset after each test
 afterEach(() => {
 	mockFetch.mockReset();
 	process.env.NEXT_PUBLIC_INTERNAL_API_KEY = originalKey;
 });
 
-function mockResponse(ok: boolean, data?: unknown, status?: number): Response {
+function mockResponse(
+	ok: boolean,
+	data?: unknown,
+	body: ReadableStream<Uint8Array> | null = null,
+	status?: number,
+): Response {
 	return {
+		body,
+		json: () => Promise.resolve(data),
 		ok,
 		status: status ?? (ok ? 200 : 500),
-		json: () => Promise.resolve(data),
 	} as unknown as Response;
+}
+
+// Returns the URL passed to the most recent fetch call
+function lastFetchedUrl(): URL {
+	return mockFetch.mock.calls[0][0] as URL;
 }
 
 it('Returns the parsed JSON on a successful response', async () => {
@@ -80,7 +93,7 @@ it('Forwards the abort signal to fetch', async () => {
 });
 
 it('Throws a labeled error on a non-ok response', async () => {
-	mockFetch.mockResolvedValue(mockResponse(false, undefined, 404));
+	mockFetch.mockResolvedValue(mockResponse(false, undefined, null, 404));
 	const promise = fetchLocalJson(
 		'/api/gsb/song',
 		{},
@@ -88,4 +101,44 @@ it('Throws a labeled error on a non-ok response', async () => {
 		'GetSongBPM API',
 	);
 	await expect(promise).rejects.toThrow('GetSongBPM API error: 404');
+});
+
+it('Has fetchLocalStream return the response body stream', async () => {
+	const body = new ReadableStream<Uint8Array>();
+	mockFetch.mockResolvedValue(mockResponse(true, undefined, body));
+	const result = await fetchLocalStream(
+		'/api/test',
+		{},
+		new AbortController().signal,
+		'Test API',
+	);
+	expect(result).toBe(body);
+});
+
+it('Has fetchLocalStream throw a labeled error for a non-ok response', async () => {
+	mockFetch.mockResolvedValue(mockResponse(false, undefined, null, 503));
+	await expect(
+		fetchLocalStream('/api/test', {}, new AbortController().signal, 'Test API'),
+	).rejects.toThrow('Test API error: 503');
+});
+
+it('Has fetchLocalStream throw a labeled error when the body is missing', async () => {
+	mockFetch.mockResolvedValue(mockResponse(true, undefined, null));
+	await expect(
+		fetchLocalStream('/api/test', {}, new AbortController().signal, 'Test API'),
+	).rejects.toThrow('Test API returned no response body');
+});
+
+it('Has fetchLocalStream append array params as repeated query keys', async () => {
+	const body = new ReadableStream<Uint8Array>();
+	mockFetch.mockResolvedValue(mockResponse(true, undefined, body));
+	await fetchLocalStream(
+		'/api/test',
+		{ artistMbid: ['a', 'b'], tempo: '120' },
+		new AbortController().signal,
+		'Test API',
+	);
+	const url = lastFetchedUrl();
+	expect(url.searchParams.getAll('artistMbid')).toEqual(['a', 'b']);
+	expect(url.searchParams.get('tempo')).toBe('120');
 });
