@@ -1,72 +1,62 @@
 'use client';
 
 import { useReducer, useEffect, Dispatch } from 'react';
-import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import {
+	dispatchAsyncError,
+	initialState,
+	reducer,
+} from '@/hooks/api/asyncReducer';
+import { fetchLocalStream } from '@/lib/api-fetch';
 import { DEFAULT_BPM } from '@/lib/constants';
+import { readNdjsonStream } from '@/lib/ndjson';
+import { isTrack } from '@/lib/track';
 import { AsyncAction } from '@/models/async';
 import { Track } from '@/models/rhythmRun';
 
 const LOCAL_ARTIST_TRACKS_ENDPOINT = '/api/metamusic/artist-tracks';
 
+/**
+ * Streams artist tracks from the internal MetaMusic route, dispatching the
+ * growing track list on each record and a final success when the stream ends.
+ * Intentional aborts are ignored, any other failure is dispatched as an error.
+ *
+ * @param mbidList - Artist MBIDs to request tracks for
+ * @param tempo - Target tempo (BPM) as a query string value
+ * @param epsilon - Allowed tempo tolerance as a query string value
+ * @param signal - AbortSignal that cancels the in-flight stream
+ * @param dispatch - Async reducer dispatch driving the hook's state
+ */
 async function streamArtistTracks(
-	url: URL,
-	abortSignal: AbortSignal,
+	mbidList: string[],
+	tempo: string,
+	epsilon: string,
+	signal: AbortSignal,
 	dispatch: Dispatch<AsyncAction<Track[]>>,
 ) {
 	try {
-		// Fetch the stream, throwing an error if not Ok
-		const res = await fetch(url, {
-			headers: {
-				'x-api-key': process.env.NEXT_PUBLIC_INTERNAL_API_KEY ?? '',
-			},
-			signal: abortSignal,
-		});
-		if (!res.ok) throw new Error(`MetaMusic API error: ${res.status}`);
+		const stream = await fetchLocalStream(
+			LOCAL_ARTIST_TRACKS_ENDPOINT,
+			{ artistMbid: mbidList, epsilon, tempo },
+			signal,
+			'MetaMusic API',
+		);
 
-		// Create reader on the response body for line-by-line streaming
-		const reader = res.body?.getReader();
-		if (!reader) throw new Error('No response body');
-
-		// Setup to run the stream
-		const decoder = new TextDecoder();
-		let buffer = '';
+		// Validate and dispatch each track as it streams in, skipping any record
+		// that does not match the Track shape
 		const tracks: Track[] = [];
-
-		while (true) {
-			// Read the next chunk from the stream, if done break
-			const { done, value } = await reader.read();
-			if (done) break;
-
-			// Decode the chunk, split by newline, place the remainder in buffer
-			buffer += decoder.decode(value, { stream: true });
-			const lines = buffer.split('\n');
-			buffer = lines.pop() ?? '';
-
-			// Parse each complete line as a Track and dispatch it
-			for (const line of lines) {
-				// Skip empty lines
-				if (!line.trim()) continue;
-
-				// Parse the line into JSON and onto the tracks array
-				try {
-					const track = JSON.parse(line) as Track;
-					tracks.push(track);
-					dispatch({ type: 'streaming', data: [...tracks] });
-				} catch {
-					console.warn('Skipping malformed line from MetaMusic stream:', line);
-				}
+		for await (const record of readNdjsonStream<unknown>(stream)) {
+			if (!isTrack(record)) {
+				console.warn('Skipping non-Track record from MetaMusic stream:', record);
+				continue;
 			}
+
+			tracks.push(record);
+			dispatch({ data: [...tracks], type: 'streaming' });
 		}
 
-		dispatch({ type: 'success', data: [...tracks] });
+		dispatch({ data: [...tracks], type: 'success' });
 	} catch (err: unknown) {
-		// AbortError is intentional so return silently
-		if ((err as Error).name === 'AbortError') return;
-
-		dispatch({
-			type: 'error',
-			error: err instanceof Error ? err.message : 'Unknown error',
-		});
+		dispatchAsyncError(err, dispatch);
 	}
 }
 
@@ -97,14 +87,14 @@ export function useMetaMusicArtistTempo(
 		dispatch({ type: 'fetch' });
 		const controller = new AbortController();
 
-		// Build the request URL with each MBID as a separate param, then tempo and epsilon
-		const url = new URL(LOCAL_ARTIST_TRACKS_ENDPOINT, globalThis.location.origin);
-		mbidList.forEach((mbid) => url.searchParams.append('artistMbid', mbid));
-		url.searchParams.set('tempo', String(tempo ?? FALLBACK_TEMPO));
-		url.searchParams.set('epsilon', String(epsilon ?? FALLBACK_EPSILON));
-
-		// Start streaming
-		streamArtistTracks(url, controller.signal, dispatch);
+		// Start streaming, sending each MBID as a separate param plus tempo and epsilon
+		streamArtistTracks(
+			mbidList,
+			String(tempo ?? FALLBACK_TEMPO),
+			String(epsilon ?? FALLBACK_EPSILON),
+			controller.signal,
+			dispatch,
+		);
 
 		return () => controller.abort();
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- mbidKey is a stable string proxy for mbidList
