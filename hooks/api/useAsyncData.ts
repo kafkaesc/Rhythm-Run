@@ -1,7 +1,11 @@
 'use client';
 
 import { useEffect, useReducer, type DependencyList } from 'react';
-import { initialState, reducer } from '@/hooks/api/asyncReducer';
+import {
+	dispatchAsyncError,
+	initialState,
+	reducer,
+} from '@/hooks/api/asyncReducer';
 
 /**
  * Performs a request and resolves the parsed data.
@@ -40,16 +44,11 @@ export function useAsyncData<T>(
 		fetcher(controller.signal)
 			.then((data) => {
 				// Store the parsed data
-				return dispatch({ type: 'success', data });
+				return dispatch({ data, type: 'success' });
 			})
 			.catch((err: unknown) => {
-				// AbortError is intentional (request superseded or unmounted),
-				// therefore ignore it. Return any other failures as an error message.
-				if ((err as Error).name === 'AbortError') return;
-				dispatch({
-					type: 'error',
-					error: err instanceof Error ? err.message : 'Unknown error',
-				});
+				// Ignore intentional aborts, report any other failure as an error
+				dispatchAsyncError(err, dispatch);
 			});
 
 		// Abort an in-flight request if deps change or the component unmounts
