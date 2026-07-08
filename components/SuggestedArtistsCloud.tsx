@@ -13,6 +13,32 @@ import { SpotifyArtist } from '@/models/spotify';
 
 const CLOUD_SIZE = 8;
 
+/**
+ * Removes the selected artist from the current suggestions and, when unused
+ * favorites remain, appends a random replacement drawn from them.
+ *
+ * @param prev - The current suggested artists
+ * @param allArtists - The user's top artists to draw a replacement from
+ * @param removedId - The ID of the artist being replaced
+ * @returns The next suggested artists list
+ */
+function replaceSuggestion(
+	prev: SpotifyArtist[],
+	allArtists: SpotifyArtist[] | null | undefined,
+	removedId: string,
+): SpotifyArtist[] {
+	const remaining = prev.filter((ar) => ar.id !== removedId);
+
+	// Draw the replacement from favorites not already suggested
+	const suggestedIds = new Set(prev.map((ar) => ar.id));
+	const pool = (allArtists ?? []).filter((ar) => !suggestedIds.has(ar.id));
+	if (pool.length === 0) return remaining;
+
+	// Randomly select a replacement from the pool of unused favorites
+	const replacement = pool[Math.floor(Math.random() * pool.length)];
+	return [...remaining, replacement];
+}
+
 type ErrorDisplayProps = Readonly<{
 	lookupError?: string | null;
 	spotifyError?: string | boolean | null;
@@ -161,17 +187,7 @@ export default function SuggestedArtistsCloud({
 
 				// Remove the selected artist and replace it with a random one from
 				// a pool of unused artists from the user's top 50 favorites
-				setSuggested((prev) => {
-					const remaining = prev.filter((ar) => ar.id !== artist.id);
-					const pool = (allArtists ?? []).filter(
-						(ar) => !prev.some((ar2) => ar2.id === ar.id),
-					);
-
-					if (pool.length === 0) return remaining;
-
-					const replacement = pool[Math.floor(Math.random() * pool.length)];
-					return [...remaining, replacement];
-				});
+				setSuggested((prev) => replaceSuggestion(prev, allArtists, artist.id));
 			} else {
 				pendingFocusIndexRef.current = null;
 				setLookupError('Artist details could not be found');
