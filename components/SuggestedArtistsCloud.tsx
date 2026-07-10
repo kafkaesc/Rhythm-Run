@@ -14,8 +14,8 @@ import { SpotifyArtist } from '@/models/spotify';
 const CLOUD_SIZE = 8;
 
 /**
- * Removes the selected artist from the current suggestions and, when unused
- * favorites remain, appends a random replacement drawn from them.
+ * Removes the selected artist from the current suggestions and--when unused
+ * favorites remain--appends a random replacement drawn from them.
  *
  * @param prev - The current suggested artists
  * @param allArtists - The user's top artists to draw a replacement from
