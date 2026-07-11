@@ -3,11 +3,39 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
-import { getCachedTracks, setCachedTracks } from '@/lib/cache';
-import { inRange } from '@/lib/math';
 import { fetchArtistTopTracks } from '@/lib/lastfm';
+import { inRange } from '@/lib/math';
 import { enrichWithTempoStream } from '@/lib/metamusic';
+import {
+	clearNoTempoArtist,
+	getCachedTracks,
+	setCachedTracks,
+	setNoTempoArtist,
+} from '@/lib/metamusic-cache';
 import { Track } from '@/models/rhythmRun';
+
+/**
+ * Caches an artist's enrichment result, two paths:
+ *
+ * - Artists with tempo data go to the track cache and clearing any no-tempo entry.
+ * - Artists with no tempo data go to the no-tempo cache.
+ *
+ * @param mbid - MusicBrainz ID of the artist
+ * @param enriched - Enriched tracks from the tempo lookup, with or without a BPM
+ */
+async function cacheEnrichmentResult(
+	mbid: string,
+	enriched: Track[],
+): Promise<void> {
+	const tracksWithBpm = enriched.filter((t) => t.bpm !== undefined);
+	if (tracksWithBpm.length === 0) {
+		await setNoTempoArtist(mbid);
+		return;
+	}
+
+	await setCachedTracks(mbid, tracksWithBpm);
+	await clearNoTempoArtist(mbid);
+}
 
 export async function GET(request: NextRequest) {
 	const authError = requireApiKey(request);
@@ -127,10 +155,7 @@ export async function GET(request: NextRequest) {
 						)
 							controller.enqueue(encoder.encode(JSON.stringify(track) + '\n'));
 					}
-					await setCachedTracks(
-						mbid,
-						enriched.filter((t) => t.bpm !== undefined),
-					);
+					await cacheEnrichmentResult(mbid, enriched);
 				}
 			} catch (err) {
 				console.error('MetaMusic stream failed:', err);
