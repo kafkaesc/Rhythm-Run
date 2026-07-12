@@ -51,7 +51,7 @@ export default function MetaMusicArtistTempo() {
 	});
 
 	// Search results
-	const { tracks, loading, streaming, error } = useMetaMusicArtistTempo(
+	const { tracks, done, loading, streaming, error } = useMetaMusicArtistTempo(
 		mmQuery?.mbids ?? [],
 		mmQuery?.tempo ?? null,
 		mmQuery?.epsilon ?? null,
@@ -82,6 +82,8 @@ export default function MetaMusicArtistTempo() {
 	 * in the results, or undefined if every searched artist has data
 	 */
 	const getNoDataArtists = (): string[] | undefined => {
+		if (!done) return undefined;
+
 		const trackArtistsSet = new Set(
 			(tracks ?? []).flatMap((tr) => tr.artists.map((ar) => ar.toLowerCase())),
 		);
