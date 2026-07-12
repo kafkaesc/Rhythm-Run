@@ -102,6 +102,7 @@ export function useMetaMusicArtistTempo(
 
 	return {
 		tracks: state.data,
+		done: state.status === 'success',
 		loading: state.status === 'loading',
 		streaming: state.status === 'streaming',
 		error: state.error,
