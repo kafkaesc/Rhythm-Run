@@ -9,10 +9,18 @@ import { enrichWithTempoStream } from '@/lib/metamusic';
 import {
 	clearNoTempoArtist,
 	getCachedTracks,
+	getNoTempoArtistDate,
 	setCachedTracks,
 	setNoTempoArtist,
 } from '@/lib/metamusic-cache';
+import { LfmTopTrack } from '@/models/lastFm';
 import { Track } from '@/models/rhythmRun';
+
+/** Last.fm top tracks for one artist, keyed by the artist's MBID */
+interface ArtistTopTracks {
+	mbid: string;
+	tracks: LfmTopTrack[];
+}
 
 /**
  * Caches an artist's enrichment result, two paths:
@@ -35,6 +43,83 @@ async function cacheEnrichmentResult(
 
 	await setCachedTracks(mbid, tracksWithBpm);
 	await clearNoTempoArtist(mbid);
+}
+
+/**
+ * Fetches Last.fm top tracks for each artist, scheduled 1 per second to
+ * avoid calling the Last.fm API too quickly. An artist whose fetch fails
+ * is recorded in the no-tempo cache and omitted from the results.
+ *
+ * @param mbids - MusicBrainz IDs of the artists, in search-priority order
+ * @param apiKey - Last.fm API key
+ */
+async function fetchTopTracksByArtist(
+	mbids: string[],
+	apiKey: string,
+): Promise<ArtistTopTracks[]> {
+	// Schedule the Last.fm fetches 1 second apart, then attach the MBID
+	// to each result. allSettled is used so one failure won't sink the rest.
+	const settled = await Promise.allSettled(
+		mbids.map((mbid, i) =>
+			new Promise<void>((resolve) => setTimeout(resolve, i * 1000))
+				.then(() => fetchArtistTopTracks(mbid, apiKey))
+				.then((tracks) => ({ mbid, tracks })),
+		),
+	);
+
+	// Filter the successful fetches. Artists whose fetch returned
+	// as "rejected" or an error go in the no-tempo cache.
+	const tracksByArtist: ArtistTopTracks[] = [];
+	for (let i = 0; i < settled.length; i++) {
+		const result = settled[i];
+		if (result.status === 'fulfilled') {
+			tracksByArtist.push(result.value);
+			continue;
+		}
+
+		console.error(
+			'Last.fm top tracks fetch failed for',
+			mbids[i],
+			result.reason,
+		);
+		await setNoTempoArtist(mbids[i]);
+	}
+
+	return tracksByArtist;
+}
+
+/**
+ * Sorts requested artists into three groups by cache status:
+ * - artists whose tempo results are cached and ready immediately
+ * - artists who are neither in the tempo cache nor the no-tempo cache
+ * - artists who are in the no-tempo cache, to be deferred after the other two
+ *
+ * @param artistMbids - MusicBrainz IDs of the requested artists
+ */
+async function groupByCacheStatus(artistMbids: string[]): Promise<{
+	cachedTracks: Track[][];
+	deferredMbids: string[];
+	unknownMbids: string[];
+}> {
+	const cachedTracks: Track[][] = [];
+	const deferredMbids: string[] = [];
+	const unknownMbids: string[] = [];
+
+	for (const mbid of artistMbids) {
+		// Tempo-cache hit, the artist's tracks are ready to stream
+		const cached = await getCachedTracks(mbid);
+		if (cached !== null) {
+			cachedTracks.push(cached);
+			continue;
+		}
+
+		// No-tempo-cache hit => defer the artist, otherwise search first
+		const noTempoDate = await getNoTempoArtistDate(mbid);
+		if (noTempoDate !== null) deferredMbids.push(mbid);
+		else unknownMbids.push(mbid);
+	}
+
+	return { cachedTracks, deferredMbids, unknownMbids };
 }
 
 export async function GET(request: NextRequest) {
@@ -93,42 +178,17 @@ export async function GET(request: NextRequest) {
 			{ status: 400 },
 		);
 
-	// Check cache for each artist, separating hits from misses
-	const cachedTracks: Track[][] = [];
-	const uncachedMbids: string[] = [];
-	for (const mbid of artistMbids) {
-		const cached = await getCachedTracks(mbid);
-		if (cached === null) uncachedMbids.push(mbid);
-		else cachedTracks.push(cached);
-	}
+	// Sort the artists by cache status: cached tempo data stream immediately,
+	// unknown artists are searched first, no-tempo artists are searched last
+	const { cachedTracks, deferredMbids, unknownMbids } =
+		await groupByCacheStatus(artistMbids);
 
-	// For uncached artists, fetch top tracks from Last.fm, staggered by 1 second
-	// to avoid calling the Last.fm API too quickly
-	let uncachedTracksByArtist: {
-		mbid: string;
-		tracks: Awaited<ReturnType<typeof fetchArtistTopTracks>>;
-	}[] = [];
-	if (uncachedMbids.length > 0) {
-		try {
-			uncachedTracksByArtist = await Promise.all(
-				uncachedMbids.map((mbid, i) =>
-					new Promise<void>((resolve) => setTimeout(resolve, i * 1000))
-						.then(() => fetchArtistTopTracks(mbid, lastFmApiKey))
-						.then((tracks) => ({ mbid, tracks })),
-				),
-			);
-		} catch (err) {
-			console.error(
-				'Last.fm top tracks fetch failed for mbids',
-				uncachedMbids,
-				err,
-			);
-			return NextResponse.json(
-				{ error: 'Failed to fetch top tracks from Last.fm' },
-				{ status: 502 },
-			);
-		}
-	}
+	// Fetch top tracks from Last.fm for the artists that need a search,
+	// keeping the unknown-first, no-tempo-last priority order
+	const uncachedTracksByArtist = await fetchTopTracksByArtist(
+		[...unknownMbids, ...deferredMbids],
+		lastFmApiKey,
+	);
 
 	// Construct a web stream as a response to return tracks as they are
 	// enriched because waiting for the entire response to enrich is slowww
