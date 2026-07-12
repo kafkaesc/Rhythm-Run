@@ -11,6 +11,7 @@ mockUseSession.mockReturnValue({ data: null, status: 'unauthenticated' });
 const mockUseMetaMusicArtistTempo = jest.fn();
 mockUseMetaMusicArtistTempo.mockReturnValue({
 	tracks: null,
+	done: false,
 	loading: false,
 	streaming: false,
 	error: null,
@@ -88,6 +89,7 @@ afterEach(() => {
 	});
 	mockUseMetaMusicArtistTempo.mockReturnValue({
 		tracks: null,
+		done: false,
 		loading: false,
 		streaming: false,
 		error: null,
@@ -198,4 +200,48 @@ it('Shows the Select a Spotify Playlist button when logged in with Spotify and t
 		name: /select a spotify playlist/i,
 	});
 	expect(btn).toBeInTheDocument();
+});
+
+it('Does not show the no tempo data notice while results are still streaming', async () => {
+	mockUseSet.mockReturnValue({
+		set: [LfmBadBunny],
+		add: jest.fn(),
+		clear: jest.fn(),
+		isFull: jest.fn().mockReturnValue(false),
+		remove: jest.fn(),
+	});
+	mockUseMetaMusicArtistTempo.mockReturnValue({
+		tracks: [mockTrack],
+		done: false,
+		loading: false,
+		streaming: true,
+		error: null,
+	});
+	render(<MetaMusicArtistTempo />);
+	const findBtn = screen.getByRole('button', { name: /find tracks/i });
+	await userEvent.click(findBtn);
+	const notice = screen.queryByText(/no tempo data found/i);
+	expect(notice).not.toBeInTheDocument();
+});
+
+it('Shows the no tempo data notice for artists without tracks once the search is done', async () => {
+	mockUseSet.mockReturnValue({
+		set: [LfmBadBunny],
+		add: jest.fn(),
+		clear: jest.fn(),
+		isFull: jest.fn().mockReturnValue(false),
+		remove: jest.fn(),
+	});
+	mockUseMetaMusicArtistTempo.mockReturnValue({
+		tracks: [mockTrack],
+		done: true,
+		loading: false,
+		streaming: false,
+		error: null,
+	});
+	render(<MetaMusicArtistTempo />);
+	const findBtn = screen.getByRole('button', { name: /find tracks/i });
+	await userEvent.click(findBtn);
+	const notice = screen.getByText(/no tempo data found for bad bunny/i);
+	expect(notice).toBeInTheDocument();
 });
