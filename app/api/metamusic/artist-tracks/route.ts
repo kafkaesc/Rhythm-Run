@@ -3,9 +3,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiKey } from '@/lib/api-auth';
-import { getCachedTracks, setCachedTracks } from '@/lib/cache';
+import {
+	cacheEnrichmentResult,
+	fetchTopTracksByArtist,
+	groupByCacheStatus,
+} from '@/lib/artist-tracks';
 import { inRange } from '@/lib/math';
-import { fetchArtistTopTracks } from '@/lib/lastfm';
 import { enrichWithTempoStream } from '@/lib/metamusic';
 import { Track } from '@/models/rhythmRun';
 
@@ -65,42 +68,17 @@ export async function GET(request: NextRequest) {
 			{ status: 400 },
 		);
 
-	// Check cache for each artist, separating hits from misses
-	const cachedTracks: Track[][] = [];
-	const uncachedMbids: string[] = [];
-	for (const mbid of artistMbids) {
-		const cached = await getCachedTracks(mbid);
-		if (cached === null) uncachedMbids.push(mbid);
-		else cachedTracks.push(cached);
-	}
+	// Sort the artists by cache status: cached tempo data stream immediately,
+	// unknown artists are searched first, no-tempo artists are searched last
+	const { cachedTracks, deferredMbids, unknownMbids } =
+		await groupByCacheStatus(artistMbids);
 
-	// For uncached artists, fetch top tracks from Last.fm, staggered by 1 second
-	// to avoid calling the Last.fm API too quickly
-	let uncachedTracksByArtist: {
-		mbid: string;
-		tracks: Awaited<ReturnType<typeof fetchArtistTopTracks>>;
-	}[] = [];
-	if (uncachedMbids.length > 0) {
-		try {
-			uncachedTracksByArtist = await Promise.all(
-				uncachedMbids.map((mbid, i) =>
-					new Promise<void>((resolve) => setTimeout(resolve, i * 1000))
-						.then(() => fetchArtistTopTracks(mbid, lastFmApiKey))
-						.then((tracks) => ({ mbid, tracks })),
-				),
-			);
-		} catch (err) {
-			console.error(
-				'Last.fm top tracks fetch failed for mbids',
-				uncachedMbids,
-				err,
-			);
-			return NextResponse.json(
-				{ error: 'Failed to fetch top tracks from Last.fm' },
-				{ status: 502 },
-			);
-		}
-	}
+	// Fetch top tracks from Last.fm for the artists that need a search,
+	// keeping the unknown-first, no-tempo-last priority order
+	const uncachedTracksByArtist = await fetchTopTracksByArtist(
+		[...unknownMbids, ...deferredMbids],
+		lastFmApiKey,
+	);
 
 	// Construct a web stream as a response to return tracks as they are
 	// enriched because waiting for the entire response to enrich is slowww
@@ -127,10 +105,7 @@ export async function GET(request: NextRequest) {
 						)
 							controller.enqueue(encoder.encode(JSON.stringify(track) + '\n'));
 					}
-					await setCachedTracks(
-						mbid,
-						enriched.filter((t) => t.bpm !== undefined),
-					);
+					await cacheEnrichmentResult(mbid, enriched);
 				}
 			} catch (err) {
 				console.error('MetaMusic stream failed:', err);
