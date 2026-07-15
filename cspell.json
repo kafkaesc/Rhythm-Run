@@ -27,6 +27,7 @@
 		"jaredhettinger",
 		"joinphrase",
 		"kafkaesc",
+		"keyspace",
 		"mbid",
 		"mbids",
 		"metamusic",
@@ -35,6 +36,10 @@
 		"playcount",
 		"toptracks",
 		"upstash",
-		"vercel"
+		"vercel",
+		"zadd",
+		"zcard",
+		"zrange",
+		"zrem"
 	]
 }
