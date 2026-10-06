@@ -81,6 +81,7 @@ input[type='range'] {
 	-webkit-appearance: none;
 	background: transparent;
 	cursor: pointer;
+	touch-action: pan-y;
 }
 
 input[type='range']::-webkit-slider-runnable-track {
@@ -122,4 +123,44 @@ input[type='range']::-moz-range-thumb {
 	border-radius: 50%;
 	background: var(--highlight);
 	border: none;
+}
+
+/* Touch targets: the 6px track is far too thin to hit reliably. The track
+   keeps its size, while the input grows to a 44px tappable band and the thumb
+   grows with it. Thumb margin-top centers it on the track: (6 - 24) / 2. */
+@media (pointer: coarse) {
+	input[type='range'] {
+		height: 44px;
+	}
+
+	input[type='range']::-webkit-slider-thumb {
+		height: 24px;
+		width: 24px;
+		margin-top: -9px;
+	}
+
+	input[type='range']::-moz-range-thumb {
+		height: 24px;
+		width: 24px;
+	}
+}
+
+/* iOS Safari floats its bottom bar over the page and tints it from whatever is
+   painted across the full width of the viewport's bottom edge. Normal flow
+   content stops about 58pt short of that edge, so against our dark footer the
+   bar renders grey and the footer looks cut off halfway down the URL bar. A
+   fixed strip is the only thing that reaches it, and 8px is enough to drive the
+   tint across the whole bar. It has to be a real full-width element: a
+   half-width strip and a ::after pseudo-element both leave the bar grey. The
+   strip sits under Safari's own bar, so it never covers page content, and the
+   -webkit-touch-callout check keeps it to iOS, where the bar exists. Safari
+   samples the colour once and ignores later style changes, so IosBarFill
+   remounts the node on a theme change to force a fresh sample. */
+@supports (-webkit-touch-callout: none) {
+	.ios-bar-fill {
+		position: fixed;
+		inset-inline: 0;
+		bottom: 0;
+		height: 8px;
+	}
 }
