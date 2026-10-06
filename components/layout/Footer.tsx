@@ -1,5 +1,6 @@
 import H2 from '@/components/elements/H2';
 import Container from '@/components/layout/Container';
+import IosBarFill from '@/components/layout/IosBarFill';
 import JhSocialLinks from '@/components/JhSocialLinks';
 import PoweredBy from '@/components/PoweredBy';
 
@@ -18,6 +19,7 @@ export default function Footer() {
 					<PoweredBy />
 				</div>
 			</Container>
+			<IosBarFill />
 		</footer>
 	);
 }
